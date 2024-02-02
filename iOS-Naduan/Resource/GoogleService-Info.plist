@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDwtkTElERn-QWge9O1nWyYC5QljVkwigA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>664672316612</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.gyoungmin.iOS-Naduan</string>
+	<key>PROJECT_ID</key>
+	<string>nadaun-50e4e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>nadaun-50e4e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:664672316612:ios:8685c91c5334ee89536d91</string>
+</dict>
+</plist>
