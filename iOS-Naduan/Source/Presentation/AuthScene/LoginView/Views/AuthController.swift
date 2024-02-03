@@ -14,7 +14,7 @@ protocol AuthControllerDelegate: AnyObject {
   func authController(to controller: AuthController, didFailure error: Error)
 }
 
-class AuthController {
+class AuthController: NSObject {
   weak var delegate: AuthControllerDelegate?
   
   func authWithKakao() {
@@ -25,6 +25,15 @@ class AuthController {
     }
   }
   
+  func authWithApple() {
+    let provider = ASAuthorizationAppleIDProvider()
+    let request = provider.createRequest()
+    
+    let controller = ASAuthorizationController(authorizationRequests: [request])
+    controller.delegate = self
+    controller.performRequests()
+  }
+  
   private func handleKakaoToken(_ token: OAuthToken?, _ error: Error?) {
     if let error = error {
       delegate?.authController(to: self, didFailure: error)
@@ -32,6 +41,33 @@ class AuthController {
     }
     
     guard let idToken = token?.idToken else {
+      delegate?.authController(to: self, didFailure: AuthError.didNotFoundIDToken)
+      return
+    }
+    
+    delegate?.authController(to: self, didSuccess: idToken)
+  }
+}
+
+extension AuthController: ASAuthorizationControllerDelegate {
+  func authorizationController(
+    controller: ASAuthorizationController,
+    didCompleteWithError error: Error
+  ) {
+    delegate?.authController(to: self, didFailure: error)
+  }
+  
+  func authorizationController(
+    controller: ASAuthorizationController,
+    didCompleteWithAuthorization authorization: ASAuthorization
+  ) {
+    guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else {
+      delegate?.authController(to: self, didFailure: AuthError.didNotFoundCredential)
+      return
+    }
+    
+    guard let idTokenData = credential.identityToken,
+          let idToken = String(data: idTokenData, encoding: .utf8) else {
       delegate?.authController(to: self, didFailure: AuthError.didNotFoundIDToken)
       return
     }

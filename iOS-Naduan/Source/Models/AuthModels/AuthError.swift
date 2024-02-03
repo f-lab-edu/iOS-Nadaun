@@ -5,6 +5,7 @@
 //  Copyright (c) 2024 Minii All rights reserved.
 
 enum AuthError: Error {
+  case didNotFoundCredential
   case didNotFoundIDToken
   case didNotFoundUser
 }
