@@ -17,7 +17,7 @@ final class LoginViewController: UIViewController {
   private let logoLabel: UILabel = {
     let label = UILabel()
     label.text = "똑똑하고\n나다운\n명함"
-    label.font = .systemFont(ofSize: 48, weight: .bold)
+    label.font = .pretendardFont(weight: .bold, size: 48)
     label.textColor = .accent
     label.numberOfLines = 0
     label.translatesAutoresizingMaskIntoConstraints = false
