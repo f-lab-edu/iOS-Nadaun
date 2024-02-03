@@ -7,6 +7,7 @@
 import UIKit
 
 import FirebaseCore
+import KakaoSDKCommon
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
