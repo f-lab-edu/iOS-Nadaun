@@ -13,7 +13,7 @@ extension UIButton.Configuration {
     configuration.imagePadding = 10
     configuration.titleAlignment = .leading
     configuration.cornerStyle = .capsule
-    configuration.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
+    configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
     return configuration
   }
 }
