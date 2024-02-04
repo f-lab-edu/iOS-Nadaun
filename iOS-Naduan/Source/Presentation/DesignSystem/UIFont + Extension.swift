@@ -57,14 +57,14 @@ enum TypographyType {
 extension UIFont {
   private static let pretendard = "Pretendard"
   
-  static func pretendardFont(weight: TypographyType.FontWeight, size: CGFloat) -> UIFont {
+  static func pretendardFont(weight: TypographyType.FontWeight, size: CGFloat) -> UIFont? {
     let name = pretendard + "-" + weight.rawValue
-    return UIFont(name: name, size: size) ?? .preferredFont(forTextStyle: .body)
+    return UIFont(name: name, size: size)
   }
   
-  static func pretendardFont(to typography: TypographyType) -> UIFont {
+  static func pretendardFont(to typography: TypographyType) -> UIFont? {
     let name = pretendard + "-" + typography.weight.rawValue
     let size = CGFloat(typography.size.rawValue)
-    return UIFont(name: name, size: size) ?? .preferredFont(forTextStyle: .body)
+    return UIFont(name: name, size: size)
   }
 }
