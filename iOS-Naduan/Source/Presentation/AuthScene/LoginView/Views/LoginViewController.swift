@@ -24,6 +24,26 @@ final class LoginViewController: UIViewController {
     return label
   }()
   
+  private let kakaoAuthButton: UIButton = {
+    var configuration = UIButton.Configuration.authStyle()
+    configuration.image = .iconKakao
+    configuration.baseBackgroundColor = .systemYellow
+    configuration.attributedTitle = .authTitle(to: "카카오로 계속하기", with: .black)
+    let button = UIButton(configuration: configuration)
+    button.translatesAutoresizingMaskIntoConstraints = false
+    return button
+  }()
+  
+  private let appleAuthButton: UIButton = {
+    var configuration = UIButton.Configuration.authStyle()
+    configuration.image = .iconApple
+    configuration.baseBackgroundColor = .black
+    configuration.attributedTitle = .authTitle(to: "애플로 계속하기", with: .white)
+    let button = UIButton(configuration: configuration)
+    button.translatesAutoresizingMaskIntoConstraints = false
+    return button
+  }()
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -40,7 +60,7 @@ private extension LoginViewController {
   }
   
   func configureHierarchy() {
-    [rectangleView, logoLabel].forEach(view.addSubview)
+    [rectangleView, logoLabel, appleAuthButton, kakaoAuthButton].forEach(view.addSubview)
   }
   
   func makeConstraints() {
@@ -54,7 +74,15 @@ private extension LoginViewController {
       
       logoLabel.leadingAnchor.constraint(equalTo: rectangleView.leadingAnchor),
       logoLabel.topAnchor.constraint(equalTo: rectangleView.bottomAnchor, constant: 16),
-      logoLabel.trailingAnchor.constraint(equalTo: rectangleView.trailingAnchor)
+      logoLabel.trailingAnchor.constraint(equalTo: rectangleView.trailingAnchor),
+      
+      appleAuthButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
+      appleAuthButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
+      appleAuthButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -16),
+      
+      kakaoAuthButton.leadingAnchor.constraint(equalTo: appleAuthButton.leadingAnchor),
+      kakaoAuthButton.trailingAnchor.constraint(equalTo: appleAuthButton.trailingAnchor),
+      kakaoAuthButton.bottomAnchor.constraint(equalTo: appleAuthButton.topAnchor, constant: -16)
     ])
   }
 }
