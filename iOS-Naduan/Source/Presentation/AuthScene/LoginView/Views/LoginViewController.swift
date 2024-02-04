@@ -27,7 +27,7 @@ final class LoginViewController: UIViewController {
   private let kakaoAuthButton: UIButton = {
     var configuration = UIButton.Configuration.authStyle()
     configuration.image = .iconKakao
-    configuration.baseBackgroundColor = .systemYellow
+    configuration.baseBackgroundColor = .colorKakao
     configuration.attributedTitle = .authTitle(to: "카카오로 계속하기", with: .black)
     let button = UIButton(configuration: configuration)
     button.translatesAutoresizingMaskIntoConstraints = false
@@ -82,7 +82,7 @@ private extension LoginViewController {
       
       kakaoAuthButton.leadingAnchor.constraint(equalTo: appleAuthButton.leadingAnchor),
       kakaoAuthButton.trailingAnchor.constraint(equalTo: appleAuthButton.trailingAnchor),
-      kakaoAuthButton.bottomAnchor.constraint(equalTo: appleAuthButton.topAnchor, constant: -16)
+      kakaoAuthButton.bottomAnchor.constraint(equalTo: appleAuthButton.topAnchor, constant: -8)
     ])
   }
 }
