@@ -66,23 +66,29 @@ private extension LoginViewController {
   func makeConstraints() {
     let safeArea = view.safeAreaLayoutGuide
     
-    NSLayoutConstraint.activate([
-      rectangleView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 64),
-      rectangleView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
-      rectangleView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -64),
-      rectangleView.heightAnchor.constraint(equalToConstant: 20),
-      
-      logoLabel.leadingAnchor.constraint(equalTo: rectangleView.leadingAnchor),
-      logoLabel.topAnchor.constraint(equalTo: rectangleView.bottomAnchor, constant: 16),
-      logoLabel.trailingAnchor.constraint(equalTo: rectangleView.trailingAnchor),
-      
-      appleAuthButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
-      appleAuthButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
-      appleAuthButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -16),
-      
-      kakaoAuthButton.leadingAnchor.constraint(equalTo: appleAuthButton.leadingAnchor),
-      kakaoAuthButton.trailingAnchor.constraint(equalTo: appleAuthButton.trailingAnchor),
-      kakaoAuthButton.bottomAnchor.constraint(equalTo: appleAuthButton.topAnchor, constant: -8)
-    ])
+    rectangleView.attach { view in
+      view.top(equalTo: safeArea.topAnchor, padding: 64)
+      view.leading(equalTo: safeArea.leadingAnchor, padding: 16)
+      view.trailing(equalTo: safeArea.trailingAnchor, padding: 64)
+      view.height(equalTo: 20)
+    }
+    
+    logoLabel.attach {
+      $0.leading(equalTo: rectangleView.leadingAnchor)
+      $0.trailing(equalTo: rectangleView.trailingAnchor)
+      $0.top(equalTo: rectangleView.bottomAnchor, padding: 16)
+    }
+    
+    kakaoAuthButton.attach {
+      $0.leading(equalTo: safeArea.leadingAnchor, padding: 16)
+      $0.trailing(equalTo: safeArea.trailingAnchor, padding: 16)
+      $0.bottom(equalTo: appleAuthButton.topAnchor, padding: 8)
+    }
+    
+    appleAuthButton.attach {
+      $0.leading(equalTo: safeArea.leadingAnchor, padding: 16)
+      $0.trailing(equalTo: safeArea.trailingAnchor, padding: 16)
+      $0.bottom(equalTo: safeArea.bottomAnchor)
+    }
   }
 }
