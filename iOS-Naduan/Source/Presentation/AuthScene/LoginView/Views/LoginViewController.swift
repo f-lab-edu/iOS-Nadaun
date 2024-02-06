@@ -45,9 +45,11 @@ final class LoginViewController: UIViewController {
   }()
   
   private let authController: AuthController
+  private let viewModel: LoginViewModel
   
-  init(authController: AuthController) {
+  init(authController: AuthController, viewModel: LoginViewModel) {
     self.authController = authController
+    self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
         
     authController.delegate = self
