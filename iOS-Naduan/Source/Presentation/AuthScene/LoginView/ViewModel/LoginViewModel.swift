@@ -7,8 +7,7 @@
 import FirebaseAuth
 
 enum LoginAction {
-  case appleLogin(idToken: String)
-  case kakaoLogin(idToken: String)
+  case signIn(provider: Provider, idToken: String)
 }
 
 class LoginViewModel {
@@ -22,23 +21,13 @@ class LoginViewModel {
   
   func bind(with action: LoginAction) {
     switch action {
-      case .appleLogin(let idToken):
-        signInWithApple(to: idToken)
-      case .kakaoLogin(let idToken):
-        signInWithKakao(to: idToken)
+      case .signIn(let provider, let idToken):
+        authRepository.signIn(provider: provider, idToken: idToken, completion: handleSignInResult)
     }
   }
 }
 
 private extension LoginViewModel {
-  func signInWithKakao(to idToken: String) {
-    authRepository.signIn(provider: .kakao, idToken: idToken, completion: handleSignInResult)
-  }
-  
-  func signInWithApple(to idToken: String) {
-    authRepository.signIn(provider: .apple, idToken: idToken, completion: handleSignInResult)
-  }
-  
   func handleSignInResult(to result: Result<User, Error>) {
     switch result {
       case .success(let user):

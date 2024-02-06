@@ -69,13 +69,12 @@ final class LoginViewController: UIViewController {
 }
 
 extension LoginViewController: AuthControllerDelegate {
-  func authController(to controller: AuthController, didSuccess idToken: String, withProvider provider: Provider) {
-    switch provider {
-      case .apple:
-        viewModel.bind(with: .appleLogin(idToken: idToken))
-      case .kakao:
-        viewModel.bind(with: .kakaoLogin(idToken: idToken))
-    }
+  func authController(
+    to controller: AuthController,
+    didSuccess idToken: String,
+    withProvider provider: Provider
+  ) {
+    viewModel.bind(with: .signIn(provider: provider, idToken: idToken))
   }
   
   func authController(to controller: AuthController, didFailure error: Error) {
