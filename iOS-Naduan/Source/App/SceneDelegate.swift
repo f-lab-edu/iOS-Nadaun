@@ -15,7 +15,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     window = UIWindow(windowScene: windowScene)
     let authController = AuthController()
-    window?.rootViewController = LoginViewController(authController: authController)
+    
+    let authRepository = AuthRepository()
+    let loginViewModel = LoginViewModel(authRepository: authRepository)
+    
+    window?.rootViewController = LoginViewController(authController: authController, viewModel: loginViewModel)
     window?.makeKeyAndVisible()
   }
 }

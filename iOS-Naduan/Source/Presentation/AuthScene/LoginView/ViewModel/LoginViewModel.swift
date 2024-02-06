@@ -25,7 +25,20 @@ class LoginViewModel {
       case .appleLogin(let idToken):
         print(idToken)
       case .kakaoLogin(let idToken):
-        print(idToken)
+        signInWithKakao(to: idToken)
+    }
+  }
+}
+
+private extension LoginViewModel {
+  func signInWithKakao(to idToken: String) {
+    authRepository.signIn(provider: .kakao, idToken: idToken) { result in
+      switch result {
+        case .success(let user):
+          self.currentUser = user
+        case .failure(let error):
+          print(error)
+      }
     }
   }
 }

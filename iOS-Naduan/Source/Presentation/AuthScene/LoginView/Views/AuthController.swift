@@ -10,7 +10,7 @@ import KakaoSDKUser
 import KakaoSDKAuth
 
 protocol AuthControllerDelegate: AnyObject {
-  func authController(to controller: AuthController, didSuccess idToken: String)
+  func authController(to controller: AuthController, didSuccess idToken: String, withProvider provider: Provider)
   func authController(to controller: AuthController, didFailure error: Error)
 }
 
@@ -45,7 +45,7 @@ class AuthController: NSObject {
       return
     }
     
-    delegate?.authController(to: self, didSuccess: idToken)
+    delegate?.authController(to: self, didSuccess: idToken, withProvider: .kakao)
   }
 }
 
@@ -72,6 +72,6 @@ extension AuthController: ASAuthorizationControllerDelegate {
       return
     }
     
-    delegate?.authController(to: self, didSuccess: idToken)
+    delegate?.authController(to: self, didSuccess: idToken, withProvider: .apple)
   }
 }
