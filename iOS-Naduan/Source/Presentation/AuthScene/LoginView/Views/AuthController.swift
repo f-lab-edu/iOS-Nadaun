@@ -8,10 +8,11 @@ import AuthenticationServices
 
 import KakaoSDKUser
 import KakaoSDKAuth
+import KakaoSDKCommon
 
 protocol AuthControllerDelegate: AnyObject {
   func authController(to controller: AuthController, didSuccess idToken: String, withProvider provider: Provider)
-  func authController(to controller: AuthController, didFailure error: Error)
+  func authController(to controller: AuthController, didFailure error: LocalizedError)
 }
 
 class AuthController: NSObject {
@@ -36,7 +37,9 @@ class AuthController: NSObject {
   
   private func handleKakaoToken(_ token: OAuthToken?, _ error: Error?) {
     if let error = error {
-      delegate?.authController(to: self, didFailure: error)
+      if case let .ClientFailed(reason, _) = (error as? SdkError), reason == .Cancelled { return }
+      
+      delegate?.authController(to: self, didFailure: AuthError.unexpected)
       return
     }
     
@@ -54,7 +57,9 @@ extension AuthController: ASAuthorizationControllerDelegate {
     controller: ASAuthorizationController,
     didCompleteWithError error: Error
   ) {
-    delegate?.authController(to: self, didFailure: error)
+    if (error as? ASAuthorizationError)?.code == .canceled { return }
+    
+    delegate?.authController(to: self, didFailure: AuthError.unexpected)
   }
   
   func authorizationController(

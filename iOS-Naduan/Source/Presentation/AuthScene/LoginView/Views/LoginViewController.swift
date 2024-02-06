@@ -83,9 +83,8 @@ extension LoginViewController: AuthControllerDelegate {
     viewModel.bind(with: .signIn(provider: provider, idToken: idToken))
   }
   
-  func authController(to controller: AuthController, didFailure error: Error) {
-    // TODO: - Error Handling
-    print(error)
+  func authController(to controller: AuthController, didFailure error: LocalizedError) {
+    presentErrorAlert(to: error)
   }
 }
 
@@ -94,30 +93,19 @@ private extension LoginViewController {
   func setBinding() {
     viewModel.didNotRegister = { user in
       // TODO: - PRESENT REGISTER VIEW
-      print("DID NOT REGISTER")
     }
     
     viewModel.didRegister = { user in
       // TODO: - PRESENT HOME VIEW
-      print("DID REGISTER")
     }
     
     viewModel.didOccurError = { [weak self] error in
-      let confirmAction = UIAlertAction(title: "확인", style: .cancel)
-      let controller = UIAlertController(
-        title: "오류",
-        message: "예기치 못한 오류가 발생하였습니다.\n잠시후 다시 시도해주세요.",
-        preferredStyle: .alert
-      )
-      
-      controller.addAction(confirmAction)
-      
-      self?.present(controller, animated: true)
+      self?.presentErrorAlert(to: error)
     }
   }
 }
 
-// MARK: - Attachment Actions
+// MARK: - View Action Method
 private extension LoginViewController {
   func attachActions() {
     let kakaoAuthAction = UIAction { _ in
@@ -131,6 +119,15 @@ private extension LoginViewController {
     }
     
     appleAuthButton.addAction(appleAuthAction, for: .touchUpInside)
+  }
+  
+  func presentErrorAlert(to error: LocalizedError) {
+      let confirmAction = UIAlertAction(title: "확인", style: .cancel)
+      let controller = UIAlertController(title: "오류", message: error.errorDescription, preferredStyle: .alert)
+      
+      controller.addAction(confirmAction)
+      
+      present(controller, animated: true)
   }
 }
 

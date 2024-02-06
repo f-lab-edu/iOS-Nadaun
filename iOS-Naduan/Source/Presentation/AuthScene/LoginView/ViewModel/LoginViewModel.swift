@@ -19,7 +19,7 @@ class LoginViewModel {
     }
   }
   
-  private var error: Error? {
+  private var error: LocalizedError? {
     didSet {
       if let error = self.error {
         didOccurError?(error)
@@ -29,7 +29,7 @@ class LoginViewModel {
   
   var didNotRegister: ((User) -> Void)?
   var didRegister: ((User) -> Void)?
-  var didOccurError: ((Error) -> Void)?
+  var didOccurError: ((LocalizedError) -> Void)?
   
   init(authRepository: AuthRepository) {
     self.authRepository = authRepository
@@ -62,8 +62,8 @@ private extension LoginViewModel {
     switch result {
       case .success(let user):
         self.currentUser = user
-      case .failure(let error):
-        self.error = error
+      case .failure:
+        self.error = AuthError.unexpected
     }
   }
 }
