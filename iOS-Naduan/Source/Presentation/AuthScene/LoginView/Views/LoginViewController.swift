@@ -7,6 +7,7 @@
 import UIKit
 
 final class LoginViewController: UIViewController {
+  // MARK: - View Properties
   private let rectangleView: UIView = {
     let view = UIView()
     view.backgroundColor = UIColor.accent
@@ -44,9 +45,11 @@ final class LoginViewController: UIViewController {
     return button
   }()
   
+  // MARK: - Logical Properties
   private let authController: AuthController
   private let viewModel: LoginViewModel
   
+  // MARK: - Initializer
   init(authController: AuthController, viewModel: LoginViewModel) {
     self.authController = authController
     self.viewModel = viewModel
@@ -59,7 +62,7 @@ final class LoginViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
   
-  
+  // MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -68,6 +71,7 @@ final class LoginViewController: UIViewController {
   }
 }
 
+// MARK: - AuthController Delegate Method
 extension LoginViewController: AuthControllerDelegate {
   func authController(
     to controller: AuthController,
@@ -78,10 +82,18 @@ extension LoginViewController: AuthControllerDelegate {
   }
   
   func authController(to controller: AuthController, didFailure error: Error) {
+    // TODO: - Error Handling
     print(error)
   }
 }
 
+// MARK: - Binding Method
+private extension LoginViewController {
+  func setBinding() {
+  }
+}
+
+// MARK: - Attachment Actions
 private extension LoginViewController {
   func attachActions() {
     let kakaoAuthAction = UIAction { _ in
@@ -98,6 +110,7 @@ private extension LoginViewController {
   }
 }
 
+// MARK: - Configuration UI
 private extension LoginViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
