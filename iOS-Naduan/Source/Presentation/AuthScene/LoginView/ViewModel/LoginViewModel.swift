@@ -23,7 +23,7 @@ class LoginViewModel {
   func bind(with action: LoginAction) {
     switch action {
       case .appleLogin(let idToken):
-        print(idToken)
+        signInWithApple(to: idToken)
       case .kakaoLogin(let idToken):
         signInWithKakao(to: idToken)
     }
@@ -32,13 +32,19 @@ class LoginViewModel {
 
 private extension LoginViewModel {
   func signInWithKakao(to idToken: String) {
-    authRepository.signIn(provider: .kakao, idToken: idToken) { result in
-      switch result {
-        case .success(let user):
-          self.currentUser = user
-        case .failure(let error):
-          print(error)
-      }
+    authRepository.signIn(provider: .kakao, idToken: idToken, completion: handleSignInResult)
+  }
+  
+  func signInWithApple(to idToken: String) {
+    authRepository.signIn(provider: .apple, idToken: idToken, completion: handleSignInResult)
+  }
+  
+  func handleSignInResult(to result: Result<User, Error>) {
+    switch result {
+      case .success(let user):
+        self.currentUser = user
+      case .failure(let error):
+        print(error)
     }
   }
 }
