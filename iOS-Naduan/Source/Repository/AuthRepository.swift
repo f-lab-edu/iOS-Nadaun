@@ -19,9 +19,9 @@ class AuthRepository {
     switch provider {
       case .apple:
         signInWithApple(with: idToken, completion: completion)
-      case let .openID(provider):
+      case .kakao:
         signInWithOpenID(
-          to: provider.description,
+          to: provider.rawValue,
           with: idToken,
           completion: completion
         )

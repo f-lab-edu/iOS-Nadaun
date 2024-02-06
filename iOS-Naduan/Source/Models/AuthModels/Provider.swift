@@ -6,15 +6,7 @@
 
 import Foundation
 
-enum Provider {
+enum Provider: String {
   case apple
-  case openID(provider: OpenIDProvider)
-}
-
-enum OpenIDProvider: String {
-  case kakao
-  
-  var description: String {
-    return "oidc.\(self.rawValue)"
-  }
+  case kakao = "oidc.kakao"
 }
