@@ -44,10 +44,51 @@ final class LoginViewController: UIViewController {
     return button
   }()
   
+  private let authController: AuthController
+  
+  init(authController: AuthController) {
+    self.authController = authController
+    super.init(nibName: nil, bundle: nil)
+        
+    authController.delegate = self
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
     configureUI()
+    attachActions()
+  }
+}
+
+extension LoginViewController: AuthControllerDelegate {
+  func authController(to controller: AuthController, didSuccess idToken: String) {
+    print("Success", idToken)
+  }
+  
+  func authController(to controller: AuthController, didFailure error: Error) {
+    print(error)
+  }
+}
+
+private extension LoginViewController {
+  func attachActions() {
+    let kakaoAuthAction = UIAction { _ in
+      self.authController.authWithKakao()
+    }
+    
+    kakaoAuthButton.addAction(kakaoAuthAction, for: .touchUpInside)
+    
+    let appleAuthAction = UIAction { _ in
+      self.authController.authWithApple()
+    }
+    
+    appleAuthButton.addAction(appleAuthAction, for: .touchUpInside)
   }
 }
 
