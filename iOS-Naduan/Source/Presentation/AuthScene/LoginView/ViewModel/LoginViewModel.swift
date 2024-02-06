@@ -10,16 +10,6 @@ enum LoginAction {
   case signIn(provider: Provider, idToken: String)
 }
 
-/*
- 로그인 성공
- -> 회원가입 필요 여부 확인 -> 회원 가입
-                            -> 홈화면 진입
- 
- 로그인 실패 -> 오류 발생
- 
- 
- */
-
 class LoginViewModel {
   private let authRepository: AuthRepository
   
@@ -62,6 +52,7 @@ private extension LoginViewModel {
     
     if user.email == nil || user.phoneNumber == nil || user.displayName == nil {
       didNotRegister?(user)
+      return
     }
     
     didRegister?(user)

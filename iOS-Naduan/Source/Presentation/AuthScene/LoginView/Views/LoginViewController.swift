@@ -68,6 +68,8 @@ final class LoginViewController: UIViewController {
     
     configureUI()
     attachActions()
+    
+    setBinding()
   }
 }
 
@@ -90,6 +92,28 @@ extension LoginViewController: AuthControllerDelegate {
 // MARK: - Binding Method
 private extension LoginViewController {
   func setBinding() {
+    viewModel.didNotRegister = { user in
+      // TODO: - PRESENT REGISTER VIEW
+      print("DID NOT REGISTER")
+    }
+    
+    viewModel.didRegister = { user in
+      // TODO: - PRESENT HOME VIEW
+      print("DID REGISTER")
+    }
+    
+    viewModel.didOccurError = { [weak self] error in
+      let confirmAction = UIAlertAction(title: "확인", style: .cancel)
+      let controller = UIAlertController(
+        title: "오류",
+        message: "예기치 못한 오류가 발생하였습니다.\n잠시후 다시 시도해주세요.",
+        preferredStyle: .alert
+      )
+      
+      controller.addAction(confirmAction)
+      
+      self?.present(controller, animated: true)
+    }
   }
 }
 
