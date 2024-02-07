@@ -22,14 +22,14 @@ class LoginViewModel {
   private var error: LocalizedError? {
     didSet {
       if let error = self.error {
-        didOccurError?(error)
+        didErrorOccur?(error)
       }
     }
   }
   
   var didNotRegister: ((User) -> Void)?
   var didRegister: ((User) -> Void)?
-  var didOccurError: ((LocalizedError) -> Void)?
+  var didErrorOccur: ((LocalizedError) -> Void)?
   
   init(authRepository: AuthRepository) {
     self.authRepository = authRepository

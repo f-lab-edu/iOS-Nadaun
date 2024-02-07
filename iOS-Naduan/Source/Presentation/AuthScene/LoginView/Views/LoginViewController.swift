@@ -99,7 +99,7 @@ private extension LoginViewController {
       // TODO: - PRESENT HOME VIEW
     }
     
-    viewModel.didOccurError = { [weak self] error in
+    viewModel.didErrorOccur = { [weak self] error in
       self?.presentErrorAlert(to: error)
     }
   }
