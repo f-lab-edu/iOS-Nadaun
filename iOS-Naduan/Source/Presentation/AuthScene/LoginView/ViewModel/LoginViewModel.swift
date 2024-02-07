@@ -7,7 +7,7 @@
 import FirebaseAuth
 
 enum LoginAction {
-  case signIn(provider: OAuthProvider, idToken: String)
+  case signIn(provider: AuthProvider, idToken: String)
 }
 
 class LoginViewModel {

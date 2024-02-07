@@ -6,7 +6,7 @@
 
 import Foundation
 
-enum OAuthProvider: String {
+enum AuthProvider: String {
   case apple
   case kakao = "oidc.kakao"
 }

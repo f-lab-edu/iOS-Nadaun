@@ -78,7 +78,7 @@ extension LoginViewController: AuthControllerDelegate {
   func authController(
     to controller: AuthController,
     didSuccess idToken: String,
-    withProvider provider: OAuthProvider
+    withProvider provider: AuthProvider
   ) {
     viewModel.bind(with: .signIn(provider: provider, idToken: idToken))
   }

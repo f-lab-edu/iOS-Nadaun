@@ -15,7 +15,7 @@ class AuthRepository {
     self.auth = auth
   }
   
-  func signIn(provider: OAuthProvider, idToken: String, completion: @escaping authCompletionHandler) {
+  func signIn(provider: AuthProvider, idToken: String, completion: @escaping authCompletionHandler) {
     switch provider {
       case .apple:
         signInWithApple(with: idToken, completion: completion)
