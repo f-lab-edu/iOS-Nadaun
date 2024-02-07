@@ -44,7 +44,7 @@ class AuthController: NSObject {
     }
     
     guard let idToken = token?.idToken else {
-      delegate?.authController(to: self, didFailure: AuthError.didNotFoundIDToken)
+      delegate?.authController(to: self, didFailure: AuthError.IDTokenMissing)
       return
     }
     
@@ -67,13 +67,13 @@ extension AuthController: ASAuthorizationControllerDelegate {
     didCompleteWithAuthorization authorization: ASAuthorization
   ) {
     guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else {
-      delegate?.authController(to: self, didFailure: AuthError.didNotFoundCredential)
+      delegate?.authController(to: self, didFailure: AuthError.credentialMissing)
       return
     }
     
     guard let idTokenData = credential.identityToken,
           let idToken = String(data: idTokenData, encoding: .utf8) else {
-      delegate?.authController(to: self, didFailure: AuthError.didNotFoundIDToken)
+      delegate?.authController(to: self, didFailure: AuthError.IDTokenMissing)
       return
     }
     

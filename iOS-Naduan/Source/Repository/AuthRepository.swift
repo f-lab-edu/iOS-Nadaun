@@ -50,7 +50,7 @@ class AuthRepository {
       }
       
       guard let result = result else {
-        completion(.failure(AuthError.didNotFoundUser))
+        completion(.failure(AuthError.userMissing))
         return
       }
       

@@ -46,7 +46,7 @@ class LoginViewModel {
 private extension LoginViewModel {
   func didChangeUserSession(user: User?) {
     guard let user = user else {
-      self.error = AuthError.didNotFoundUser
+      self.error = AuthError.userMissing
       return
     }
     
