@@ -108,14 +108,14 @@ private extension LoginViewController {
 // MARK: - View Action Method
 private extension LoginViewController {
   func attachActions() {
-    let kakaoAuthAction = UIAction { _ in
-      self.authController.authWithKakao()
+    let kakaoAuthAction = UIAction { [weak self] _ in
+      self?.authController.authWithKakao()
     }
     
     kakaoAuthButton.addAction(kakaoAuthAction, for: .touchUpInside)
     
-    let appleAuthAction = UIAction { _ in
-      self.authController.authWithApple()
+    let appleAuthAction = UIAction { [weak self] _ in
+      self?.authController.authWithApple()
     }
     
     appleAuthButton.addAction(appleAuthAction, for: .touchUpInside)
