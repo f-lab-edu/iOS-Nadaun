@@ -11,7 +11,7 @@ import KakaoSDKAuth
 import KakaoSDKCommon
 
 protocol AuthControllerDelegate: AnyObject {
-  func authController(to controller: AuthController, didSuccess idToken: String, withProvider provider: Provider)
+  func authController(to controller: AuthController, didSuccess idToken: String, withProvider provider: OAuthProvider)
   func authController(to controller: AuthController, didFailure error: LocalizedError)
 }
 
