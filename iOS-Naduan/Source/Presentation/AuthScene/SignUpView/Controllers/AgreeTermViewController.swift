@@ -6,7 +6,7 @@
 
 import UIKit
 
-class AgreeTermViewController: UIViewController, SignUpChildFlowViewController {
+class AgreeTermViewController: SignUpFlowChildViewController {
   // Private Type
   private enum AgreeDocument: CustomStringConvertible, CaseIterable {
     case term
@@ -32,42 +32,6 @@ class AgreeTermViewController: UIViewController, SignUpChildFlowViewController {
   }
   
   // View Property
-  private let nextFlowButton: UIButton = {
-    var attributes = AttributeContainer()
-    attributes.font = UIFont.pretendardFont(weight: .bold, size: 18)
-    
-    var configuration = UIButton.Configuration.filled()
-    configuration.baseBackgroundColor = UIColor.accent
-    configuration.background.cornerRadius = .zero
-    configuration.attributedTitle = AttributedString("다음", attributes: attributes)
-    configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: .zero, bottom: 40, trailing: .zero)
-    
-    let button = UIButton(configuration: configuration)
-    button.automaticallyUpdatesConfiguration = false
-    
-    button.configurationUpdateHandler = { button in
-      switch button.state {
-        case .disabled:
-          button.configuration?.background.backgroundColor = .disable
-        case .normal:
-          button.configuration?.background.backgroundColor = .accent
-        default:
-          return
-      }
-    }
-    button.isEnabled = false
-    return button
-  }()
-  
-  private let titleLabel: UILabel = {
-    let label = UILabel()
-    label.font = .pretendardFont(to: .B1M)
-    label.textColor = .accent
-    label.numberOfLines = .zero
-    label.setTextWithLineHeight(text: "만나서 반가워요 :)\n가입약관을 확인해주세요.", lineHeight: 26)
-    return label
-  }()
-  
   private let tableView: UITableView = {
     let tableView = UITableView(frame: .zero, style: .plain)
     tableView.register(AgreeTermTableCell.self, forCellReuseIdentifier: AgreeTermTableCell.reuseIdentifier)
@@ -79,12 +43,11 @@ class AgreeTermViewController: UIViewController, SignUpChildFlowViewController {
   }()
   
   // Business Logic Properties
-  weak var signUpDelegate: SignUpFlowChildControllerDelegate?
   private let viewModel: AgreeTermViewModel
   
-  init(viewModel: AgreeTermViewModel) {
+  init(title: String, viewModel: AgreeTermViewModel) {
     self.viewModel = viewModel
-    super.init(nibName: nil, bundle: nil)
+    super.init(title: title)
   }
   
   required init?(coder: NSCoder) {
@@ -97,8 +60,24 @@ class AgreeTermViewController: UIViewController, SignUpChildFlowViewController {
     
     tableView.dataSource = self
     
-    configureUI()
     binding()
+  }
+  
+  override func configureHierarchy() {
+    super.configureHierarchy()
+    
+    view.addSubview(tableView)
+  }
+  
+  override func makeConstraints() {
+    super.makeConstraints()
+    
+    tableView.attach {
+      $0.top(equalTo: titleLabel.bottomAnchor, padding: 32)
+      $0.leading(equalTo: titleLabel.leadingAnchor)
+      $0.trailing(equalTo: titleLabel.trailingAnchor)
+      $0.bottom(equalTo: nextFlowButton.topAnchor)
+    }
   }
 }
 
@@ -138,41 +117,6 @@ private extension AgreeTermViewController {
     addActions()
     viewModel.isSelectAll = { [weak self] isSelected in
       self?.nextFlowButton.isEnabled = isSelected
-    }
-  }
-}
-
-// MARK: Configure UI
-private extension AgreeTermViewController {
-  func configureUI() {
-    view.backgroundColor = .systemBackground
-    
-    configureHierarchy()
-    makeConstraints()
-  }
-  
-  func configureHierarchy() {
-    [titleLabel, tableView, nextFlowButton].forEach(view.addSubview)
-  }
-  
-  func makeConstraints() {
-    titleLabel.attach {
-      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 20)
-      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 20)
-      $0.top(equalTo: view.safeAreaLayoutGuide.topAnchor)
-    }
-    
-    tableView.attach {
-      $0.top(equalTo: titleLabel.bottomAnchor, padding: 32)
-      $0.leading(equalTo: titleLabel.leadingAnchor)
-      $0.trailing(equalTo: titleLabel.trailingAnchor)
-      $0.bottom(equalTo: nextFlowButton.topAnchor)
-    }
-    
-    nextFlowButton.attach {
-      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
-      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-      $0.bottom(equalTo: view.bottomAnchor)
     }
   }
 }

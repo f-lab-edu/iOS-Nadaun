@@ -10,7 +10,3 @@ protocol SignUpFlowChildControllerDelegate: AnyObject {
   func signUpFlowChild(to controller: UIViewController, didSuccess item: Any)
   func signUpFlowChild(to controller: UIViewController, didFailure error: Error)
 }
-
-protocol SignUpChildFlowViewController: UIViewController {
-  var signUpDelegate: SignUpFlowChildControllerDelegate? { get set }
-}
