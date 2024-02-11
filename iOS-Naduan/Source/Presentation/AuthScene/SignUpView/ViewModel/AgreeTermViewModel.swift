@@ -12,13 +12,13 @@ class AgreeTermViewModel {
   
   private var isSelectTerm: Bool = false {
     didSet {
-      isSelectAll?(isSelectTerm && isSelectPrivacy)
+      isSelectAll?(isSelectTerm == true && isSelectPrivacy == true)
     }
   }
   
   private var isSelectPrivacy: Bool = false {
     didSet {
-      isSelectAll?(isSelectTerm && isSelectPrivacy)
+      isSelectAll?(isSelectTerm == true && isSelectPrivacy == true)
     }
   }
   

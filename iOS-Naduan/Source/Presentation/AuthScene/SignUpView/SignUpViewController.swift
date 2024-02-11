@@ -11,10 +11,11 @@ enum SignUpFlow: CaseIterable {
   case settingProfile
   case generateBasicCard
   
-  var controller: UIViewController {
+  var controller: SignUpChildFlowViewController {
     switch self {
       case .agreeTerm:
-        return AgreeTermViewController()
+        let viewModel = AgreeTermViewModel()
+        return AgreeTermViewController(viewModel: viewModel)
       case .settingProfile:
         return SettingProfileViewController()
       case .generateBasicCard:
@@ -24,37 +25,21 @@ enum SignUpFlow: CaseIterable {
 }
 
 final class SignUpViewController: UITabBarController {
-  private let nextFlowButton: UIButton = {
-    var attributes = AttributeContainer()
-    attributes.font = UIFont.pretendardFont(weight: .bold, size: 18)
-    
-    var configuration = UIButton.Configuration.filled()
-    configuration.baseBackgroundColor = UIColor.accent
-    configuration.background.cornerRadius = .zero
-    configuration.attributedTitle = AttributedString("다음", attributes: attributes)
-    configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: .zero, bottom: 40, trailing: .zero)
-    
-    let button = UIButton(configuration: configuration)
-    button.automaticallyUpdatesConfiguration = false
-    
-    button.configurationUpdateHandler = { button in
-      switch button.state {
-        case .disabled:
-          button.configuration?.background.backgroundColor = .disable
-        case .normal:
-          button.configuration?.background.backgroundColor = .accent
-        default:
-          return
-      }
-    }
-    return button
-  }()
-  
   override func viewDidLoad() {
     super.viewDidLoad()
     
     configureTabBarController()
     configureUI()
+  }
+}
+
+extension SignUpViewController: SignUpFlowChildControllerDelegate {
+  func signUpFlowChild(to controller: UIViewController, didSuccess item: Any) {
+    selectedIndex += 1
+  }
+  
+  func signUpFlowChild(to controller: UIViewController, didFailure error: Error) {
+    print("실패")
   }
 }
 
@@ -66,6 +51,7 @@ private extension SignUpViewController {
   
   func addSubControllers() {
     let controllers = SignUpFlow.allCases.map(\.controller)
+    controllers.forEach { $0.signUpDelegate = self }
     setViewControllers(controllers, animated: true)
   }
   
@@ -79,9 +65,6 @@ private extension SignUpViewController {
     view.backgroundColor = .systemBackground
     
     configureNavigationBar()
-    
-    configureHierarchy()
-    makeConstraints()
   }
   
   func configureNavigationBar() {
@@ -89,17 +72,5 @@ private extension SignUpViewController {
       self.dismiss(animated: true)
     }
     navigationItem.rightBarButtonItem = UIBarButtonItem(title: "취소", primaryAction: closeAction)
-  }
-  
-  func configureHierarchy() {
-    [nextFlowButton].forEach(view.addSubview)
-  }
-  
-  func makeConstraints() {
-    nextFlowButton.attach {
-      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
-      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-      $0.bottom(equalTo: view.bottomAnchor)
-    }
   }
 }
