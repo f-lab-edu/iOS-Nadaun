@@ -6,10 +6,21 @@
 
 import UIKit
 
-enum SignUpFlow {
+enum SignUpFlow: CaseIterable {
   case agreeTerm
   case settingProfile
   case generateBasicCard
+  
+  var controller: UIViewController {
+    switch self {
+      case .agreeTerm:
+        return AgreeTermViewController()
+      case .settingProfile:
+        return SettingProfileViewController()
+      case .generateBasicCard:
+        return GenerateBasicCardViewController()
+    }
+  }
 }
 
 final class SignUpViewController: UITabBarController {
@@ -42,12 +53,22 @@ final class SignUpViewController: UITabBarController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    configureTabBar()
+    configureTabBarController()
     configureUI()
   }
 }
 
 private extension SignUpViewController {
+  func configureTabBarController() {
+    addSubControllers()
+    configureTabBar()
+  }
+  
+  func addSubControllers() {
+    let controllers = SignUpFlow.allCases.map(\.controller)
+    setViewControllers(controllers, animated: true)
+  }
+  
   func configureTabBar() {
     tabBar.isHidden = true
   }
