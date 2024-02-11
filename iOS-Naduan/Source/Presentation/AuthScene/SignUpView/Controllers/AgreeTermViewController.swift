@@ -89,9 +89,10 @@ extension AgreeTermViewController: UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell: AgreeTermTableCell = tableView.dequeueReusableCell(with: indexPath)
-    let document = AgreeDocument.allCases[indexPath.row]
-    cell.bind(to: document.description, url: document.url) { [weak self] in
-      switch document {
+    let documents = AgreeDocument.allCases[indexPath.row]
+    
+    cell.bind(to: documents.description, url: documents.url) { [weak self] in
+      switch documents {
         case .term:
           self?.viewModel.bind(action: .selectTerm)
         case .privacy:
