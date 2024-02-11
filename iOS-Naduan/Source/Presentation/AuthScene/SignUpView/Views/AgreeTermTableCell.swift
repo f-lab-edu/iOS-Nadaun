@@ -79,7 +79,6 @@ class AgreeTermTableCell: UITableViewCell {
       $0.leading(equalTo: contentView.leadingAnchor)
       $0.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
       $0.height(equalTo: 24)
-      $0.width(equalTo: 24)
     }
     
     titleLabel.attach {
