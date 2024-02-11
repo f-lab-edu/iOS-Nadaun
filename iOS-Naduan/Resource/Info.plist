@@ -2,9 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LSApplicationQueriesSchemes</key>
+	<key>UIAppFonts</key>
 	<array>
-		<string>kakaokompassauth</string>
+		<string>Pretendard-Black.ttf</string>
+		<string>Pretendard-ExtraBold.ttf</string>
+		<string>Pretendard-Bold.ttf</string>
+		<string>Pretendard-SemiBold.ttf</string>
+		<string>Pretendard-Medium.ttf</string>
+		<string>Pretendard-Regular.ttf</string>
+		<string>Pretendard-Light.ttf</string>
+		<string>Pretendard-ExtraLight.ttf</string>
+		<string>Pretendard-Thin.ttf</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -18,6 +26,22 @@
 				<string>kakao382948201d19c6430b05b2804d3afd10</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>OpenID</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-664672316612-ios-8685c91c5334ee89536d91</string>
+			</array>
+		</dict>
+	</array>
+	<key>KAKAO_KEY</key>
+	<string>$(KAKAO_KEY)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaokompassauth</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
@@ -32,8 +56,6 @@
 					<string>Default Configuration</string>
 					<key>UISceneDelegateClassName</key>
 					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
-					<key>UISceneStoryboardFile</key>
-					<string>Main</string>
 				</dict>
 			</array>
 		</dict>
