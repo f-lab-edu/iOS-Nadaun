@@ -7,7 +7,7 @@
 import UIKit
 
 extension UINavigationController {
-  func setupBarAppearance() {
+  static let defaultAppearance: UINavigationBarAppearance = {
     let appearance = UINavigationBarAppearance()
     
     appearance.configureWithTransparentBackground()
@@ -18,13 +18,20 @@ extension UINavigationController {
     ]
     appearance.largeTitleTextAttributes = [
       .font: UIFont.pretendardFont(to: .H1B) as Any,
-      .foregroundColor: UIColor.accent
+      .foregroundColor: UIColor.accent,
     ]
     
-    navigationBar.standardAppearance = appearance
-    navigationBar.compactAppearance = appearance
-    navigationBar.scrollEdgeAppearance = appearance
-    navigationBar.compactScrollEdgeAppearance = appearance
+    return appearance
+  }()
+  
+  func setupBarAppearance() {
+    navigationBar.standardAppearance = Self.defaultAppearance
+    navigationBar.compactAppearance = Self.defaultAppearance
+    navigationBar.scrollEdgeAppearance = Self.defaultAppearance
+    navigationBar.compactScrollEdgeAppearance = Self.defaultAppearance
+    
+    navigationBar.isTranslucent = false
+    navigationBar.tintColor = .accent
   }
   
   open override func viewDidLoad() {
