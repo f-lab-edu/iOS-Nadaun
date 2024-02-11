@@ -29,7 +29,7 @@ final class SignUpViewController: UITabBarController {
     button.configurationUpdateHandler = { button in
       switch button.state {
         case .disabled:
-          button.configuration?.background.backgroundColor = .gray
+          button.configuration?.background.backgroundColor = .disable
         case .normal:
           button.configuration?.background.backgroundColor = .accent
         default:
