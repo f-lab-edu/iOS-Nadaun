@@ -50,6 +50,7 @@ class AgreeTermViewController: UIViewController {
     tableView.alwaysBounceVertical = false
     tableView.separatorStyle = .none
     tableView.allowsSelection = false
+    tableView.estimatedRowHeight = .zero
     return tableView
   }()
   
