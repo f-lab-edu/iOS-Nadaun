@@ -93,8 +93,9 @@ private extension LoginViewController {
   func setBinding() {
     viewModel.didNotRegister = { [weak self] user in
       let controller = SignUpViewController()
-      controller.modalPresentationStyle = .fullScreen
-      self?.present(controller, animated: true)
+      let navigationController = UINavigationController(rootViewController: controller)
+      navigationController.modalPresentationStyle = .fullScreen
+      self?.present(navigationController, animated: true)
     }
     
     viewModel.didRegister = { user in

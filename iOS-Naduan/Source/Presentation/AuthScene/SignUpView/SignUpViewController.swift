@@ -78,8 +78,17 @@ private extension SignUpViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
     
+    configureNavigationBar()
+    
     configureHierarchy()
     makeConstraints()
+  }
+  
+  func configureNavigationBar() {
+    let closeAction = UIAction { _ in
+      self.dismiss(animated: true)
+    }
+    navigationItem.rightBarButtonItem = UIBarButtonItem(title: "취소", primaryAction: closeAction)
   }
   
   func configureHierarchy() {
