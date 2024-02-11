@@ -12,7 +12,7 @@ protocol Reusable: AnyObject {
 
 extension Reusable {
   static var reuseIdentifier: String {
-    return String(describing: Self.self)
+    return String(describing: self)
   }
 }
 
