@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class SettingProfileViewController: UIViewController {
+final class SettingProfileViewController: UIViewController, SignUpChildFlowViewController {
   weak var signUpDelegate: SignUpFlowChildControllerDelegate?
   
   override func viewDidLoad() {

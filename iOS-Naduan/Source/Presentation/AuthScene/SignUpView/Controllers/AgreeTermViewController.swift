@@ -6,7 +6,7 @@
 
 import UIKit
 
-class AgreeTermViewController: UIViewController {
+class AgreeTermViewController: UIViewController, SignUpChildFlowViewController {
   // Private Type
   private enum AgreeDocument: CustomStringConvertible, CaseIterable {
     case term
@@ -31,10 +31,34 @@ class AgreeTermViewController: UIViewController {
     }
   }
   
-  // Delegate Property
-  weak var signUpDelegate: SignUpFlowChildControllerDelegate?
-  
   // View Property
+  private let nextFlowButton: UIButton = {
+    var attributes = AttributeContainer()
+    attributes.font = UIFont.pretendardFont(weight: .bold, size: 18)
+    
+    var configuration = UIButton.Configuration.filled()
+    configuration.baseBackgroundColor = UIColor.accent
+    configuration.background.cornerRadius = .zero
+    configuration.attributedTitle = AttributedString("다음", attributes: attributes)
+    configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: .zero, bottom: 40, trailing: .zero)
+    
+    let button = UIButton(configuration: configuration)
+    button.automaticallyUpdatesConfiguration = false
+    
+    button.configurationUpdateHandler = { button in
+      switch button.state {
+        case .disabled:
+          button.configuration?.background.backgroundColor = .disable
+        case .normal:
+          button.configuration?.background.backgroundColor = .accent
+        default:
+          return
+      }
+    }
+    button.isEnabled = false
+    return button
+  }()
+  
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.font = .pretendardFont(to: .B1M)
@@ -54,6 +78,19 @@ class AgreeTermViewController: UIViewController {
     return tableView
   }()
   
+  // Business Logic Properties
+  weak var signUpDelegate: SignUpFlowChildControllerDelegate?
+  private let viewModel: AgreeTermViewModel
+  
+  init(viewModel: AgreeTermViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   // Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -61,6 +98,7 @@ class AgreeTermViewController: UIViewController {
     tableView.dataSource = self
     
     configureUI()
+    binding()
   }
 }
 
@@ -73,10 +111,34 @@ extension AgreeTermViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell: AgreeTermTableCell = tableView.dequeueReusableCell(with: indexPath)
     let document = AgreeDocument.allCases[indexPath.row]
-    cell.bind(to: document.description, url: document.url) {
-      print("SELECTED ITEM \(document.description)")
+    cell.bind(to: document.description, url: document.url) { [weak self] in
+      switch document {
+        case .term:
+          self?.viewModel.bind(action: .selectTerm)
+        case .privacy:
+          self?.viewModel.bind(action: .selectPrivacy)
+      }
     }
     return cell
+  }
+}
+
+// MARK: Binding Method
+private extension AgreeTermViewController {
+  func addActions() {
+    let nextAction = UIAction { [weak self] _ in
+      guard let self = self else { return }
+      
+      self.signUpDelegate?.signUpFlowChild(to: self, didSuccess: true)
+    }
+    nextFlowButton.addAction(nextAction, for: .touchUpInside)
+  }
+  
+  func binding() {
+    addActions()
+    viewModel.isSelectAll = { [weak self] isSelected in
+      self?.nextFlowButton.isEnabled = isSelected
+    }
   }
 }
 
@@ -90,7 +152,7 @@ private extension AgreeTermViewController {
   }
   
   func configureHierarchy() {
-    [titleLabel, tableView].forEach(view.addSubview)
+    [titleLabel, tableView, nextFlowButton].forEach(view.addSubview)
   }
   
   func makeConstraints() {
@@ -104,7 +166,13 @@ private extension AgreeTermViewController {
       $0.top(equalTo: titleLabel.bottomAnchor, padding: 32)
       $0.leading(equalTo: titleLabel.leadingAnchor)
       $0.trailing(equalTo: titleLabel.trailingAnchor)
-      $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor, padding: 50)
+      $0.bottom(equalTo: nextFlowButton.topAnchor)
+    }
+    
+    nextFlowButton.attach {
+      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+      $0.bottom(equalTo: view.bottomAnchor)
     }
   }
 }
