@@ -20,6 +20,15 @@ class AgreeTermViewController: UIViewController {
           return "개인정보 수집 및 이용 안내 (필수)"
       }
     }
+    
+    var url: String {
+      switch self {
+        case .term:
+          return "https://gyoungmin.notion.site/3ece9fe63ae945cd80cc567bef309146?pvs=4"
+        case .privacy:
+          return "https://gyoungmin.notion.site/fbf1b6f0bad84b96990c7d65a6bcea77?pvs=4"
+      }
+    }
   }
   
   // Delegate Property
@@ -63,7 +72,9 @@ extension AgreeTermViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell: AgreeTermTableCell = tableView.dequeueReusableCell(with: indexPath)
     let document = AgreeDocument.allCases[indexPath.row]
-    cell.bind(to: document.description)
+    cell.bind(to: document.description, url: document.url) {
+      print("SELECTED ITEM \(document.description)")
+    }
     return cell
   }
 }
