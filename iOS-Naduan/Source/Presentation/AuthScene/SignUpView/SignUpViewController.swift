@@ -11,15 +11,18 @@ enum SignUpFlow: CaseIterable {
   case settingProfile
   case generateBasicCard
   
-  var controller: SignUpChildFlowViewController {
+  var controller: SignUpFlowChildViewController {
     switch self {
       case .agreeTerm:
         let viewModel = AgreeTermViewModel()
-        return AgreeTermViewController(viewModel: viewModel)
+        return AgreeTermViewController(
+          title: "만나서 반가워요 :)\n가입약관을 확인해주세요.",
+          viewModel: viewModel
+        )
       case .settingProfile:
-        return SettingProfileViewController()
+        return SettingProfileViewController(title: "다운 이용을 위해\n기본 정보를 기입해주세요.")
       case .generateBasicCard:
-        return GenerateBasicCardViewController()
+        return GenerateBasicCardViewController(title: "다운에서 사용할\n기본 명함을 설정하세요.")
     }
   }
 }

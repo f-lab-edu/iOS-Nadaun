@@ -6,9 +6,7 @@
 
 import UIKit
 
-final class GenerateBasicCardViewController: UIViewController, SignUpChildFlowViewController {
-  weak var signUpDelegate: SignUpFlowChildControllerDelegate?
-  
+final class GenerateBasicCardViewController: SignUpFlowChildViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
