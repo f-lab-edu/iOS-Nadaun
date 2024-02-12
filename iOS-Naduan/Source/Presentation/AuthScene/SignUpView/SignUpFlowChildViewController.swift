@@ -14,7 +14,6 @@ class SignUpFlowChildViewController: UIViewController {
     label.font = .pretendardFont(to: .B1M)
     label.textColor = .accent
     label.numberOfLines = .zero
-//    label.setTextWithLineHeight(text: "만나서 반가워요 :)\n가입약관을 확인해주세요.", lineHeight: 26)
     return label
   }()
   
