@@ -24,16 +24,12 @@ class AgreeTermViewModel {
   
   var isSelectAll: ((Bool) -> Void)?
   
-  private func isAllSelect() -> Bool {
-    return isSelectTerm && isSelectPrivacy
-  }
-  
   func bind(action: AgreeTermAction) {
     switch action {
       case .selectTerm:
-        isSelectTerm = (isSelectTerm == true) ? false : true
+        isSelectTerm.toggle()
       case .selectPrivacy:
-        isSelectPrivacy = (isSelectPrivacy == true) ? false : true
+        isSelectPrivacy.toggle()
     }
   }
 }
