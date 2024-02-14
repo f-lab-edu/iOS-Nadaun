@@ -41,14 +41,14 @@ class AgreeTermViewController: UIViewController {
   }()
   
   private let nextFlowButton: UIButton = {
-    var attributes = AttributeContainer()
-    attributes.font = UIFont.pretendardFont(weight: .bold, size: 18)
+    var container = AttributeContainer()
+    container.font = UIFont.pretendardFont(weight: .bold, size: 18)
     
-    var configuration = UIButton.Configuration.filled()
-    configuration.baseBackgroundColor = UIColor.accent
+    let inset = NSDirectionalEdgeInsets(top: 10, leading: .zero, bottom: 40, trailing: .zero)
+    var configuration = UIButton.Configuration.daunStyle(with: .basic)
     configuration.background.cornerRadius = .zero
-    configuration.attributedTitle = AttributedString("다음", attributes: attributes)
-    configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: .zero, bottom: 40, trailing: .zero)
+    configuration.contentInsets = inset
+    configuration.setTitle(to: "다음", with: container)
     
     let button = UIButton(configuration: configuration)
     button.automaticallyUpdatesConfiguration = false
@@ -83,7 +83,7 @@ class AgreeTermViewController: UIViewController {
   init(title: String, viewModel: AgreeTermViewModel) {
     self.viewModel = viewModel
     self.titleLabel.setTextWithLineHeight(text: title, lineHeight: 26)
-    super.init()
+    super.init(nibName: nil, bundle: nil)
   }
   
   required init?(coder: NSCoder) {
@@ -95,6 +95,7 @@ class AgreeTermViewController: UIViewController {
     super.viewDidLoad()
     
     tableView.dataSource = self
+    configureUI()
     
     binding()
   }

@@ -26,23 +26,32 @@ final class LoginViewController: UIViewController {
   }()
   
   private let kakaoAuthButton: UIButton = {
-    var configuration = UIButton.Configuration.authStyle()
+    var container = AttributeContainer()
+    container.font = UIFont.pretendardFont(to: .H5B)
+    
+    var configuration = UIButton.Configuration.daunStyle(with: .custom(.colorKakao, .title))
     configuration.image = .iconKakao
-    configuration.baseBackgroundColor = .colorKakao
-    configuration.attributedTitle = .authTitle(to: "카카오로 계속하기", with: .black)
-    let button = UIButton(configuration: configuration)
-    button.translatesAutoresizingMaskIntoConstraints = false
-    return button
+    configuration.imagePadding = 10
+    configuration.cornerStyle = .capsule
+    configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: .zero, bottom: 10, trailing: .zero)
+    
+    configuration.setTitle(to: "카카오로 계속하기", with: container)
+    return UIButton(configuration: configuration)
   }()
   
   private let appleAuthButton: UIButton = {
-    var configuration = UIButton.Configuration.authStyle()
+    var container = AttributeContainer()
+    container.font = UIFont.pretendardFont(to: .H5B)
+    
+    var configuration = UIButton.Configuration.daunStyle(with: .custom(.title, .white))
     configuration.image = .iconApple
-    configuration.baseBackgroundColor = .black
-    configuration.attributedTitle = .authTitle(to: "애플로 계속하기", with: .white)
-    let button = UIButton(configuration: configuration)
-    button.translatesAutoresizingMaskIntoConstraints = false
-    return button
+    configuration.imagePadding = 10
+    configuration.cornerStyle = .capsule
+    configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: .zero, bottom: 10, trailing: .zero)
+    
+    configuration.setTitle(to: "애플로 계속하기", with: container)
+    
+    return UIButton(configuration: configuration)
   }()
   
   // MARK: - Logical Properties
