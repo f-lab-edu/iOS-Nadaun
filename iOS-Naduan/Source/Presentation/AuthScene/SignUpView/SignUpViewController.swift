@@ -11,7 +11,7 @@ enum SignUpFlow: CaseIterable {
   case settingProfile
   case generateBasicCard
   
-  var controller: SignUpFlowChildViewController {
+  var controller: UIViewController {
     switch self {
       case .agreeTerm:
         let viewModel = AgreeTermViewModel()
@@ -19,10 +19,8 @@ enum SignUpFlow: CaseIterable {
           title: "만나서 반가워요 :)\n가입약관을 확인해주세요.",
           viewModel: viewModel
         )
-      case .settingProfile:
-        return SettingProfileViewController(title: "다운 이용을 위해\n기본 정보를 기입해주세요.")
-      case .generateBasicCard:
-        return GenerateBasicCardViewController(title: "다운에서 사용할\n기본 명함을 설정하세요.")
+      default:
+        return UIViewController()
     }
   }
 }
@@ -36,16 +34,6 @@ final class SignUpViewController: UITabBarController {
   }
 }
 
-extension SignUpViewController: SignUpFlowChildControllerDelegate {
-  func signUpFlowChild(to controller: UIViewController, didSuccess item: Any) {
-    selectedIndex += 1
-  }
-  
-  func signUpFlowChild(to controller: UIViewController, didFailure error: Error) {
-    print("실패")
-  }
-}
-
 private extension SignUpViewController {
   func configureTabBarController() {
     addSubControllers()
@@ -54,7 +42,6 @@ private extension SignUpViewController {
   
   func addSubControllers() {
     let controllers = SignUpFlow.allCases.map(\.controller)
-    controllers.forEach { $0.signUpDelegate = self }
     setViewControllers(controllers, animated: true)
   }
   
