@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class SettingProfileViewController: SignUpFlowChildViewController {
+final class SettingProfileViewController: UIViewController {
   private let profileInputScrollView: UIScrollView = {
     let scrollView = UIScrollView()
     return scrollView

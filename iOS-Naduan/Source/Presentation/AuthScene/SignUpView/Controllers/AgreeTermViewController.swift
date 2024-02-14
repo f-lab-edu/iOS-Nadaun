@@ -6,7 +6,7 @@
 
 import UIKit
 
-class AgreeTermViewController: SignUpFlowChildViewController {
+class AgreeTermViewController: UIViewController {
   // Private Type
   private enum AgreeDocument: CustomStringConvertible, CaseIterable {
     case term
@@ -32,6 +32,41 @@ class AgreeTermViewController: SignUpFlowChildViewController {
   }
   
   // View Property
+  private let titleLabel: UILabel = {
+    let label = UILabel()
+    label.font = .pretendardFont(to: .B1M)
+    label.textColor = .accent
+    label.numberOfLines = .zero
+    return label
+  }()
+  
+  private let nextFlowButton: UIButton = {
+    var attributes = AttributeContainer()
+    attributes.font = UIFont.pretendardFont(weight: .bold, size: 18)
+    
+    var configuration = UIButton.Configuration.filled()
+    configuration.baseBackgroundColor = UIColor.accent
+    configuration.background.cornerRadius = .zero
+    configuration.attributedTitle = AttributedString("다음", attributes: attributes)
+    configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: .zero, bottom: 40, trailing: .zero)
+    
+    let button = UIButton(configuration: configuration)
+    button.automaticallyUpdatesConfiguration = false
+    
+    button.configurationUpdateHandler = { button in
+      switch button.state {
+        case .disabled:
+          button.configuration?.background.backgroundColor = .disable
+        case .normal:
+          button.configuration?.background.backgroundColor = .accent
+        default:
+          return
+      }
+    }
+    button.isEnabled = false
+    return button
+  }()
+  
   private let tableView: UITableView = {
     let tableView = UITableView(frame: .zero, style: .plain)
     tableView.register(AgreeTermTableCell.self, forCellReuseIdentifier: AgreeTermTableCell.reuseIdentifier)
@@ -47,7 +82,8 @@ class AgreeTermViewController: SignUpFlowChildViewController {
   
   init(title: String, viewModel: AgreeTermViewModel) {
     self.viewModel = viewModel
-    super.init(title: title)
+    self.titleLabel.setTextWithLineHeight(text: title, lineHeight: 26)
+    super.init()
   }
   
   required init?(coder: NSCoder) {
@@ -61,23 +97,6 @@ class AgreeTermViewController: SignUpFlowChildViewController {
     tableView.dataSource = self
     
     binding()
-  }
-  
-  override func configureHierarchy() {
-    super.configureHierarchy()
-    
-    view.addSubview(tableView)
-  }
-  
-  override func makeConstraints() {
-    super.makeConstraints()
-    
-    tableView.attach {
-      $0.top(equalTo: titleLabel.bottomAnchor, padding: 32)
-      $0.leading(equalTo: titleLabel.leadingAnchor)
-      $0.trailing(equalTo: titleLabel.trailingAnchor)
-      $0.bottom(equalTo: nextFlowButton.topAnchor)
-    }
   }
 }
 
@@ -107,9 +126,7 @@ extension AgreeTermViewController: UITableViewDataSource {
 private extension AgreeTermViewController {
   func addActions() {
     let nextAction = UIAction { [weak self] _ in
-      guard let self = self else { return }
-      
-      self.signUpDelegate?.signUpFlowChild(to: self, didSuccess: true)
+      // TODO: - Action 추가하기
     }
     nextFlowButton.addAction(nextAction, for: .touchUpInside)
   }
@@ -118,6 +135,40 @@ private extension AgreeTermViewController {
     addActions()
     viewModel.isSelectAll = { [weak self] isSelected in
       self?.nextFlowButton.isEnabled = isSelected
+    }
+  }
+}
+
+private extension AgreeTermViewController {
+  func configureUI() {
+    view.backgroundColor = .systemBackground
+    
+    configureHierarchy()
+    makeConstraints()
+  }
+  
+  func configureHierarchy() {
+    [titleLabel, nextFlowButton, tableView].forEach(view.addSubview)
+  }
+  
+  func makeConstraints() {
+    titleLabel.attach {
+      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 20)
+      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 20)
+      $0.top(equalTo: view.safeAreaLayoutGuide.topAnchor)
+    }
+    
+    nextFlowButton.attach {
+      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+      $0.bottom(equalTo: view.bottomAnchor)
+    }
+    
+    tableView.attach {
+      $0.top(equalTo: titleLabel.bottomAnchor, padding: 32)
+      $0.leading(equalTo: titleLabel.leadingAnchor)
+      $0.trailing(equalTo: titleLabel.trailingAnchor)
+      $0.bottom(equalTo: nextFlowButton.topAnchor)
     }
   }
 }
