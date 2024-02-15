@@ -32,7 +32,6 @@ final class SettingProfileViewController: UIViewController {
     
     let button = UIButton(configuration: configuration)
     button.automaticallyUpdatesConfiguration = false
-    button.isEnabled = false
     return button
   }()
   
@@ -63,6 +62,15 @@ final class SettingProfileViewController: UIViewController {
     super.viewDidLoad()
     
     configureUI()
+    
+    let nextAction = UIAction { [weak self] _ in
+      guard let self = self else {
+        return
+      }
+      self.delegate?.settingProfile(to: self, didSuccessUpdate: .init())
+    }
+    
+    nextFlowButton.addAction(nextAction, for: .touchUpInside)
   }
 }
 

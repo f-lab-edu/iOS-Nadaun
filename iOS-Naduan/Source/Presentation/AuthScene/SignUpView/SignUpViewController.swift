@@ -6,13 +6,13 @@
 
 import UIKit
 
-enum SignUpFlow: CaseIterable {
-  case agreeTerm
-  case settingProfile
-  case generateBasicCard
-}
-
 final class SignUpViewController: UITabBarController {
+  enum SignUpFlow: CaseIterable {
+    case agreeTerm
+    case settingProfile
+    case generateBasicCard
+  }
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -23,14 +23,21 @@ final class SignUpViewController: UITabBarController {
 
 extension SignUpViewController: AgreeTermDelegate {
   func agreeTerm(isComplete controller: UIViewController) {
-    print("Success AgreeTerm")
     selectedIndex += 1
   }
 }
 
 extension SignUpViewController: SettingProfileDelegate {
   func settingProfile(to controller: UIViewController, didSuccessUpdate profile: UserProfile) {
-    print(profile)
+    // TODO: - 프로필 값을 활용하여서 기본 명함 설정 화면 이동
+    let cardController = generateChildController(to: .generateBasicCard)
+    viewControllers?.append(cardController)
+    selectedIndex += 1
+  }
+}
+
+extension SignUpViewController: GenerateBasicCardDelegate {
+  func generateBasicCard(to controller: UIViewController, didSuccessUpdate card: BusinessCard) {
   }
 }
 
@@ -47,8 +54,11 @@ private extension SignUpViewController {
         let controller = SettingProfileViewController()
         controller.delegate = self
         return controller
-      default:
-        return UIViewController()
+        
+      case .generateBasicCard:
+        let controller = GenerateBasicCardViewController()
+        controller.delegate = self
+        return controller
     }
   }
 }
@@ -60,7 +70,9 @@ private extension SignUpViewController {
   }
   
   func addSubControllers() {
-    let controllers = SignUpFlow.allCases.map { generateChildController(to: $0) }
+    let flows: [SignUpFlow] = [.agreeTerm, .settingProfile]
+    
+    let controllers = flows.map { generateChildController(to: $0) }
     setViewControllers(controllers, animated: true)
   }
   
