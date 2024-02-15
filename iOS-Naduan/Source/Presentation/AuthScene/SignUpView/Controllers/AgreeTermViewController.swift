@@ -6,6 +6,10 @@
 
 import UIKit
 
+protocol AgreeTermDelegate: AnyObject {
+  func agreeTerm(isComplete controller: UIViewController)
+}
+
 class AgreeTermViewController: UIViewController {
   // Private Type
   private enum AgreeDocument: CustomStringConvertible, CaseIterable {
@@ -52,17 +56,6 @@ class AgreeTermViewController: UIViewController {
     
     let button = UIButton(configuration: configuration)
     button.automaticallyUpdatesConfiguration = false
-    
-    button.configurationUpdateHandler = { button in
-      switch button.state {
-        case .disabled:
-          button.configuration?.background.backgroundColor = .disable
-        case .normal:
-          button.configuration?.background.backgroundColor = .accent
-        default:
-          return
-      }
-    }
     button.isEnabled = false
     return button
   }()
@@ -78,11 +71,13 @@ class AgreeTermViewController: UIViewController {
   }()
   
   // Business Logic Properties
+  weak var delegate: AgreeTermDelegate?
   private let viewModel: AgreeTermViewModel
   
-  init(title: String, viewModel: AgreeTermViewModel) {
+  init(viewModel: AgreeTermViewModel) {
     self.viewModel = viewModel
-    self.titleLabel.setTextWithLineHeight(text: title, lineHeight: 26)
+    
+    self.titleLabel.setTextWithLineHeight(text: "만나서 반가워요 :)\n가입약관을 확인해주세요.", lineHeight: 26)
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -128,8 +123,23 @@ private extension AgreeTermViewController {
   func addActions() {
     let nextAction = UIAction { [weak self] _ in
       // TODO: - Action 추가하기
+      guard let self = self else { return }
+      
+      self.delegate?.agreeTerm(isComplete: self)
     }
     nextFlowButton.addAction(nextAction, for: .touchUpInside)
+    nextFlowButton.configurationUpdateHandler = updateNextButtonConfiguration
+  }
+  
+  func updateNextButtonConfiguration(_ button: UIButton) {
+    switch button.state {
+      case .disabled:
+        button.configuration?.background.backgroundColor = .disable
+      case .normal:
+        button.configuration?.background.backgroundColor = .accent
+      default:
+        return
+    }
   }
   
   func binding() {
