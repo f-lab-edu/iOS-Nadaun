@@ -28,12 +28,23 @@ extension SignUpViewController: AgreeTermDelegate {
   }
 }
 
+extension SignUpViewController: SettingProfileDelegate {
+  func settingProfile(to controller: UIViewController, didSuccessUpdate profile: UserProfile) {
+    print(profile)
+  }
+}
+
 private extension SignUpViewController {
   func generateChildController(to flow: SignUpFlow) -> UIViewController {
     switch flow {
       case .agreeTerm:
         let viewModel = AgreeTermViewModel()
         let controller = AgreeTermViewController(viewModel: viewModel)
+        controller.delegate = self
+        return controller
+        
+      case .settingProfile:
+        let controller = SettingProfileViewController()
         controller.delegate = self
         return controller
       default:
