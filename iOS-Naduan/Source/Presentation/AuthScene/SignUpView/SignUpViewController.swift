@@ -7,12 +7,14 @@
 import UIKit
 
 final class SignUpViewController: UITabBarController {
+  // MARK: - Child Flow Item
   enum SignUpFlow: CaseIterable {
     case agreeTerm
     case settingProfile
     case generateBasicCard
   }
   
+  // MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -21,26 +23,30 @@ final class SignUpViewController: UITabBarController {
   }
 }
 
+// MARK: - AgreeTerm Delegate Method
 extension SignUpViewController: AgreeTermDelegate {
   func agreeTerm(isComplete controller: UIViewController) {
     selectedIndex += 1
   }
 }
 
+// MARK: - SettingProfile Delegate Method
 extension SignUpViewController: SettingProfileDelegate {
   func settingProfile(to controller: UIViewController, didSuccessUpdate profile: UserProfile) {
-    // TODO: - 프로필 값을 활용하여서 기본 명함 설정 화면 이동
     let cardController = generateChildController(to: .generateBasicCard)
     viewControllers?.append(cardController)
     selectedIndex += 1
   }
 }
 
+// MARK: - GenerateBasicCard Delegate Method
 extension SignUpViewController: GenerateBasicCardDelegate {
   func generateBasicCard(to controller: UIViewController, didSuccessUpdate card: BusinessCard) {
+    // TODO: - 홈 화면으로 전환
   }
 }
 
+// MARK: - Child Controller Generate Methods
 private extension SignUpViewController {
   func generateChildController(to flow: SignUpFlow) -> UIViewController {
     switch flow {
@@ -63,6 +69,7 @@ private extension SignUpViewController {
   }
 }
 
+// MARK: - Configure Tab Bar Controller
 private extension SignUpViewController {
   func configureTabBarController() {
     addSubControllers()
@@ -81,6 +88,7 @@ private extension SignUpViewController {
   }
 }
 
+// MARK: - Configure UI Method
 private extension SignUpViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
