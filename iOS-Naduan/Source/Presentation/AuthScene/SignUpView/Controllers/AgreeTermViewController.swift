@@ -6,12 +6,14 @@
 
 import UIKit
 
+// MARK: - AgreeTermDelegate
 protocol AgreeTermDelegate: AnyObject {
   func agreeTerm(isComplete controller: UIViewController)
 }
 
+// MARK: - AgreeTermViewController
 class AgreeTermViewController: UIViewController {
-  // Private Type
+  // MARK: - AgreeDocument
   private enum AgreeDocument: CustomStringConvertible, CaseIterable {
     case term
     case privacy
@@ -31,7 +33,7 @@ class AgreeTermViewController: UIViewController {
     }
   }
   
-  // View Property
+  // MARK: - View Properties
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.font = .pretendardFont(to: .B1M)
@@ -66,10 +68,11 @@ class AgreeTermViewController: UIViewController {
     return tableView
   }()
   
-  // Business Logic Properties
+  // MARK: - Business Logic Properties
   weak var delegate: AgreeTermDelegate?
   private let viewModel: AgreeTermViewModel
   
+  // MARK: - Initializer
   init(viewModel: AgreeTermViewModel) {
     self.viewModel = viewModel
     
@@ -81,7 +84,7 @@ class AgreeTermViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
   
-  // Life Cycle
+  // MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -92,7 +95,7 @@ class AgreeTermViewController: UIViewController {
   }
 }
 
-// MARK: UITableViewDataSource
+// MARK: UITableViewDataSource Methods
 extension AgreeTermViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return AgreeDocument.allCases.count
@@ -116,6 +119,13 @@ extension AgreeTermViewController: UITableViewDataSource {
 
 // MARK: Binding Method
 private extension AgreeTermViewController {
+  func binding() {
+    addActions()
+    viewModel.isSelectAll = { [weak self] isSelected in
+      self?.nextFlowButton.isEnabled = isSelected
+    }
+  }
+  
   func addActions() {
     let nextAction = UIAction { [weak self] _ in
       // TODO: - Action 추가하기
@@ -137,15 +147,9 @@ private extension AgreeTermViewController {
         return
     }
   }
-  
-  func binding() {
-    addActions()
-    viewModel.isSelectAll = { [weak self] isSelected in
-      self?.nextFlowButton.isEnabled = isSelected
-    }
-  }
 }
 
+// MARK: - Configure UI Methods
 private extension AgreeTermViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
@@ -180,6 +184,7 @@ private extension AgreeTermViewController {
   }
 }
 
+// MARK: - TextConstants
 private extension AgreeTermViewController {
   enum TextConstants {
     static let title: String = "만나서 반가워요 :)\n가입약관을 확인해주세요."
