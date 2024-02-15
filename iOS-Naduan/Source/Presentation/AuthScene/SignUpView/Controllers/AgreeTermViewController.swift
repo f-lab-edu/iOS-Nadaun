@@ -18,19 +18,15 @@ class AgreeTermViewController: UIViewController {
     
     var description: String {
       switch self {
-        case .term:
-          return "다운 서비스 이용 동의 (필수)"
-        case .privacy:
-          return "개인정보 수집 및 이용 안내 (필수)"
+        case .term:     return TextConstants.termAgreeComment
+        case .privacy:  return TextConstants.privacyAgreeComment
       }
     }
     
     var url: String {
       switch self {
-        case .term:
-          return "https://gyoungmin.notion.site/3ece9fe63ae945cd80cc567bef309146?pvs=4"
-        case .privacy:
-          return "https://gyoungmin.notion.site/fbf1b6f0bad84b96990c7d65a6bcea77?pvs=4"
+        case .term:     return TextConstants.termURLString
+        case .privacy:  return TextConstants.privacyURLString
       }
     }
   }
@@ -52,7 +48,7 @@ class AgreeTermViewController: UIViewController {
     var configuration = UIButton.Configuration.daunStyle(with: .basic)
     configuration.background.cornerRadius = .zero
     configuration.contentInsets = inset
-    configuration.setTitle(to: "다음", with: container)
+    configuration.setTitle(to: TextConstants.nextFlow, with: container)
     
     let button = UIButton(configuration: configuration)
     button.automaticallyUpdatesConfiguration = false
@@ -77,7 +73,7 @@ class AgreeTermViewController: UIViewController {
   init(viewModel: AgreeTermViewModel) {
     self.viewModel = viewModel
     
-    self.titleLabel.setTextWithLineHeight(text: "만나서 반가워요 :)\n가입약관을 확인해주세요.", lineHeight: 26)
+    self.titleLabel.setTextWithLineHeight(text: TextConstants.title, lineHeight: 26)
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -181,5 +177,17 @@ private extension AgreeTermViewController {
       $0.trailing(equalTo: titleLabel.trailingAnchor)
       $0.bottom(equalTo: nextFlowButton.topAnchor)
     }
+  }
+}
+
+private extension AgreeTermViewController {
+  enum TextConstants {
+    static let title: String = "만나서 반가워요 :)\n가입약관을 확인해주세요."
+    static let nextFlow: String = "다음"
+    
+    static let termAgreeComment: String = "다운 서비스 이용 동의 (필수)"
+    static let privacyAgreeComment: String = "개인정보 수집 및 이용 안내 (필수)"
+    static let termURLString: String = "https://gyoungmin.notion.site/3ece9fe63ae945cd80cc567bef309146?pvs=4"
+    static let privacyURLString: String = "https://gyoungmin.notion.site/fbf1b6f0bad84b96990c7d65a6bcea77?pvs=4"
   }
 }
