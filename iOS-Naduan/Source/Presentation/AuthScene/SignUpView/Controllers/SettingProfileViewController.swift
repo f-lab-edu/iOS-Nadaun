@@ -14,20 +14,7 @@ final class SettingProfileViewController: UIViewController {
   // View Property
   private let titleLabel = SignUpTitleLabel()
   
-  private let nextFlowButton: UIButton = {
-    var container = AttributeContainer()
-    container.font = UIFont.pretendardFont(weight: .bold, size: 18)
-    
-    let inset = NSDirectionalEdgeInsets(top: 10, leading: .zero, bottom: 40, trailing: .zero)
-    var configuration = UIButton.Configuration.daunStyle(with: .basic)
-    configuration.background.cornerRadius = .zero
-    configuration.contentInsets = inset
-    configuration.setTitle(to: "다음", with: container)
-    
-    let button = UIButton(configuration: configuration)
-    button.automaticallyUpdatesConfiguration = false
-    return button
-  }()
+  private let nextFlowButton = SignUpNextButton(title: "다음")
   
   private let profileInputScrollView: UIScrollView = {
     let scrollView = UIScrollView()
