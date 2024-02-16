@@ -10,6 +10,36 @@ protocol SettingProfileDelegate: AnyObject {
   func settingProfile(to controller: UIViewController, didSuccessUpdate profile: UserProfile)
 }
 
+class InsetTextField: UITextField {
+  private let padding: UIEdgeInsets
+  
+  init(padding: UIEdgeInsets) {
+    self.padding = padding
+    super.init(frame: .zero)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  override func textRect(forBounds bounds: CGRect) -> CGRect {
+    insetTextRect(for: bounds)
+  }
+  
+  override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
+    insetTextRect(for: bounds)
+  }
+  
+  override func editingRect(forBounds bounds: CGRect) -> CGRect {
+    insetTextRect(for: bounds)
+  }
+  
+  private func insetTextRect(for bounds: CGRect) -> CGRect {
+    let inset = bounds.inset(by: padding)
+    return inset
+  }
+}
+
 final class SettingProfileViewController: UIViewController {
   // View Property
   private let titleLabel: UILabel = {
@@ -40,18 +70,22 @@ final class SettingProfileViewController: UIViewController {
     return scrollView
   }()
   
-  private let scrollContentView: UIStackView = {
-    let stackView = UIStackView()
-    stackView.axis = .vertical
-    stackView.spacing = 16
-    stackView.isLayoutMarginsRelativeArrangement = true
-    stackView.layoutMargins = UIEdgeInsets(top: 16, left: 32, bottom: 16, right: 32)
-    return stackView
-  }()
+  private let scrollContentView = UIView()
   
   private let cardView: CardView = {
     let cardView = CardView(profile: .init())
     return cardView
+  }()
+  
+  private let nameTextField: InsetTextField = {
+    let inset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    let textField = InsetTextField(padding: inset)
+    textField.font = .pretendardFont(to: .B3M)
+    textField.attributedPlaceholder = NSAttributedString(string: "이름 (필수)", attributes: [.foregroundColor: UIColor.disable])
+    textField.layer.borderColor = UIColor.disable.cgColor
+    textField.layer.borderWidth = 1
+    textField.layer.cornerRadius = 4
+    return textField
   }()
   
   weak var delegate: SettingProfileDelegate?
@@ -90,7 +124,7 @@ private extension SettingProfileViewController {
   func configureHierarchy() {
     [titleLabel, nextFlowButton, profileInputScrollView].forEach(view.addSubview)
     [scrollContentView].forEach(profileInputScrollView.addSubview)
-    [cardView].forEach(scrollContentView.addArrangedSubview)
+    [cardView, nameTextField].forEach(scrollContentView.addSubview)
   }
   
   func makeConstraints() {
@@ -122,7 +156,16 @@ private extension SettingProfileViewController {
     }
     
     cardView.attach {
+      $0.top(equalTo: scrollContentView.topAnchor, padding: 32)
+      $0.leading(equalTo: scrollContentView.leadingAnchor, padding: 32)
+      $0.trailing(equalTo: scrollContentView.trailingAnchor, padding: 32)
       $0.height(equalTo: scrollContentView.widthAnchor, multi: 0.5)
+    }
+    
+    nameTextField.attach {
+      $0.top(equalTo: cardView.bottomAnchor, padding: 16)
+      $0.leading(equalTo: scrollContentView.leadingAnchor, padding: 20)
+      $0.trailing(equalTo: scrollContentView.trailingAnchor, padding: 20)
     }
   }
 }
@@ -140,5 +183,4 @@ struct SettingProfileViewController_Previews: PreviewProvider {
     }
   }
 }
-
 #endif
