@@ -103,6 +103,12 @@ class CardView: UIView {
     layer.cornerRadius = 8
     layer.backgroundColor = UIColor.white.cgColor
   }
+  
+  override func draw(_ rect: CGRect) {
+    super.draw(rect)
+    
+    layer.applyShadow(color: UIColor.black, alpha: 0.5, x: 2, y: 0, blur: 20)
+  }
 }
 
 #if DEBUG && canImport(SwiftUI)

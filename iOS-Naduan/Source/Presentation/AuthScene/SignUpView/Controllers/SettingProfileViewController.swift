@@ -43,8 +43,15 @@ final class SettingProfileViewController: UIViewController {
   private let scrollContentView: UIStackView = {
     let stackView = UIStackView()
     stackView.axis = .vertical
-    stackView.distribution = .fillProportionally
+    stackView.spacing = 16
+    stackView.isLayoutMarginsRelativeArrangement = true
+    stackView.layoutMargins = UIEdgeInsets(top: 16, left: 32, bottom: 16, right: 32)
     return stackView
+  }()
+  
+  private let cardView: CardView = {
+    let cardView = CardView(profile: .init())
+    return cardView
   }()
   
   weak var delegate: SettingProfileDelegate?
@@ -83,6 +90,7 @@ private extension SettingProfileViewController {
   func configureHierarchy() {
     [titleLabel, nextFlowButton, profileInputScrollView].forEach(view.addSubview)
     [scrollContentView].forEach(profileInputScrollView.addSubview)
+    [cardView].forEach(scrollContentView.addArrangedSubview)
   }
   
   func makeConstraints() {
@@ -99,10 +107,10 @@ private extension SettingProfileViewController {
     }
     
     profileInputScrollView.attach {
-      $0.top(equalTo: titleLabel.bottomAnchor, padding: 12)
-      $0.leading(equalTo: titleLabel.leadingAnchor)
-      $0.trailing(equalTo: titleLabel.trailingAnchor)
-      $0.bottom(equalTo: nextFlowButton.topAnchor, padding: 12)
+      $0.top(equalTo: titleLabel.bottomAnchor)
+      $0.leading(equalTo: view.leadingAnchor)
+      $0.trailing(equalTo: view.trailingAnchor)
+      $0.bottom(equalTo: nextFlowButton.topAnchor)
     }
     
     scrollContentView.attach {
@@ -112,5 +120,25 @@ private extension SettingProfileViewController {
       $0.bottom(equalTo: profileInputScrollView.contentLayoutGuide.bottomAnchor)
       $0.width(equalTo: profileInputScrollView.frameLayoutGuide.widthAnchor)
     }
+    
+    cardView.attach {
+      $0.height(equalTo: scrollContentView.widthAnchor, multi: 0.5)
+    }
   }
 }
+
+#if DEBUG
+
+import SwiftUI
+
+struct SettingProfileViewController_Previews: PreviewProvider {
+  static var previews: some View {
+    UIViewControllerPreview {
+      let controller = SettingProfileViewController()
+      let navigationController = UINavigationController(rootViewController: controller)
+      return navigationController
+    }
+  }
+}
+
+#endif

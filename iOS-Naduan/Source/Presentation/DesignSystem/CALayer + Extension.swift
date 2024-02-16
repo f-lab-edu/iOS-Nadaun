@@ -20,6 +20,7 @@ extension CALayer {
     shadowOpacity = alpha
     shadowOffset = CGSize(width: x, height: y)
     shadowRadius = blur / UIScreen.main.scale
+    shadowPath = UIBezierPath(rect: bounds).cgPath
     
     if spread != .zero {
       let rect = bounds.insetBy(dx: -spread, dy: -spread)
