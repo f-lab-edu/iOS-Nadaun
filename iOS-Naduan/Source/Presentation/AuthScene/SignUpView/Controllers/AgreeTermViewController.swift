@@ -34,13 +34,7 @@ class AgreeTermViewController: UIViewController {
   }
   
   // MARK: - View Properties
-  private let titleLabel: UILabel = {
-    let label = UILabel()
-    label.font = .pretendardFont(to: .B1M)
-    label.textColor = .accent
-    label.numberOfLines = .zero
-    return label
-  }()
+  private let titleLabel = SignUpTitleLabel()
   
   private let nextFlowButton: UIButton = {
     var container = AttributeContainer()
