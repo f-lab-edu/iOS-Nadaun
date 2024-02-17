@@ -11,29 +11,10 @@ protocol SettingProfileDelegate: AnyObject {
 }
 
 final class SettingProfileViewController: UIViewController {
+<<<<<<< HEAD
   // MARK: - View Properties
-  private let titleLabel: UILabel = {
-    let label = UILabel()
-    label.font = .pretendardFont(to: .B1M)
-    label.textColor = .accent
-    label.numberOfLines = .zero
-    return label
-  }()
-  
-  private let nextFlowButton: UIButton = {
-    var container = AttributeContainer()
-    container.font = UIFont.pretendardFont(weight: .bold, size: 18)
-    
-    let inset = NSDirectionalEdgeInsets(top: 10, leading: .zero, bottom: 40, trailing: .zero)
-    var configuration = UIButton.Configuration.daunStyle(with: .basic)
-    configuration.background.cornerRadius = .zero
-    configuration.contentInsets = inset
-    configuration.setTitle(to: "다음", with: container)
-    
-    let button = UIButton(configuration: configuration)
-    button.automaticallyUpdatesConfiguration = false
-    return button
-  }()
+  private let titleLabel = SignUpTitleLabel()
+  private let nextFlowButton = SignUpNextButton(title: "다음")
   
   private let profileInputScrollView: UIScrollView = {
     let scrollView = UIScrollView()
