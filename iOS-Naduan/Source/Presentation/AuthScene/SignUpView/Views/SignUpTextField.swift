@@ -6,6 +6,13 @@
 
 import UIKit
 
+enum TextFormType: Int {
+  case name
+  case phone
+  case email
+  case position
+}
+
 class SignUpTextField: UITextField {
   // MARK: - View Properties
   private let explanationLabel: UILabel = {
@@ -22,10 +29,12 @@ class SignUpTextField: UITextField {
   
   // MARK: - Initializer
   convenience init(
+    type: TextFormType,
     to placeholder: String? = nil,
     with errorMessage: String? = nil
   ) {
     self.init()
+    self.tag = type.rawValue
     self.placeholder = placeholder
     self.errorMessage = errorMessage
     
@@ -53,6 +62,13 @@ extension SignUpTextField {
   func updateErrorMessage(to errorDescription: String, with color: UIColor? = .redError) {
     self.explanationLabel.text = errorDescription
     self.explanationLabel.textColor = color
+    self.layer.borderColor = color?.cgColor
+  }
+  
+  func updateSuccessMessage(to successDescription: String? = nil, with color: UIColor? = .accent) {
+    self.explanationLabel.text = successDescription
+    self.explanationLabel.textColor = .green
+    self.layer.borderColor = color?.cgColor
   }
 }
 
@@ -89,6 +105,7 @@ struct SignUpTextField_Previews: PreviewProvider {
   static var previews: some View {
     UIViewPreview {
       let view = SignUpTextField(
+        type: .name,
         to: "이름",
         with: "잘못된 입력입니다."
       )
