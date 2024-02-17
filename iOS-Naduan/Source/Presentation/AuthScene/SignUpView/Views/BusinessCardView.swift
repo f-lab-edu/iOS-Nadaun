@@ -6,7 +6,7 @@
 
 import UIKit
 
-class CardView: UIView {
+class BusinessCardView: UIView {
   private let companyLabel: UILabel = {
     let label = UILabel()
     label.text = "Apple Inc"
@@ -119,12 +119,12 @@ struct CardView_Previews: PreviewProvider {
   static let profile = UserProfile(nickName: "이경민")
   static var previews: some View {
     UIViewPreview {
-      let view = CardView(profile: profile)
+      let view = BusinessCardView(profile: profile)
       view.layer.applyShadow(color: .black, alpha: 0.2, x: -2, y: 2, blur: 30, spread: .zero)
       return view
     }
     .previewLayout(.sizeThatFits)
-    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 0.6)
+    .frame(width: UIScreen.main.bounds.width - 32, height: (UIScreen.main.bounds.width - 32) * 0.6)
     .padding()
     .background(.green)
   }
