@@ -56,14 +56,16 @@ final class SettingProfileViewController: UIViewController {
     return cardView
   }()
   
-  private let nameTextField = SignUpTextField(to: "이름", with: "이름을 입력해주세요.")
-  private let phoneTextField = SignUpTextField(to: "휴대폰 번호")
-  private let emailTextField = SignUpTextField(to: "이메일")
-  private let positionTextField = SignUpTextField(to: "직급")
+  private let nameTextField = SignUpTextField(type: .name, to: "이름", with: "이름을 입력해주세요.")
+  private let phoneTextField = SignUpTextField(type: .phone, to: "휴대폰 번호")
+  private let emailTextField = SignUpTextField(type: .email, to: "이메일")
+  private let positionTextField = SignUpTextField(type: .position, to: "직급")
   
   weak var delegate: SettingProfileDelegate?
+  private let viewModel: SettingProfileViewModel
   
-  init() {
+  init(viewModel: SettingProfileViewModel) {
+    self.viewModel = viewModel
     titleLabel.setTextWithLineHeight(text: "다운 이용을 위해\n기본 정보를 기입해주세요.", lineHeight: 26)
     super.init(nibName: nil, bundle: nil)
   }
@@ -77,14 +79,70 @@ final class SettingProfileViewController: UIViewController {
     
     configureUI()
     
-    let nextAction = UIAction { [weak self] _ in
-      guard let self = self else {
-        return
-      }
-      self.delegate?.settingProfile(to: self, didSuccessUpdate: .init())
+    [nameTextField, phoneTextField, emailTextField, positionTextField].forEach {
+      $0.delegate = self
+      $0.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
     }
     
-    nextFlowButton.addAction(nextAction, for: .touchUpInside)
+    binding()
+  }
+  
+  @objc private func didChangeTextField(_ textField: UITextField) {
+    bindTextFieldItem(with: textField)
+  }
+}
+
+extension SettingProfileViewController: UITextFieldDelegate {
+  private func bindTextFieldItem(with textField: UITextField) {
+    guard let textField = textField as? SignUpTextField,
+          let text = textField.text,
+          let fieldType = TextFormType(rawValue: textField.tag) else { return }
+    print(text)
+    switch fieldType {
+      case .name:
+        viewModel.bind(to: .editName(text))
+      case .phone:
+        viewModel.bind(to: .editPhoneNumber(text))
+      case .email:
+        viewModel.bind(to: .editEmail(text))
+      case .position:
+        viewModel.bind(to: .editPosition(text))
+    }
+  }
+}
+
+private extension SettingProfileViewController {
+  func binding() {
+    viewModel.nameUpdate = { [weak self] nickName in
+      guard let nickName = nickName else { return }
+      
+      self?.nameTextField.text = nickName
+      
+      if nickName.isEmpty {
+        self?.nameTextField.updateErrorMessage(to: "이름을 입력해주세요.")
+        return
+      }
+      
+      self?.nameTextField.updateSuccessMessage()
+    }
+    
+    viewModel.phoneNumberUpdate = { [weak self] number in
+      guard let number = number else { return }
+      
+      self?.phoneTextField.text = number
+      
+      if self?.verifyPhoneNumber(with: number) == false {
+        self?.phoneTextField.updateErrorMessage(to: "올바른 번호를 입력해주세요.")
+        return
+      }
+      
+      self?.phoneTextField.updateSuccessMessage()
+    }
+  }
+  
+  private func verifyPhoneNumber(with number: String) -> Bool {
+    let regex = "^01[0-1, 7]-[0-9]{3,4}-[0-9]{3,4}"
+    return number.range(of: regex, options: .regularExpression) != nil
   }
 }
 
@@ -145,19 +203,3 @@ private extension SettingProfileViewController {
     }
   }
 }
-
-#if DEBUG
-
-import SwiftUI
-
-struct SettingProfileViewController_Previews: PreviewProvider {
-  static var previews: some View {
-    UIViewControllerPreview {
-      let controller = SettingProfileViewController()
-      let navigationController = UINavigationController(rootViewController: controller)
-      return navigationController
-    }
-    .ignoresSafeArea()
-  }
-}
-#endif
