@@ -37,6 +37,7 @@ class SignUpTextField: UITextField {
   
   // MARK: - Business Logic Properties
   private var errorMessage: String?
+  var isError: Bool = true
   
   // MARK: - Initializer
   convenience init(
@@ -70,8 +71,8 @@ class SignUpTextField: UITextField {
 
 // MARK: - Update UI Methods
 extension SignUpTextField {
-  func updateExplanationLabel(isError: Bool, to formType: TextFormType) {
-    if isError {
+  func updateExplanationLabel(isFormat: Bool, to formType: TextFormType) {
+    if isFormat == false {
       explanationLabel.text = formType.errorDescription
       explanationLabel.textColor = .redError
       layer.borderColor = UIColor.redError.cgColor

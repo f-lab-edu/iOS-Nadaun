@@ -87,23 +87,6 @@ extension SettingProfileViewController: UITextFieldDelegate {
     
     cardView.updateProfile(name: name, phone: phone, email: email, position: position)
   }
-  
-  private func bindTextFieldItem(with textField: UITextField) {
-    guard let textField = textField as? SignUpTextField,
-          let text = textField.text,
-          let fieldType = TextFormType(rawValue: textField.tag) else { return }
-    
-    switch fieldType {
-      case .name:
-        updateName(text)
-      case .phone:
-        viewModel.bind(to: .editPhoneNumber(text))
-      case .email:
-        updateEmail(text)
-      case .position:
-        cardView.updateProfile(position: text)
-    }
-  }
 }
 
 // MARK: - Binding Method
@@ -128,7 +111,33 @@ private extension SettingProfileViewController {
       $0.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
     }
     
-    viewModel.phoneNumberUpdate = updatePhoneNumber(_:)
+    viewModel.didChangeName = { [weak self] name in
+      self?.nameTextField.text = name
+    }
+    
+    viewModel.didChangePhoneNumber = { [weak self] phoneNumber in
+      self?.phoneTextField.text = phoneNumber
+    }
+    
+    viewModel.didChangeEmail = { [weak self] email in
+      self?.emailTextField.text = email
+    }
+    
+    viewModel.didChangePosition = { [weak self] position in
+      self?.positionTextField.text = position
+    }
+    
+    viewModel.isVerifyNameFormat = { [weak self] isFormat in
+      self?.nameTextField.updateExplanationLabel(isFormat: isFormat, to: .name)
+    }
+    
+    viewModel.isVerifyPhoneFormat = { [weak self] isFormat in
+      self?.phoneTextField.updateExplanationLabel(isFormat: isFormat, to: .phone)
+    }
+    
+    viewModel.isVerifyEmailFormat = { [weak self] isFormat in
+      self?.emailTextField.updateExplanationLabel(isFormat: isFormat, to: .email)
+    }
   }
   
   @objc private func willShowKeyboard(_ notification: Notification) {
@@ -148,45 +157,20 @@ private extension SettingProfileViewController {
   }
   
   @objc private func didChangeTextField(_ textField: UITextField) {
-    bindTextFieldItem(with: textField)
-  }
-}
-
-// MARK: - Update Profile UI Methods
-private extension SettingProfileViewController {
-  func updateName(_ name: String?) {
-    guard let name = name else { return }
+    guard let textField = textField as? SignUpTextField,
+          let text = textField.text,
+          let fieldType = TextFormType(rawValue: textField.tag) else { return }
     
-    nameTextField.text = name
-    nameTextField.updateExplanationLabel(isError: name.isEmpty, to: .name)
-  }
-  
-  func updatePhoneNumber(_ phoneNumber: String?) {
-    guard let phoneNumber = phoneNumber else { return }
-    
-    phoneTextField.text = phoneNumber
-    
-    let isError = isNotVerifyPhoneNumberFormat(with: phoneNumber)
-    phoneTextField.updateExplanationLabel(isError: isError, to: .phone)
-  }
-  
-  func updateEmail(_ email: String?) {
-    guard let email = email else { return }
-    
-    emailTextField.text = email
-    
-    let isError = isNotVerifyEmailFormat(with: email)
-    emailTextField.updateExplanationLabel(isError: isError, to: .email)
-  }
-  
-  private func isNotVerifyEmailFormat(with email: String) -> Bool {
-    let regex = "^([a-zA-Z0-9._-])+@[a-zA-Z0-9.-]+.[a-zA-Z]{3,20}$"
-    return email.range(of: regex, options: .regularExpression) == nil
-  }
-  
-  private func isNotVerifyPhoneNumberFormat(with number: String) -> Bool {
-    let regex = "^01[0-1, 7]-[0-9]{3,4}-[0-9]{3,4}"
-    return number.range(of: regex, options: .regularExpression) == nil
+    switch fieldType {
+      case .name:
+        viewModel.bind(to: .editName(text))
+      case .phone:
+        viewModel.bind(to: .editPhone(text))
+      case .email:
+        viewModel.bind(to: .editEmail(text))
+      case .position:
+        viewModel.bind(to: .editPosition(text))
+    }
   }
 }
 
