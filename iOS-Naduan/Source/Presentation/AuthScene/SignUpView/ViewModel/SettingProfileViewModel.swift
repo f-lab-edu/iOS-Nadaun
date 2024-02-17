@@ -5,50 +5,33 @@
 //  Copyright (c) 2024 Minii All rights reserved.
 
 enum SettingProfileAction {
-  case editName(String)
   case editPhoneNumber(String)
-  case editEmail(String)
-  case editPosition(String)
-  case updateProfile
+  case updateProfile(profile: UserProfile)
 }
 
 class SettingProfileViewModel {
   private let userRepository: UserRepository
-  private var userProfile: UserProfile {
+  private var phoneNumber: String? {
     didSet {
-      nameUpdate?(userProfile.nickName)
-      phoneNumberUpdate?(userProfile.phoneNumber)
-      emailUpdate?(userProfile.email)
+      phoneNumberUpdate?(phoneNumber)
     }
   }
   
-  var nameUpdate: ((String?) -> Void)?
   var phoneNumberUpdate: ((String?) -> Void)?
-  var emailUpdate: ((String?) -> Void)?
-  
   var successUpdateProfile: ((UserProfile) -> Void)?
   
-  init(userRepository: UserRepository, userProfile: UserProfile) {
+  init(userRepository: UserRepository) {
     self.userRepository = userRepository
-    self.userProfile = userProfile
   }
   
   func bind(to action: SettingProfileAction) {
     switch action {
-      case .editName(let name):
-        userProfile.nickName = name
-        return
       case .editPhoneNumber(let number):
         let newNumber = updatePhoneNumber(to: number)
-        userProfile.phoneNumber = newNumber
+        phoneNumber = newNumber
         return
-      case .editEmail(let email):
-        userProfile.email = email
-        return
-      case .editPosition(let positionName):
-        userProfile.position = positionName
-        return
-      case .updateProfile:
+        
+      case .updateProfile(let profile):
         return
     }
   }
@@ -57,7 +40,7 @@ class SettingProfileViewModel {
 private extension SettingProfileViewModel {
   func updatePhoneNumber(to number: String) -> String {
     var number = number
-    guard let prevText = userProfile.phoneNumber else { return number }
+    guard let prevText = phoneNumber else { return number }
     
     let isRemove = (prevText.count < number.count)
     let isDashIndex = (number.count == 4 || number.count == 9)

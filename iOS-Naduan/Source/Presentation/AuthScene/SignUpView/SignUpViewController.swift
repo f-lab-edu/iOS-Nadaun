@@ -71,7 +71,7 @@ private extension SignUpViewController {
         
       case .settingProfile:
         let repository = UserRepository(user: user, store: .firestore())
-        let viewModel = SettingProfileViewModel(userRepository: repository, userProfile: .init())
+        let viewModel = SettingProfileViewModel(userRepository: repository)
         
         let controller = SettingProfileViewController(viewModel: viewModel)
         controller.delegate = self

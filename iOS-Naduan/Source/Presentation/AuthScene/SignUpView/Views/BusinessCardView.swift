@@ -9,7 +9,6 @@ import UIKit
 class BusinessCardView: UIView {
   private let companyLabel: UILabel = {
     let label = UILabel()
-    label.text = "Apple Inc"
     label.font = .pretendardFont(to: .H4B)
     label.textAlignment = .right
     label.textColor = .title
@@ -98,12 +97,8 @@ class BusinessCardView: UIView {
     
     layer.cornerRadius = 8
     layer.backgroundColor = UIColor.white.cgColor
-  }
-  
-  override func draw(_ rect: CGRect) {
-    super.draw(rect)
-    
-    layer.applyShadow(color: UIColor.black, alpha: 0.5, x: 2, y: 0, blur: 20)
+    layer.borderColor = UIColor.gray02.cgColor
+    layer.borderWidth = 1
   }
   
   func updateProfile(
@@ -127,6 +122,16 @@ class BusinessCardView: UIView {
     if let position = position {
       self.positionLabel.setTextWithLineHeight(text: position, lineHeight: 14)
     }
+  }
+  
+  func hide() {
+    [companyLabel, nameLabel, positionLabel, phoneNumberLabel, emailLabel]
+      .forEach { $0.isHidden = true }
+  }
+  
+  func show() {
+    [companyLabel, nameLabel, positionLabel, phoneNumberLabel, emailLabel]
+      .forEach { $0.isHidden = false }
   }
 }
 

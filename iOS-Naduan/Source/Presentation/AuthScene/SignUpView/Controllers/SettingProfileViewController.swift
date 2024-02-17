@@ -11,7 +11,7 @@ protocol SettingProfileDelegate: AnyObject {
 }
 
 final class SettingProfileViewController: UIViewController {
-  // View Property
+  // MARK: - View Properties
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.font = .pretendardFont(to: .B1M)
@@ -37,6 +37,8 @@ final class SettingProfileViewController: UIViewController {
   
   private let profileInputScrollView: UIScrollView = {
     let scrollView = UIScrollView()
+    scrollView.showsVerticalScrollIndicator = false
+    scrollView.alwaysBounceVertical = false
     return scrollView
   }()
   
@@ -51,22 +53,21 @@ final class SettingProfileViewController: UIViewController {
     return stackView
   }()
   
-  private let cardView: BusinessCardView = {
-    let cardView = BusinessCardView(profile: .init())
-    return cardView
-  }()
-  
+  private let cardView: BusinessCardView = BusinessCardView()
   private let nameTextField = SignUpTextField(type: .name, to: "이름", with: "이름을 입력해주세요.")
   private let phoneTextField = SignUpTextField(type: .phone, to: "휴대폰 번호")
   private let emailTextField = SignUpTextField(type: .email, to: "이메일")
   private let positionTextField = SignUpTextField(type: .position, to: "직급")
   
   weak var delegate: SettingProfileDelegate?
+  private var cardWidthConstraint: NSLayoutConstraint?
+  private var cardHideWidthConstraint: NSLayoutConstraint?
   private let viewModel: SettingProfileViewModel
   
+  // MARK: - Initializer
   init(viewModel: SettingProfileViewModel) {
     self.viewModel = viewModel
-    titleLabel.setTextWithLineHeight(text: "다운 이용을 위해\n기본 정보를 기입해주세요.", lineHeight: 26)
+    titleLabel.setTextWithLineHeight(text: "다운 이용을 위해\n기본 정보를 채워보세요.", lineHeight: 26)
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -74,25 +75,28 @@ final class SettingProfileViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
   
+  // MARK: - Life Cycle Methods
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    cardWidthConstraint = cardView.width(equalTo: titleLabel.widthAnchor, multi: 0.8)
+    cardHideWidthConstraint = cardView.width(equalTo: titleLabel.widthAnchor, multi: 0.4)
+    
     configureUI()
     
-    [nameTextField, phoneTextField, emailTextField, positionTextField].forEach {
-      $0.delegate = self
-      $0.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
-    }
-    
     binding()
-  }
-  
-  @objc private func didChangeTextField(_ textField: UITextField) {
-    bindTextFieldItem(with: textField)
   }
 }
 
 extension SettingProfileViewController: UITextFieldDelegate {
+  func textFieldDidEndEditing(_ textField: UITextField) {
+    textField.endEditing(true)
+  }
+  
+  func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    textField.endEditing(true)
+  }
+  
   private func bindTextFieldItem(with textField: UITextField) {
     guard let textField = textField as? SignUpTextField,
           let text = textField.text,
@@ -100,57 +104,104 @@ extension SettingProfileViewController: UITextFieldDelegate {
     
     switch fieldType {
       case .name:
-        viewModel.bind(to: .editName(text))
+        updateName(text)
       case .phone:
         viewModel.bind(to: .editPhoneNumber(text))
       case .email:
-        viewModel.bind(to: .editEmail(text))
+        updateEmail(text)
       case .position:
-        viewModel.bind(to: .editPosition(text))
+        cardView.updateProfile(position: text)
     }
   }
 }
 
+// MARK: - Binding Method
 private extension SettingProfileViewController {
   func binding() {
-    viewModel.nameUpdate = { [weak self] nickName in
-      guard let nickName = nickName else { return }
-      
-      self?.nameTextField.text = nickName
-      
-      if nickName.isEmpty {
-        self?.nameTextField.updateErrorMessage(to: "이름을 입력해주세요.")
-        return
-      }
-      
-      self?.nameTextField.updateSuccessMessage()
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(willShowKeyboard),
+      name: UIResponder.keyboardWillShowNotification,
+      object: nil
+    )
+    
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(willHideKeyboard),
+      name: UIResponder.keyboardWillHideNotification,
+      object: nil
+    )
+    
+    [nameTextField, phoneTextField, emailTextField, positionTextField].forEach {
+      $0.delegate = self
+      $0.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
     }
     
-    viewModel.phoneNumberUpdate = { [weak self] number in
-      guard let number = number else { return }
-      
-      self?.phoneTextField.text = number
-      
-      if self?.verifyPhoneNumber(with: number) == false {
-        self?.phoneTextField.updateErrorMessage(to: "올바른 번호를 입력해주세요.")
-        return
-      }
-      
-      self?.phoneTextField.updateSuccessMessage()
+    viewModel.phoneNumberUpdate = updatePhoneNumber(_:)
+  }
+  
+  @objc private func willShowKeyboard(_ notification: Notification) {
+    guard let userInformation = notification.userInfo,
+          let keyBoardFrame = userInformation[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+      return
     }
     
-    viewModel.emailUpdate = { [weak self] email in
-      guard let email = email else { return }
-      
-      self?.emailTextField.text = email
-      
-      if self?.verifyEmailFormat(with: email) == false {
-        self?.emailTextField.updateErrorMessage(to: "올바른 이메일을 입력해주세요.")
-        return
-      }
-      
-      self?.emailTextField.updateSuccessMessage()
+    let contentInset = UIEdgeInsets(top: .zero, left: .zero, bottom: keyBoardFrame.size.height, right: .zero)
+    profileInputScrollView.contentInset = contentInset
+    updateCardView(isHidden: true)
+  }
+  
+  @objc private func willHideKeyboard(_ notification: Notification) {
+    profileInputScrollView.contentInset = .zero
+    updateCardView(isHidden: false)
+  }
+  
+  @objc private func didChangeTextField(_ textField: UITextField) {
+    bindTextFieldItem(with: textField)
+  }
+}
+
+// MARK: - Update Profile UI Methods
+private extension SettingProfileViewController {
+  func updateName(_ name: String?) {
+    guard let name = name else { return }
+    
+    nameTextField.text = name
+    cardView.updateProfile(name: name)
+    
+    if name.isEmpty == true {
+      nameTextField.updateErrorMessage(to: "이름을 입력해주세요.")
+      return
     }
+    nameTextField.updateSuccessMessage()
+  }
+  
+  func updatePhoneNumber(_ phoneNumber: String?) {
+    guard let phoneNumber = phoneNumber else { return }
+    
+    phoneTextField.text = phoneNumber
+    cardView.updateProfile(phone: phoneNumber)
+    
+    if verifyPhoneNumberFormat(with: phoneNumber) == false {
+      phoneTextField.updateErrorMessage(to: "올바른 번호를 입력해주세요.")
+      return
+    }
+    
+    phoneTextField.updateSuccessMessage()
+  }
+  
+  func updateEmail(_ email: String?) {
+    guard let email = email else { return }
+    
+    emailTextField.text = email
+    cardView.updateProfile(email: email)
+    
+    if verifyEmailFormat(with: email) == false {
+      emailTextField.updateErrorMessage(to: "올바른 이메일을 입력해주세요.")
+      return
+    }
+    
+    emailTextField.updateSuccessMessage()
   }
   
   private func verifyEmailFormat(with email: String) -> Bool {
@@ -158,12 +209,39 @@ private extension SettingProfileViewController {
     return email.range(of: regex, options: .regularExpression) != nil
   }
   
-  private func verifyPhoneNumber(with number: String) -> Bool {
+  private func verifyPhoneNumberFormat(with number: String) -> Bool {
     let regex = "^01[0-1, 7]-[0-9]{3,4}-[0-9]{3,4}"
     return number.range(of: regex, options: .regularExpression) != nil
   }
 }
 
+// MARK: - Update Card View Methods
+private extension SettingProfileViewController {
+  func updateCardView(isHidden: Bool) {
+    guard let cardWidthConstraint = cardWidthConstraint, let cardHideWidthConstraint = cardHideWidthConstraint else { return }
+    
+    if isHidden {
+      view.removeConstraint(cardWidthConstraint)
+      view.addConstraint(cardHideWidthConstraint)
+    } else {
+      view.removeConstraint(cardHideWidthConstraint)
+      view.addConstraint(cardWidthConstraint)
+    }
+    
+    UIView.animate(withDuration: 1) { [weak self] in
+      if isHidden {
+        self?.cardView.hide()
+      } else {
+        self?.cardView.show()
+      }
+      
+      self?.cardView.layoutIfNeeded()
+      self?.view.layoutIfNeeded()
+    }
+  }
+}
+
+// MARK: - Configure UI Methods
 private extension SettingProfileViewController {
   func configureUI() {
     configureHierarchy()
@@ -171,18 +249,27 @@ private extension SettingProfileViewController {
   }
   
   func configureHierarchy() {
-    [titleLabel, nextFlowButton, profileInputScrollView].forEach(view.addSubview)
+    [titleLabel,cardView, nextFlowButton, profileInputScrollView].forEach(view.addSubview)
     [scrollContentView].forEach(profileInputScrollView.addSubview)
-    [cardView, inputFormStackView].forEach(scrollContentView.addSubview)
+    [inputFormStackView].forEach(scrollContentView.addSubview)
     [nameTextField, phoneTextField, emailTextField, positionTextField]
       .forEach(inputFormStackView.addArrangedSubview)
   }
   
   func makeConstraints() {
+    guard let cardWidthConstraint = cardWidthConstraint else { return }
+    
     titleLabel.attach {
       $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 20)
       $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 20)
       $0.top(equalTo: view.safeAreaLayoutGuide.topAnchor)
+    }
+    
+    cardView.attach {
+      $0.top(equalTo: titleLabel.bottomAnchor, padding: 32)
+      $0.centerXAnchor.constraint(equalTo: titleLabel.centerXAnchor)
+      cardWidthConstraint
+      $0.height(equalTo: cardView.widthAnchor, multi: 0.6)
     }
     
     nextFlowButton.attach {
@@ -192,7 +279,7 @@ private extension SettingProfileViewController {
     }
     
     profileInputScrollView.attach {
-      $0.top(equalTo: titleLabel.bottomAnchor)
+      $0.top(equalTo: cardView.bottomAnchor, padding: 32)
       $0.leading(equalTo: titleLabel.leadingAnchor)
       $0.trailing(equalTo: titleLabel.trailingAnchor)
       $0.bottom(equalTo: nextFlowButton.topAnchor)
@@ -206,15 +293,8 @@ private extension SettingProfileViewController {
       $0.width(equalTo: profileInputScrollView.frameLayoutGuide.widthAnchor)
     }
     
-    cardView.attach {
-      $0.top(equalTo: scrollContentView.topAnchor, padding: 32)
-      $0.leading(equalTo: scrollContentView.leadingAnchor, padding: 32)
-      $0.trailing(equalTo: scrollContentView.trailingAnchor, padding: 32)
-      $0.height(equalTo: scrollContentView.widthAnchor, multi: 0.5)
-    }
-    
     inputFormStackView.attach {
-      $0.top(equalTo: cardView.bottomAnchor, padding: 32)
+      $0.top(equalTo: scrollContentView.topAnchor, padding: 4)
       $0.leading(equalTo: scrollContentView.leadingAnchor, padding: 4)
       $0.trailing(equalTo: scrollContentView.trailingAnchor, padding: 4)
       $0.bottom(equalTo: scrollContentView.bottomAnchor, padding: 4)
