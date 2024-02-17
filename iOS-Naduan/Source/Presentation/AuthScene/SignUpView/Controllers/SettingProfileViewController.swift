@@ -97,7 +97,7 @@ extension SettingProfileViewController: UITextFieldDelegate {
     guard let textField = textField as? SignUpTextField,
           let text = textField.text,
           let fieldType = TextFormType(rawValue: textField.tag) else { return }
-    print(text)
+    
     switch fieldType {
       case .name:
         viewModel.bind(to: .editName(text))
@@ -138,6 +138,24 @@ private extension SettingProfileViewController {
       
       self?.phoneTextField.updateSuccessMessage()
     }
+    
+    viewModel.emailUpdate = { [weak self] email in
+      guard let email = email else { return }
+      
+      self?.emailTextField.text = email
+      
+      if self?.verifyEmailFormat(with: email) == false {
+        self?.emailTextField.updateErrorMessage(to: "올바른 이메일을 입력해주세요.")
+        return
+      }
+      
+      self?.emailTextField.updateSuccessMessage()
+    }
+  }
+  
+  private func verifyEmailFormat(with email: String) -> Bool {
+    let regex = "^([a-zA-Z0-9._-])+@[a-zA-Z0-9.-]+.[a-zA-Z]{3,20}$"
+    return email.range(of: regex, options: .regularExpression) != nil
   }
   
   private func verifyPhoneNumber(with number: String) -> Bool {

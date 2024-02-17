@@ -18,11 +18,13 @@ class SettingProfileViewModel {
     didSet {
       nameUpdate?(userProfile.nickName)
       phoneNumberUpdate?(userProfile.phoneNumber)
+      emailUpdate?(userProfile.email)
     }
   }
   
   var nameUpdate: ((String?) -> Void)?
   var phoneNumberUpdate: ((String?) -> Void)?
+  var emailUpdate: ((String?) -> Void)?
   
   var successUpdateProfile: ((UserProfile) -> Void)?
   
@@ -50,8 +52,6 @@ class SettingProfileViewModel {
         return
     }
   }
-  
-
 }
 
 private extension SettingProfileViewModel {
