@@ -42,21 +42,24 @@ final class SettingProfileViewController: UIViewController {
   
   private let scrollContentView = UIView()
   
-  private let cardView: CardView = {
-    let cardView = CardView(profile: .init())
+  private let inputFormStackView: UIStackView = {
+    let stackView = UIStackView()
+    stackView.distribution = .fillProportionally
+    stackView.alignment = .fill
+    stackView.axis = .vertical
+    stackView.spacing = 32
+    return stackView
+  }()
+  
+  private let cardView: BusinessCardView = {
+    let cardView = BusinessCardView(profile: .init())
     return cardView
   }()
   
-  private let nameTextField: InsetTextField = {
-    let inset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-    let textField = InsetTextField(padding: inset)
-    textField.font = .pretendardFont(to: .B3M)
-    textField.attributedPlaceholder = NSAttributedString(string: "이름 (필수)", attributes: [.foregroundColor: UIColor.disable])
-    textField.layer.borderColor = UIColor.disable.cgColor
-    textField.layer.borderWidth = 1
-    textField.layer.cornerRadius = 4
-    return textField
-  }()
+  private let nameTextField = SignUpTextField(to: "이름", with: "이름을 입력해주세요.")
+  private let phoneTextField = SignUpTextField(to: "휴대폰 번호")
+  private let emailTextField = SignUpTextField(to: "이메일")
+  private let positionTextField = SignUpTextField(to: "직급")
   
   weak var delegate: SettingProfileDelegate?
   
@@ -94,7 +97,9 @@ private extension SettingProfileViewController {
   func configureHierarchy() {
     [titleLabel, nextFlowButton, profileInputScrollView].forEach(view.addSubview)
     [scrollContentView].forEach(profileInputScrollView.addSubview)
-    [cardView, nameTextField].forEach(scrollContentView.addSubview)
+    [cardView, inputFormStackView].forEach(scrollContentView.addSubview)
+    [nameTextField, phoneTextField, emailTextField, positionTextField]
+      .forEach(inputFormStackView.addArrangedSubview)
   }
   
   func makeConstraints() {
@@ -112,8 +117,8 @@ private extension SettingProfileViewController {
     
     profileInputScrollView.attach {
       $0.top(equalTo: titleLabel.bottomAnchor)
-      $0.leading(equalTo: view.leadingAnchor)
-      $0.trailing(equalTo: view.trailingAnchor)
+      $0.leading(equalTo: titleLabel.leadingAnchor)
+      $0.trailing(equalTo: titleLabel.trailingAnchor)
       $0.bottom(equalTo: nextFlowButton.topAnchor)
     }
     
@@ -132,10 +137,11 @@ private extension SettingProfileViewController {
       $0.height(equalTo: scrollContentView.widthAnchor, multi: 0.5)
     }
     
-    nameTextField.attach {
-      $0.top(equalTo: cardView.bottomAnchor, padding: 16)
-      $0.leading(equalTo: scrollContentView.leadingAnchor, padding: 20)
-      $0.trailing(equalTo: scrollContentView.trailingAnchor, padding: 20)
+    inputFormStackView.attach {
+      $0.top(equalTo: cardView.bottomAnchor, padding: 32)
+      $0.leading(equalTo: scrollContentView.leadingAnchor, padding: 4)
+      $0.trailing(equalTo: scrollContentView.trailingAnchor, padding: 4)
+      $0.bottom(equalTo: scrollContentView.bottomAnchor, padding: 4)
     }
   }
 }
@@ -151,6 +157,7 @@ struct SettingProfileViewController_Previews: PreviewProvider {
       let navigationController = UINavigationController(rootViewController: controller)
       return navigationController
     }
+    .ignoresSafeArea()
   }
 }
 #endif
