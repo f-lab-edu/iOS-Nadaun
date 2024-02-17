@@ -11,6 +11,17 @@ enum TextFormType: Int {
   case phone
   case email
   case position
+  
+  var errorDescription: String {
+    switch self {
+      case .name, .position:
+        return ""
+      case .phone:
+        return "올바른 번호를 입력해주세요."
+      case .email:
+        return "올바른 이메일을 입력해주세요."
+    }
+  }
 }
 
 class SignUpTextField: UITextField {
@@ -59,16 +70,16 @@ class SignUpTextField: UITextField {
 
 // MARK: - Update UI Methods
 extension SignUpTextField {
-  func updateErrorMessage(to errorDescription: String, with color: UIColor? = .redError) {
-    self.explanationLabel.text = errorDescription
-    self.explanationLabel.textColor = color
-    self.layer.borderColor = color?.cgColor
-  }
-  
-  func updateSuccessMessage(to successDescription: String? = nil, with color: UIColor? = .accent) {
-    self.explanationLabel.text = successDescription
-    self.explanationLabel.textColor = .green
-    self.layer.borderColor = color?.cgColor
+  func updateExplanationLabel(isError: Bool, to formType: TextFormType) {
+    if isError {
+      explanationLabel.text = formType.errorDescription
+      explanationLabel.textColor = .redError
+      layer.borderColor = UIColor.redError.cgColor
+      return
+    }
+    
+    explanationLabel.text = nil
+    layer.borderColor = UIColor.accent.cgColor
   }
 }
 

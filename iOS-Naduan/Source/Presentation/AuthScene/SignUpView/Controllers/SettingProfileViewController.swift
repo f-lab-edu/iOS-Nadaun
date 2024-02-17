@@ -35,9 +35,9 @@ final class SettingProfileViewController: UIViewController {
   
   private let cardView: BusinessCardView = BusinessCardView()
   private let nameTextField = SignUpTextField(type: .name, to: "이름", with: "이름을 입력해주세요.")
-  private let phoneTextField = SignUpTextField(type: .phone, to: "휴대폰 번호")
-  private let emailTextField = SignUpTextField(type: .email, to: "이메일")
-  private let positionTextField = SignUpTextField(type: .position, to: "직급")
+  private let phoneTextField = SignUpTextField(type: .phone, to: "휴대폰 번호", with: "휴대폰 번호를 입력해주세요.")
+  private let emailTextField = SignUpTextField(type: .email, to: "이메일", with: "이메일을 입력해주세요.")
+  private let positionTextField = SignUpTextField(type: .position, to: "직급", with: "직급을 입력해주세요.")
   
   weak var delegate: SettingProfileDelegate?
   private var cardWidthConstraint: NSLayoutConstraint?
@@ -158,12 +158,7 @@ private extension SettingProfileViewController {
     guard let name = name else { return }
     
     nameTextField.text = name
-    
-    if name.isEmpty == true {
-      nameTextField.updateErrorMessage(to: "이름을 입력해주세요.")
-      return
-    }
-    nameTextField.updateSuccessMessage()
+    nameTextField.updateExplanationLabel(isError: name.isEmpty, to: .name)
   }
   
   func updatePhoneNumber(_ phoneNumber: String?) {
@@ -171,12 +166,8 @@ private extension SettingProfileViewController {
     
     phoneTextField.text = phoneNumber
     
-    if verifyPhoneNumberFormat(with: phoneNumber) == false {
-      phoneTextField.updateErrorMessage(to: "올바른 번호를 입력해주세요.")
-      return
-    }
-    
-    phoneTextField.updateSuccessMessage()
+    let isError = isNotVerifyPhoneNumberFormat(with: phoneNumber)
+    phoneTextField.updateExplanationLabel(isError: isError, to: .phone)
   }
   
   func updateEmail(_ email: String?) {
@@ -184,22 +175,18 @@ private extension SettingProfileViewController {
     
     emailTextField.text = email
     
-    if verifyEmailFormat(with: email) == false {
-      emailTextField.updateErrorMessage(to: "올바른 이메일을 입력해주세요.")
-      return
-    }
-    
-    emailTextField.updateSuccessMessage()
+    let isError = isNotVerifyEmailFormat(with: email)
+    emailTextField.updateExplanationLabel(isError: isError, to: .email)
   }
   
-  private func verifyEmailFormat(with email: String) -> Bool {
+  private func isNotVerifyEmailFormat(with email: String) -> Bool {
     let regex = "^([a-zA-Z0-9._-])+@[a-zA-Z0-9.-]+.[a-zA-Z]{3,20}$"
-    return email.range(of: regex, options: .regularExpression) != nil
+    return email.range(of: regex, options: .regularExpression) == nil
   }
   
-  private func verifyPhoneNumberFormat(with number: String) -> Bool {
+  private func isNotVerifyPhoneNumberFormat(with number: String) -> Bool {
     let regex = "^01[0-1, 7]-[0-9]{3,4}-[0-9]{3,4}"
-    return number.range(of: regex, options: .regularExpression) != nil
+    return number.range(of: regex, options: .regularExpression) == nil
   }
 }
 
