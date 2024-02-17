@@ -60,7 +60,7 @@ final class SettingProfileViewController: UIViewController {
     super.viewDidLoad()
     
     cardWidthConstraint = cardView.width(equalTo: titleLabel.widthAnchor, multi: 0.8)
-    cardHideWidthConstraint = cardView.width(equalTo: titleLabel.widthAnchor, multi: 0.4)
+    cardHideWidthConstraint = cardView.width(equalTo: titleLabel.widthAnchor, multi: 0.6)
     
     configureUI()
     
@@ -70,11 +70,22 @@ final class SettingProfileViewController: UIViewController {
 
 extension SettingProfileViewController: UITextFieldDelegate {
   func textFieldDidEndEditing(_ textField: UITextField) {
+    updateProfileInCardView()
     textField.endEditing(true)
   }
   
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-    textField.endEditing(true)
+    updateProfileInCardView()
+    return textField.endEditing(true)
+  }
+  
+  private func updateProfileInCardView() {
+    guard let name = nameTextField.text,
+          let phone = phoneTextField.text,
+          let email = emailTextField.text,
+          let position = positionTextField.text else { return }
+    
+    cardView.updateProfile(name: name, phone: phone, email: email, position: position)
   }
   
   private func bindTextFieldItem(with textField: UITextField) {
@@ -147,7 +158,6 @@ private extension SettingProfileViewController {
     guard let name = name else { return }
     
     nameTextField.text = name
-    cardView.updateProfile(name: name)
     
     if name.isEmpty == true {
       nameTextField.updateErrorMessage(to: "이름을 입력해주세요.")
@@ -160,7 +170,6 @@ private extension SettingProfileViewController {
     guard let phoneNumber = phoneNumber else { return }
     
     phoneTextField.text = phoneNumber
-    cardView.updateProfile(phone: phoneNumber)
     
     if verifyPhoneNumberFormat(with: phoneNumber) == false {
       phoneTextField.updateErrorMessage(to: "올바른 번호를 입력해주세요.")
@@ -174,7 +183,6 @@ private extension SettingProfileViewController {
     guard let email = email else { return }
     
     emailTextField.text = email
-    cardView.updateProfile(email: email)
     
     if verifyEmailFormat(with: email) == false {
       emailTextField.updateErrorMessage(to: "올바른 이메일을 입력해주세요.")
@@ -208,16 +216,13 @@ private extension SettingProfileViewController {
       view.addConstraint(cardWidthConstraint)
     }
     
-    UIView.animate(withDuration: 1) { [weak self] in
-      if isHidden {
-        self?.cardView.hide()
-      } else {
-        self?.cardView.show()
+    UIView.animate(
+      withDuration: 1,
+      animations: { self.view.layoutIfNeeded() },
+      completion: { _ in
+        isHidden ? self.cardView.hide() : self.cardView.show()
       }
-      
-      self?.cardView.layoutIfNeeded()
-      self?.view.layoutIfNeeded()
-    }
+    )
   }
 }
 
