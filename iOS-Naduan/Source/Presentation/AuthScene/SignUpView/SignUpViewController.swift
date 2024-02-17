@@ -6,6 +6,8 @@
 
 import UIKit
 
+import FirebaseAuth
+
 final class SignUpViewController: UITabBarController {
   // MARK: - Child Flow Item
   enum SignUpFlow: CaseIterable {
