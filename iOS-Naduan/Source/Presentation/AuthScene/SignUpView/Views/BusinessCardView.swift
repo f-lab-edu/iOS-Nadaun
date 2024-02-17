@@ -62,11 +62,7 @@ class BusinessCardView: UIView {
     return label
   }()
   
-  init(profile: UserProfile) {
-    self.nameLabel.setTextWithLineHeight(text: profile.nickName, lineHeight: 22)
-    self.positionLabel.setTextWithLineHeight(text: profile.position, lineHeight: 14)
-    self.phoneNumberLabel.setTextWithLineHeight(text: profile.phoneNumber, lineHeight: 10)
-    self.emailLabel.setTextWithLineHeight(text: profile.email, lineHeight: 10)
+  init() {
     super.init(frame: .zero)
   }
   
@@ -109,6 +105,29 @@ class BusinessCardView: UIView {
     
     layer.applyShadow(color: UIColor.black, alpha: 0.5, x: 2, y: 0, blur: 20)
   }
+  
+  func updateProfile(
+    name: String? = nil,
+    phone: String? = nil,
+    email: String? = nil,
+    position: String? = nil
+  ) {
+    if let name = name {
+      self.nameLabel.setTextWithLineHeight(text: name, lineHeight: 22)
+    }
+    
+    if let phone = phone {
+      self.phoneNumberLabel.setTextWithLineHeight(text: phone, lineHeight: 10)
+    }
+    
+    if let email = email {
+      self.emailLabel.setTextWithLineHeight(text: email, lineHeight: 10)
+    }
+    
+    if let position = position {
+      self.positionLabel.setTextWithLineHeight(text: position, lineHeight: 14)
+    }
+  }
 }
 
 #if DEBUG && canImport(SwiftUI)
@@ -116,10 +135,9 @@ class BusinessCardView: UIView {
 import SwiftUI
 
 struct CardView_Previews: PreviewProvider {
-  static let profile = UserProfile(nickName: "이경민")
   static var previews: some View {
     UIViewPreview {
-      let view = BusinessCardView(profile: profile)
+      let view = BusinessCardView()
       view.layer.applyShadow(color: .black, alpha: 0.2, x: -2, y: 2, blur: 30, spread: .zero)
       return view
     }
