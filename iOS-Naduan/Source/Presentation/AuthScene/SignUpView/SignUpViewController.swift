@@ -14,6 +14,17 @@ final class SignUpViewController: UITabBarController {
     case generateBasicCard
   }
   
+  private let user: FirebaseAuth.User
+  
+  init(user: FirebaseAuth.User) {
+    self.user = user
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
   // MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -57,7 +68,10 @@ private extension SignUpViewController {
         return controller
         
       case .settingProfile:
-        let controller = SettingProfileViewController()
+        let repository = UserRepository(user: user, store: .firestore())
+        let viewModel = SettingProfileViewModel(userRepository: repository, userProfile: .init())
+        
+        let controller = SettingProfileViewController(viewModel: viewModel)
         controller.delegate = self
         return controller
         
