@@ -11,7 +11,6 @@ protocol SettingProfileDelegate: AnyObject {
 }
 
 final class SettingProfileViewController: UIViewController {
-<<<<<<< HEAD
   // MARK: - View Properties
   private let titleLabel = SignUpTitleLabel()
   private let nextFlowButton = SignUpNextButton(title: "다음")

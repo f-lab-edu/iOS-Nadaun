@@ -101,11 +101,7 @@ extension LoginViewController: AuthControllerDelegate {
 private extension LoginViewController {
   func setBinding() {
     viewModel.didNotRegister = { [weak self] user in
-<<<<<<< HEAD
       let controller = SignUpViewController(user: user)
-=======
-      let controller = SignUpViewController()
->>>>>>> master
       let navigationController = UINavigationController(rootViewController: controller)
       navigationController.modalPresentationStyle = .fullScreen
       self?.present(navigationController, animated: true)
