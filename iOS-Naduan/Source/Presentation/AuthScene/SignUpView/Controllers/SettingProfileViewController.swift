@@ -13,7 +13,16 @@ protocol SettingProfileDelegate: AnyObject {
 final class SettingProfileViewController: UIViewController {
   // MARK: - View Properties
   private let titleLabel = SignUpTitleLabel()
-  private let nextFlowButton = SignUpNextButton(title: "다음")
+  private let nextFlowButton = SignUpNextButton(title: "다음") { button in
+    switch button.state {
+      case .disabled:
+        button.configuration?.background.backgroundColor = .disable
+      case .normal:
+        button.configuration?.background.backgroundColor = .accent
+      default:
+        return
+    }
+  }
   
   private let profileInputScrollView: UIScrollView = {
     let scrollView = UIScrollView()
@@ -198,6 +207,13 @@ private extension SettingProfileViewController {
         isHidden ? self.cardView.hide() : self.cardView.show()
       }
     )
+  }
+}
+
+// MARK: - View Action Method
+private extension SettingProfileViewController {
+  func attachActions() {
+    
   }
 }
 
