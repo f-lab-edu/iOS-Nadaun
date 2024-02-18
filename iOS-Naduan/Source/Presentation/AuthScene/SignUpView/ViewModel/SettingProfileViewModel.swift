@@ -13,31 +13,39 @@ enum SettingProfileAction {
 }
 
 class SettingProfileViewModel {
+  typealias FormatCheckFormat = (isNameFormat: Bool, isPhoneFormat: Bool, isEmailFormat: Bool)
   private let userRepository: UserRepository
   private var name: String? {
     didSet {
-      isVerifyNameFormat?(name != nil && (name?.isEmpty == false))
       didChangeName?(name)
+      verifyNameFormat(name)
     }
   }
   
   private var phoneNumber: String? {
     didSet {
       didChangePhoneNumber?(phoneNumber)
-      isVerifyPhoneFormat?(verifyPhoneFormat(phoneNumber))
+      verifyPhoneFormat(phoneNumber)
     }
   }
   
   private var email: String? {
     didSet {
       didChangeEmail?(email)
-      isVerifyEmailFormat?(verifyEmailFormat(email))
+      verifyEmailFormat(email)
     }
   }
   
   private var position: String? {
     didSet {
       didChangePosition?(position)
+    }
+  }
+  
+  private var checkedAllFormat: FormatCheckFormat {
+    didSet {
+      let result = (checkedAllFormat.isNameFormat && checkedAllFormat.isPhoneFormat && checkedAllFormat.isEmailFormat)
+      isEnableNextButton?(result)
     }
   }
   
@@ -50,10 +58,12 @@ class SettingProfileViewModel {
   var isVerifyPhoneFormat: ((Bool) -> Void)?
   var isVerifyEmailFormat: ((Bool) -> Void)?
   
+  var isEnableNextButton: ((Bool) -> Void)?
   var successUpdateProfile: ((UserProfile) -> Void)?
   
   init(userRepository: UserRepository) {
     self.userRepository = userRepository
+    self.checkedAllFormat = (false, false, false)
   }
   
   func bind(to action: SettingProfileAction) {
@@ -104,17 +114,33 @@ private extension SettingProfileViewModel {
     return number
   }
   
-  func verifyEmailFormat(_ text: String?) -> Bool {
-    guard let text = text else { return false }
-    
-    let regex = "^([a-zA-Z0-9._-])+@[a-zA-Z0-9.-]+.[a-zA-Z]{3,20}$"
-    return text.range(of: regex, options: .regularExpression) != nil
+  func verifyNameFormat(_ text: String?) {
+    let result = name != nil && (name?.isEmpty == false)
+    checkedAllFormat.isNameFormat = result
+    isVerifyNameFormat?(result)
   }
   
-  func verifyPhoneFormat(_ text: String?) -> Bool {
-    guard let text = text else { return false }
+  func verifyPhoneFormat(_ text: String?) {
+    var result: Bool = false
     
-    let regex = "^01[0-1, 7]-[0-9]{3,4}-[0-9]{3,4}"
-    return text.range(of: regex, options: .regularExpression) != nil
+    if let text = text {
+      let regex = "^01[0-1, 7]-[0-9]{3,4}-[0-9]{3,4}"
+      result = (text.range(of: regex, options: .regularExpression) != nil)
+    }
+    
+    checkedAllFormat.isPhoneFormat = result
+    isVerifyPhoneFormat?(result)
+  }
+  
+  func verifyEmailFormat(_ text: String?) {
+    var result: Bool = false
+    
+    if let text = text {
+      let regex = "^([a-zA-Z0-9._-])+@[a-zA-Z0-9.-]+.[a-zA-Z]{3,20}$"
+      result = (text.range(of: regex, options: .regularExpression) != nil)
+    }
+    
+    checkedAllFormat.isEmailFormat = result
+    isVerifyEmailFormat?(result)
   }
 }

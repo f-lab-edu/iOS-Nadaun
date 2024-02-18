@@ -138,6 +138,10 @@ private extension SettingProfileViewController {
     viewModel.isVerifyEmailFormat = { [weak self] isFormat in
       self?.emailTextField.updateExplanationLabel(isFormat: isFormat)
     }
+    
+    viewModel.isEnableNextButton = { [weak self] isAllCheck in
+      self?.nextFlowButton.isEnabled = (isAllCheck == false)
+    }
   }
   
   @objc private func willShowKeyboard(_ notification: Notification) {
@@ -200,6 +204,9 @@ private extension SettingProfileViewController {
 // MARK: - Configure UI Methods
 private extension SettingProfileViewController {
   func configureUI() {
+    view.backgroundColor = .systemBackground
+    nextFlowButton.isEnabled = true
+    
     configureHierarchy()
     makeConstraints()
   }
