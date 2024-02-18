@@ -9,7 +9,7 @@ enum SettingProfileAction {
   case editPhone(String)
   case editEmail(String)
   case editPosition(String)
-  case updateProfile(profile: UserProfile)
+  case updateProfile
 }
 
 class SettingProfileViewModel {
@@ -85,12 +85,27 @@ class SettingProfileViewModel {
         self.position = postion
         return
         
-      case .updateProfile(let profile):
+      case .updateProfile:
+        uploadProfile()
         return
     }
   }
 }
 
+private extension SettingProfileViewModel {
+  func uploadProfile() {
+    userRepository.updateUserProfile { result in
+      switch result {
+        case .success:
+          return
+        case .failure:
+          return
+      }
+    }
+  }
+}
+
+// MARK: - Profile Formatting Method
 private extension SettingProfileViewModel {
   func updatePhoneNumber(to number: String) -> String {
     var number = number

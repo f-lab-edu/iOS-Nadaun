@@ -72,6 +72,7 @@ final class SettingProfileViewController: UIViewController {
     cardHideWidthConstraint = cardView.width(equalTo: titleLabel.widthAnchor, multi: 0.6)
     
     configureUI()
+    attachButtonActions()
     
     binding()
   }
@@ -212,8 +213,11 @@ private extension SettingProfileViewController {
 
 // MARK: - View Action Method
 private extension SettingProfileViewController {
-  func attachActions() {
-    
+  func attachButtonActions() {
+    let updateAction = UIAction { [weak self] _ in
+      self?.viewModel.bind(to: .updateProfile)
+    }
+    nextFlowButton.addAction(updateAction, for: .touchUpInside)
   }
 }
 
