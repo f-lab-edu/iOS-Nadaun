@@ -22,6 +22,17 @@ enum TextFormType: Int {
         return "올바른 이메일을 입력해주세요."
     }
   }
+  
+  var keyBoardType: UIKeyboardType {
+    switch self {
+      case .name, .position:
+        return .default
+      case .phone:
+        return .numberPad
+      case .email:
+        return .emailAddress
+    }
+  }
 }
 
 class SignUpTextField: UITextField {
@@ -37,7 +48,7 @@ class SignUpTextField: UITextField {
   
   // MARK: - Business Logic Properties
   private var errorMessage: String?
-  var isError: Bool = true
+  private let formType: TextFormType
   
   // MARK: - Initializer
   convenience init(
@@ -45,12 +56,21 @@ class SignUpTextField: UITextField {
     to placeholder: String? = nil,
     with errorMessage: String? = nil
   ) {
-    self.init()
+    self.init(formType: type)
     self.tag = type.rawValue
     self.placeholder = placeholder
     self.errorMessage = errorMessage
     
     configureInitSetting()
+  }
+  
+  init(formType: TextFormType) {
+    self.formType = formType
+    super.init(frame: .zero)
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
   
   // MARK: - Life Cycle Methods
@@ -71,7 +91,7 @@ class SignUpTextField: UITextField {
 
 // MARK: - Update UI Methods
 extension SignUpTextField {
-  func updateExplanationLabel(isFormat: Bool, to formType: TextFormType) {
+  func updateExplanationLabel(isFormat: Bool) {
     if isFormat == false {
       explanationLabel.text = formType.errorDescription
       explanationLabel.textColor = .redError
@@ -87,6 +107,7 @@ extension SignUpTextField {
 // MARK: - Configure UI Methods
 private extension SignUpTextField {
   func configureInitSetting() {
+    keyboardType = formType.keyBoardType
     borderStyle = .none
     font = .pretendardFont(to: .C2R)
     textColor = .accent

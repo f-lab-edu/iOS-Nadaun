@@ -128,15 +128,15 @@ private extension SettingProfileViewController {
     }
     
     viewModel.isVerifyNameFormat = { [weak self] isFormat in
-      self?.nameTextField.updateExplanationLabel(isFormat: isFormat, to: .name)
+      self?.nameTextField.updateExplanationLabel(isFormat: isFormat)
     }
     
     viewModel.isVerifyPhoneFormat = { [weak self] isFormat in
-      self?.phoneTextField.updateExplanationLabel(isFormat: isFormat, to: .phone)
+      self?.phoneTextField.updateExplanationLabel(isFormat: isFormat)
     }
     
     viewModel.isVerifyEmailFormat = { [weak self] isFormat in
-      self?.emailTextField.updateExplanationLabel(isFormat: isFormat, to: .email)
+      self?.emailTextField.updateExplanationLabel(isFormat: isFormat)
     }
   }
   
