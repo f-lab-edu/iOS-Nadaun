@@ -94,7 +94,8 @@ class SettingProfileViewModel {
 
 private extension SettingProfileViewModel {
   func uploadProfile() {
-    userRepository.updateUserProfile { result in
+    let userProfile = UserProfile(nickName: name, email: email, phoneNumber: phoneNumber, position: position)
+    userRepository.updateUserProfile(to: userProfile) { result in
       switch result {
         case .success:
           return

@@ -150,7 +150,7 @@ private extension SettingProfileViewController {
     }
     
     viewModel.isEnableNextButton = { [weak self] isAllCheck in
-      self?.nextFlowButton.isEnabled = (isAllCheck == false)
+      self?.nextFlowButton.isEnabled = isAllCheck
     }
   }
   
