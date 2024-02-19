@@ -42,8 +42,8 @@ final class SettingProfileViewController: UIViewController {
     return stackView
   }()
   
-  private let nameTextField = SignUpTextField(type: .name, to: "이름 (필수)")
-  private let emailTextField = SignUpTextField(type: .email, to: "이메일 (필수)")
+  private let nameTextField = SignUpTextField(type: .name, to: TextConstants.nameTitle)
+  private let emailTextField = SignUpTextField(type: .email, to: TextConstants.emailTitle)
   
   weak var delegate: SettingProfileDelegate?
   private let viewModel: SettingProfileViewModel
@@ -116,21 +116,32 @@ private extension SettingProfileViewController {
     
     viewModel.updateProfileSuccess = { [weak self] userProfile in
       guard let self = self else { return }
-      delegate?.settingProfile(to: self, didSuccessUpdate: userProfile)
+      
+      DispatchQueue.main.async {
+        self.delegate?.settingProfile(to: self, didSuccessUpdate: userProfile)
+      }
     }
     
     viewModel.updateProfileFailure = { [weak self] _ in
-      self?.presentErrorAlert(for: "프로필 설정 중 예기치 못한 에러가 발생하였습니다. 잠시후 다시 시도해주세요.")
+      DispatchQueue.main.async {
+        self?.presentErrorAlert(for: TextConstants.errorMessage)
+      }
     }
   }
   
   @objc private func willShowKeyboard(_ notification: Notification) {
+    let informationKey = UIResponder.keyboardFrameEndUserInfoKey
     guard let userInformation = notification.userInfo,
-          let keyBoardFrame = userInformation[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+          let keyBoardFrame = userInformation[informationKey] as? CGRect else {
       return
     }
     
-    let contentInset = UIEdgeInsets(top: .zero, left: .zero, bottom: keyBoardFrame.size.height, right: .zero)
+    let contentInset = UIEdgeInsets(
+      top: .zero,
+      left: .zero,
+      bottom: keyBoardFrame.size.height,
+      right: .zero
+    )
     profileInputScrollView.contentInset = contentInset
   }
   
@@ -215,5 +226,13 @@ private extension SettingProfileViewController {
       $0.bottom(equalTo: profileInputScrollView.contentLayoutGuide.bottomAnchor)
       $0.width(equalTo: profileInputScrollView.frameLayoutGuide.widthAnchor)
     }
+  }
+}
+
+private extension SettingProfileViewController {
+  enum TextConstants {
+    static let nameTitle: String = "이름 (필수)"
+    static let emailTitle: String = "이메일 (필수)"
+    static let errorMessage: String = "설정 중 오류가 발생했습니다. 잠시후 다시 시도해주세요."
   }
 }
