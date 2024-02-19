@@ -6,25 +6,25 @@
 
 import UIKit
 
-enum TextFormType: Int {
-  case name
-  case phone
-  case email
-  case position
-  
-  var keyBoardType: UIKeyboardType {
-    switch self {
-      case .name, .position:
-        return .default
-      case .phone:
-        return .numberPad
-      case .email:
-        return .emailAddress
+class SignUpTextField: UITextField {
+  enum SignUpFormType: Int {
+    case name
+    case phone
+    case email
+    case position
+    
+    var keyBoardType: UIKeyboardType {
+      switch self {
+        case .name, .position:
+          return .default
+        case .phone:
+          return .numberPad
+        case .email:
+          return .emailAddress
+      }
     }
   }
-}
-
-class SignUpTextField: UITextField {
+  
   // MARK: - View Properties
   private let titleLabel: UILabel = {
     let label = UILabel()
@@ -36,21 +36,19 @@ class SignUpTextField: UITextField {
   private let padding: UIEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
   
   // MARK: - Business Logic Properties
-  private let formType: TextFormType
+  private let formType: SignUpFormType
   
   // MARK: - Initializer
-  convenience init(
-    type: TextFormType,
-    to title: String? = nil
-  ) {
+  convenience init(type: SignUpFormType, to title: String? = nil) {
     self.init(formType: type)
-    self.tag = type.rawValue
-    self.titleLabel.text = title
+    
+    tag = type.rawValue
+    titleLabel.text = title
     
     configureInitSetting()
   }
   
-  init(formType: TextFormType) {
+  init(formType: SignUpFormType) {
     self.formType = formType
     super.init(frame: .zero)
   }
@@ -99,22 +97,3 @@ private extension SignUpTextField {
     setNeedsUpdateConstraints()
   }
 }
-
-#if DEBUG
-
-import SwiftUI
-
-struct SignUpTextField_Previews: PreviewProvider {
-  static var previews: some View {
-    UIViewPreview {
-      let view = SignUpTextField(
-        type: .name,
-        to: "이름"
-      )
-      return view
-    }
-    .frame(width: 300)
-  }
-}
-
-#endif

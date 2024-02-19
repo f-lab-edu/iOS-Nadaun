@@ -7,6 +7,4 @@
 struct UserProfile: Encodable {
   var nickName: String?
   var email: String?
-  var phoneNumber: String?
-  var position: String?
 }
