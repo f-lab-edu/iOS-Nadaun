@@ -70,7 +70,7 @@ private extension SignUpViewController {
         return controller
         
       case .settingProfile:
-        let repository = UserRepository(store: .firestore())
+        let repository = UserRepository(user: user, store: .firestore())
         let viewModel = SettingProfileViewModel(userRepository: repository)
         
         let controller = SettingProfileViewController(viewModel: viewModel)

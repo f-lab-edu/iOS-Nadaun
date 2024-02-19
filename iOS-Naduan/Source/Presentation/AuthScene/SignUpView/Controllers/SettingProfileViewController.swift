@@ -141,7 +141,7 @@ private extension SettingProfileViewController {
   @objc private func didChangeTextField(_ textField: UITextField) {
     guard let textField = textField as? SignUpTextField,
           let text = textField.text,
-          let fieldType = TextFormType(rawValue: textField.tag) else { return }
+          let fieldType = SignUpTextField.SignUpFormType(rawValue: textField.tag) else { return }
     
     switch fieldType {
       case .name:
@@ -217,19 +217,3 @@ private extension SettingProfileViewController {
     }
   }
 }
-
-#if DEBUG
-import SwiftUI
-import FirebaseAuth
-
-struct SettingProfile_Previews: PreviewProvider {
-  static var previews: some View {
-    UIViewControllerPreview {
-      let repositiory = UserRepository(store: .firestore())
-      let viewModel = SettingProfileViewModel(userRepository: repositiory)
-      let controller = SettingProfileViewController(viewModel: viewModel)
-      return controller
-    }
-  }
-}
-#endif

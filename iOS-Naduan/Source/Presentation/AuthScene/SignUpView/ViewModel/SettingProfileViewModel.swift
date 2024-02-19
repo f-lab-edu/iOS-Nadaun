@@ -4,15 +4,19 @@
 //
 //  Copyright (c) 2024 Minii All rights reserved.
 
+// MARK: - Setting Profile Action
 enum SettingProfileAction {
   case editName(String)
   case editEmail(String)
   case updateProfile
 }
 
+// MARK: - Setting Profile ViewModel
 class SettingProfileViewModel {
-  typealias FormatCheckFormat = (isNameFormat: Bool, isPhoneFormat: Bool, isEmailFormat: Bool)
+  // MARK: - Business Logic Properties
   private let userRepository: UserRepository
+  
+  // MARK: - Binding Properties
   private var name: String? {
     didSet {
       didChangeName?(name)
@@ -27,18 +31,23 @@ class SettingProfileViewModel {
     }
   }
   
+  // 사용자 정보 변경 속성
   var didChangeName: ((String?) -> Void)?
   var didChangeEmail: ((String?) -> Void)?
   
+  // 버튼 사용 가능성 속성
   var isEnableNextButton: ((Bool) -> Void)?
   
+  // 프로필 업데이트 결과 속성
   var updateProfileSuccess: ((UserProfile) -> Void)?
   var updateProfileFailure: ((Error) -> Void)?
   
+  // MARK: - Initializer
   init(userRepository: UserRepository) {
     self.userRepository = userRepository
   }
   
+  // MARK: - Binding Methods
   func bind(to action: SettingProfileAction) {
     switch action {
       case .editName(let name):
@@ -56,6 +65,7 @@ class SettingProfileViewModel {
   }
 }
 
+// MARK: - Upload Profile Methods
 private extension SettingProfileViewModel {
   func uploadProfile() {
     let userProfile = UserProfile(nickName: name, email: email)
