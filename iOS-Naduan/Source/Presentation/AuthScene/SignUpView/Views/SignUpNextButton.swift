@@ -9,6 +9,7 @@ import UIKit
 class SignUpNextButton: UIButton {
   convenience init(
     title: String,
+    isEnable: Bool = false,
     updateHandler: UIButton.ConfigurationUpdateHandler? = nil
   ) {
     var container = AttributeContainer()
@@ -21,6 +22,7 @@ class SignUpNextButton: UIButton {
     configuration.setTitle(to: title, with: container)
     self.init(configuration: configuration)
     
+    isEnabled = isEnable
     automaticallyUpdatesConfiguration = false
     configurationUpdateHandler = updateHandler
   }

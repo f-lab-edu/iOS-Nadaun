@@ -8,17 +8,16 @@ import FirebaseAuth
 import FirebaseFirestore
 
 class UserRepository {
-  private let user: User
   private let store: Firestore
   
-  init(user: User, store: Firestore) {
-    self.user = user
+  init(store: Firestore) {
+//    self.user = user
     self.store = store
   }
   
   func updateUserProfile(to profile: UserProfile, completion: @escaping (Result<Void, Error>) -> Void) {
     do {
-      try store.collection("User").document(user.uid)
+      try store.collection("User").document()
         .setData(from: profile)
       completion(.success(()))
     } catch let error {

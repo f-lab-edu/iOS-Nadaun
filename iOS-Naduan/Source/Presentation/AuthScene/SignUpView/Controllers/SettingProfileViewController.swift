@@ -31,32 +31,27 @@ final class SettingProfileViewController: UIViewController {
     return scrollView
   }()
   
-  private let scrollContentView = UIView()
-  
-  private let inputFormStackView: UIStackView = {
+  private let scrollContentView: UIStackView = {
     let stackView = UIStackView()
     stackView.distribution = .fillProportionally
     stackView.alignment = .fill
     stackView.axis = .vertical
     stackView.spacing = 32
+    stackView.isLayoutMarginsRelativeArrangement = true
+    stackView.layoutMargins = UIEdgeInsets(top: 32, left: .zero, bottom: 16, right: .zero)
     return stackView
   }()
   
-  private let cardView: BusinessCardView = BusinessCardView()
-  private let nameTextField = SignUpTextField(type: .name, to: "이름", with: "이름을 입력해주세요.")
-  private let phoneTextField = SignUpTextField(type: .phone, to: "휴대폰 번호", with: "휴대폰 번호를 입력해주세요.")
-  private let emailTextField = SignUpTextField(type: .email, to: "이메일", with: "이메일을 입력해주세요.")
-  private let positionTextField = SignUpTextField(type: .position, to: "직급", with: "직급을 입력해주세요.")
+  private let nameTextField = SignUpTextField(type: .name, to: "이름 (필수)")
+  private let emailTextField = SignUpTextField(type: .email, to: "이메일 (필수)")
   
   weak var delegate: SettingProfileDelegate?
-  private var cardWidthConstraint: NSLayoutConstraint?
-  private var cardHideWidthConstraint: NSLayoutConstraint?
   private let viewModel: SettingProfileViewModel
   
   // MARK: - Initializer
   init(viewModel: SettingProfileViewModel) {
     self.viewModel = viewModel
-    titleLabel.setTextWithLineHeight(text: "다운 이용을 위해\n기본 정보를 채워보세요.", lineHeight: 26)
+    titleLabel.setTextWithLineHeight(text: "다운에서 사용할\n회원님의 정보를 입력해주세요.", lineHeight: 26)
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -68,9 +63,6 @@ final class SettingProfileViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    cardWidthConstraint = cardView.width(equalTo: titleLabel.widthAnchor, multi: 0.8)
-    cardHideWidthConstraint = cardView.width(equalTo: titleLabel.widthAnchor, multi: 0.6)
-    
     configureUI()
     attachButtonActions()
     
@@ -80,22 +72,11 @@ final class SettingProfileViewController: UIViewController {
 
 extension SettingProfileViewController: UITextFieldDelegate {
   func textFieldDidEndEditing(_ textField: UITextField) {
-    updateProfileInCardView()
     textField.endEditing(true)
   }
   
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-    updateProfileInCardView()
     return textField.endEditing(true)
-  }
-  
-  private func updateProfileInCardView() {
-    guard let name = nameTextField.text,
-          let phone = phoneTextField.text,
-          let email = emailTextField.text,
-          let position = positionTextField.text else { return }
-    
-    cardView.updateProfile(name: name, phone: phone, email: email, position: position)
   }
 }
 
@@ -116,7 +97,7 @@ private extension SettingProfileViewController {
       object: nil
     )
     
-    [nameTextField, phoneTextField, emailTextField, positionTextField].forEach {
+    [nameTextField, emailTextField].forEach {
       $0.delegate = self
       $0.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
     }
@@ -125,28 +106,8 @@ private extension SettingProfileViewController {
       self?.nameTextField.text = name
     }
     
-    viewModel.didChangePhoneNumber = { [weak self] phoneNumber in
-      self?.phoneTextField.text = phoneNumber
-    }
-    
     viewModel.didChangeEmail = { [weak self] email in
       self?.emailTextField.text = email
-    }
-    
-    viewModel.didChangePosition = { [weak self] position in
-      self?.positionTextField.text = position
-    }
-    
-    viewModel.isVerifyNameFormat = { [weak self] isFormat in
-      self?.nameTextField.updateExplanationLabel(isFormat: isFormat)
-    }
-    
-    viewModel.isVerifyPhoneFormat = { [weak self] isFormat in
-      self?.phoneTextField.updateExplanationLabel(isFormat: isFormat)
-    }
-    
-    viewModel.isVerifyEmailFormat = { [weak self] isFormat in
-      self?.emailTextField.updateExplanationLabel(isFormat: isFormat)
     }
     
     viewModel.isEnableNextButton = { [weak self] isAllCheck in
@@ -171,12 +132,10 @@ private extension SettingProfileViewController {
     
     let contentInset = UIEdgeInsets(top: .zero, left: .zero, bottom: keyBoardFrame.size.height, right: .zero)
     profileInputScrollView.contentInset = contentInset
-    updateCardView(isHidden: true)
   }
   
   @objc private func willHideKeyboard(_ notification: Notification) {
     profileInputScrollView.contentInset = .zero
-    updateCardView(isHidden: false)
   }
   
   @objc private func didChangeTextField(_ textField: UITextField) {
@@ -187,36 +146,11 @@ private extension SettingProfileViewController {
     switch fieldType {
       case .name:
         viewModel.bind(to: .editName(text))
-      case .phone:
-        viewModel.bind(to: .editPhone(text))
       case .email:
         viewModel.bind(to: .editEmail(text))
-      case .position:
-        viewModel.bind(to: .editPosition(text))
+      default:
+        return
     }
-  }
-}
-
-// MARK: - Update Card View Methods
-private extension SettingProfileViewController {
-  func updateCardView(isHidden: Bool) {
-    guard let cardWidthConstraint = cardWidthConstraint, let cardHideWidthConstraint = cardHideWidthConstraint else { return }
-    
-    if isHidden {
-      view.removeConstraint(cardWidthConstraint)
-      view.addConstraint(cardHideWidthConstraint)
-    } else {
-      view.removeConstraint(cardHideWidthConstraint)
-      view.addConstraint(cardWidthConstraint)
-    }
-    
-    UIView.animate(
-      withDuration: 1,
-      animations: { self.view.layoutIfNeeded() },
-      completion: { _ in
-        isHidden ? self.cardView.hide() : self.cardView.show()
-      }
-    )
   }
 }
 
@@ -248,27 +182,17 @@ private extension SettingProfileViewController {
   }
   
   func configureHierarchy() {
-    [titleLabel,cardView, nextFlowButton, profileInputScrollView].forEach(view.addSubview)
+    [titleLabel, nextFlowButton, profileInputScrollView].forEach(view.addSubview)
     [scrollContentView].forEach(profileInputScrollView.addSubview)
-    [inputFormStackView].forEach(scrollContentView.addSubview)
-    [nameTextField, phoneTextField, emailTextField, positionTextField]
-      .forEach(inputFormStackView.addArrangedSubview)
+    [nameTextField, emailTextField]
+      .forEach(scrollContentView.addArrangedSubview)
   }
   
   func makeConstraints() {
-    guard let cardWidthConstraint = cardWidthConstraint else { return }
-    
     titleLabel.attach {
       $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 20)
       $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 20)
       $0.top(equalTo: view.safeAreaLayoutGuide.topAnchor)
-    }
-    
-    cardView.attach {
-      $0.top(equalTo: titleLabel.bottomAnchor, padding: 32)
-      $0.centerXAnchor.constraint(equalTo: titleLabel.centerXAnchor)
-      cardWidthConstraint
-      $0.height(equalTo: cardView.widthAnchor, multi: 0.6)
     }
     
     nextFlowButton.attach {
@@ -278,7 +202,7 @@ private extension SettingProfileViewController {
     }
     
     profileInputScrollView.attach {
-      $0.top(equalTo: cardView.bottomAnchor, padding: 32)
+      $0.top(equalTo: titleLabel.bottomAnchor, padding: 12)
       $0.leading(equalTo: titleLabel.leadingAnchor)
       $0.trailing(equalTo: titleLabel.trailingAnchor)
       $0.bottom(equalTo: nextFlowButton.topAnchor)
@@ -291,12 +215,21 @@ private extension SettingProfileViewController {
       $0.bottom(equalTo: profileInputScrollView.contentLayoutGuide.bottomAnchor)
       $0.width(equalTo: profileInputScrollView.frameLayoutGuide.widthAnchor)
     }
-    
-    inputFormStackView.attach {
-      $0.top(equalTo: scrollContentView.topAnchor, padding: 4)
-      $0.leading(equalTo: scrollContentView.leadingAnchor, padding: 4)
-      $0.trailing(equalTo: scrollContentView.trailingAnchor, padding: 4)
-      $0.bottom(equalTo: scrollContentView.bottomAnchor, padding: 4)
+  }
+}
+
+#if DEBUG
+import SwiftUI
+import FirebaseAuth
+
+struct SettingProfile_Previews: PreviewProvider {
+  static var previews: some View {
+    UIViewControllerPreview {
+      let repositiory = UserRepository(store: .firestore())
+      let viewModel = SettingProfileViewModel(userRepository: repositiory)
+      let controller = SettingProfileViewController(viewModel: viewModel)
+      return controller
     }
   }
 }
+#endif

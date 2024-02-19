@@ -12,17 +12,6 @@ enum TextFormType: Int {
   case email
   case position
   
-  var errorDescription: String {
-    switch self {
-      case .name, .position:
-        return ""
-      case .phone:
-        return "올바른 번호를 입력해주세요."
-      case .email:
-        return "올바른 이메일을 입력해주세요."
-    }
-  }
-  
   var keyBoardType: UIKeyboardType {
     switch self {
       case .name, .position:
@@ -37,29 +26,26 @@ enum TextFormType: Int {
 
 class SignUpTextField: UITextField {
   // MARK: - View Properties
-  private let explanationLabel: UILabel = {
+  private let titleLabel: UILabel = {
     let label = UILabel()
-    label.font = .pretendardFont(weight: .regular, size: 8)
-    label.textColor = .disable
+    label.font = .pretendardFont(to: .B3M)
+    label.textColor = .title
     return label
   }()
   
   private let padding: UIEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
   
   // MARK: - Business Logic Properties
-  private var errorMessage: String?
   private let formType: TextFormType
   
   // MARK: - Initializer
   convenience init(
     type: TextFormType,
-    to placeholder: String? = nil,
-    with errorMessage: String? = nil
+    to title: String? = nil
   ) {
     self.init(formType: type)
     self.tag = type.rawValue
-    self.placeholder = placeholder
-    self.errorMessage = errorMessage
+    self.titleLabel.text = title
     
     configureInitSetting()
   }
@@ -89,41 +75,25 @@ class SignUpTextField: UITextField {
   }
 }
 
-// MARK: - Update UI Methods
-extension SignUpTextField {
-  func updateExplanationLabel(isFormat: Bool) {
-    if isFormat == false {
-      explanationLabel.text = formType.errorDescription
-      explanationLabel.textColor = .redError
-      layer.borderColor = UIColor.redError.cgColor
-      return
-    }
-    
-    explanationLabel.text = nil
-    layer.borderColor = UIColor.accent.cgColor
-  }
-}
-
 // MARK: - Configure UI Methods
 private extension SignUpTextField {
   func configureInitSetting() {
     keyboardType = formType.keyBoardType
     borderStyle = .none
-    font = .pretendardFont(to: .C2R)
-    textColor = .accent
-    layer.borderColor = UIColor.disable.cgColor
+    font = .pretendardFont(to: .B4R)
+    textColor = .title
+    layer.borderColor = UIColor.accent.cgColor
     layer.borderWidth = 1
-    explanationLabel.text = errorMessage
+    layer.cornerRadius = 4
   }
   
   func configureUI() {
-    addSubview(explanationLabel)
+    addSubview(titleLabel)
     
-    explanationLabel.attach {
-      $0.top(equalTo: bottomAnchor, padding: 4)
+    titleLabel.attach {
+      $0.bottom(equalTo: topAnchor, padding: 8)
       $0.leading(equalTo: leadingAnchor)
       $0.trailing(equalTo: trailingAnchor)
-      $0.height(equalTo: heightAnchor, multi: 0.3)
     }
     
     setNeedsUpdateConstraints()
@@ -139,12 +109,11 @@ struct SignUpTextField_Previews: PreviewProvider {
     UIViewPreview {
       let view = SignUpTextField(
         type: .name,
-        to: "이름",
-        with: "잘못된 입력입니다."
+        to: "이름"
       )
       return view
     }
-    .frame(maxWidth: .infinity)
+    .frame(width: 300)
   }
 }
 
