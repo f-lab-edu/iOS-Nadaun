@@ -6,10 +6,12 @@
 
 import UIKit
 
+// MARK: - Setting Profile Delegate
 protocol SettingProfileDelegate: AnyObject {
   func settingProfile(to controller: UIViewController, didSuccessUpdate profile: UserProfile)
 }
 
+// MARK: - Setting Profile View Controller
 final class SettingProfileViewController: UIViewController {
   // MARK: - View Properties
   private let titleLabel = SignUpTitleLabel()
@@ -45,6 +47,7 @@ final class SettingProfileViewController: UIViewController {
   private let nameTextField = SignUpTextField(type: .name, to: TextConstants.nameTitle)
   private let emailTextField = SignUpTextField(type: .email, to: TextConstants.emailTitle)
   
+  // MARK: - Business Logic Properties
   weak var delegate: SettingProfileDelegate?
   private let viewModel: SettingProfileViewModel
   
@@ -70,13 +73,16 @@ final class SettingProfileViewController: UIViewController {
   }
 }
 
+// MARK: - UITextField Delegate Method
 extension SettingProfileViewController: UITextFieldDelegate {
-  func textFieldDidEndEditing(_ textField: UITextField) {
-    textField.endEditing(true)
-  }
-  
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-    return textField.endEditing(true)
+    if textField == nameTextField {
+      emailTextField.becomeFirstResponder()
+    } else {
+      textField.endEditing(true)
+    }
+    
+    return true
   }
 }
 

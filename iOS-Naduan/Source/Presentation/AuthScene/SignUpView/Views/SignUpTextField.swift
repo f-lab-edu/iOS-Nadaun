@@ -23,6 +23,16 @@ class SignUpTextField: UITextField {
           return .emailAddress
       }
     }
+    
+    var returnType: UIReturnKeyType {
+      switch self {
+        case .name:
+          return .next
+        case .email:
+          return .done
+        default: return .default
+      }
+    }
   }
   
   // MARK: - View Properties
@@ -77,6 +87,7 @@ class SignUpTextField: UITextField {
 private extension SignUpTextField {
   func configureInitSetting() {
     keyboardType = formType.keyBoardType
+    returnKeyType = formType.returnType
     borderStyle = .none
     font = .pretendardFont(to: .B4R)
     textColor = .title
