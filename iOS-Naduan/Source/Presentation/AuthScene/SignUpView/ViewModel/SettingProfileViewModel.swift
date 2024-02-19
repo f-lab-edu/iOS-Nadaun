@@ -98,8 +98,10 @@ private extension SettingProfileViewModel {
     userRepository.updateUserProfile(to: userProfile) { result in
       switch result {
         case .success:
+          print("UPLOAD PROFILE SUCCESS")
           return
         case .failure:
+          print("UPLOAD PROFILE FAILURE")
           return
       }
     }
