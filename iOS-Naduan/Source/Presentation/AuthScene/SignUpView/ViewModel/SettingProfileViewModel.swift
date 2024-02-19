@@ -59,7 +59,8 @@ class SettingProfileViewModel {
   var isVerifyEmailFormat: ((Bool) -> Void)?
   
   var isEnableNextButton: ((Bool) -> Void)?
-  var successUpdateProfile: ((UserProfile) -> Void)?
+  var updateProfileSuccess: ((UserProfile) -> Void)?
+  var updateProfileFailure: ((Error) -> Void)?
   
   init(userRepository: UserRepository) {
     self.userRepository = userRepository
@@ -95,14 +96,12 @@ class SettingProfileViewModel {
 private extension SettingProfileViewModel {
   func uploadProfile() {
     let userProfile = UserProfile(nickName: name, email: email, phoneNumber: phoneNumber, position: position)
-    userRepository.updateUserProfile(to: userProfile) { result in
+    userRepository.updateUserProfile(to: userProfile) { [weak self, userProfile] result in
       switch result {
         case .success:
-          print("UPLOAD PROFILE SUCCESS")
-          return
-        case .failure:
-          print("UPLOAD PROFILE FAILURE")
-          return
+          self?.updateProfileSuccess?(userProfile)
+        case .failure(let error):
+          self?.updateProfileFailure?(error)
       }
     }
   }

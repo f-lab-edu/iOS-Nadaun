@@ -152,6 +152,15 @@ private extension SettingProfileViewController {
     viewModel.isEnableNextButton = { [weak self] isAllCheck in
       self?.nextFlowButton.isEnabled = isAllCheck
     }
+    
+    viewModel.updateProfileSuccess = { [weak self] userProfile in
+      guard let self = self else { return }
+      delegate?.settingProfile(to: self, didSuccessUpdate: userProfile)
+    }
+    
+    viewModel.updateProfileFailure = { [weak self] _ in
+      self?.presentErrorAlert(for: "프로필 설정 중 예기치 못한 에러가 발생하였습니다. 잠시후 다시 시도해주세요.")
+    }
   }
   
   @objc private func willShowKeyboard(_ notification: Notification) {
@@ -218,6 +227,13 @@ private extension SettingProfileViewController {
       self?.viewModel.bind(to: .updateProfile)
     }
     nextFlowButton.addAction(updateAction, for: .touchUpInside)
+  }
+  
+  func presentErrorAlert(for reason: String) {
+    let controller = UIAlertController(title: "", message: reason, preferredStyle: .alert)
+    let confirmAction = UIAlertAction(title: "확인", style: .default)
+    controller.addAction(confirmAction)
+    present(controller, animated: true)
   }
 }
 
