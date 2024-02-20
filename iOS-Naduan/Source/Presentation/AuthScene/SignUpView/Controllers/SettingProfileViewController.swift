@@ -192,7 +192,6 @@ private extension SettingProfileViewController {
 private extension SettingProfileViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
-    nextFlowButton.isEnabled = true
     
     configureHierarchy()
     makeConstraints()

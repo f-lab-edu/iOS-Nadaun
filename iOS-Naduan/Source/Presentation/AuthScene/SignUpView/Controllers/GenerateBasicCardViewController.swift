@@ -8,7 +8,6 @@ import UIKit
 
 protocol GenerateBasicCardDelegate: AnyObject {
   func generateBasicCard(to controller: UIViewController, didSuccessUpdate card: BusinessCard)
-  func generateBasicCard(skipGenerate controller: UIViewController)
 }
 
 final class GenerateBasicCardViewController: UIViewController {
@@ -40,9 +39,9 @@ final class GenerateBasicCardViewController: UIViewController {
     return stackView
   }()
   
-  private let companyLabel = SignUpTextField(type: .company, to: "회사")
-  private let departmentLabel = SignUpTextField(type: .department, to: "부서")
-  private let positionLabel = SignUpTextField(type: .position, to: "직책")
+  private let companyTextField = SignUpTextField(type: .company, to: "회사")
+  private let departmentTextField = SignUpTextField(type: .department, to: "부서")
+  private let positionTextField = SignUpTextField(type: .position, to: "직책")
   
   private let viewModel: GenerateBasicViewModel
   
@@ -60,21 +59,72 @@ final class GenerateBasicCardViewController: UIViewController {
     super.viewDidLoad()
     
     configureUI()
+    binding()
+  }
+}
+
+private extension GenerateBasicCardViewController {
+  func binding() {
+    bindingView()
+    
+    viewModel.nextButtonEnable = { [weak self] isEnable in
+      self?.nextFlowButton.isEnabled = isEnable
+    }
+    
+    viewModel.generateCardSuccess = { [weak self] in
+      // TODO: - Success Method Binding
+    }
+    
+    viewModel.generateCardFailure = { [weak self] error in
+      // TODO: - Failure Method Binding
+    }
+    
+    [companyTextField, departmentTextField, positionTextField].forEach {
+      $0.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
+    }
+  }
+  
+  func bindingView() {
+    let action = UIAction { _ in
+      // TODO: - 업데이트 메서드
+    }
+    nextFlowButton.addAction(action, for: .touchUpInside)
+  }
+  
+  @objc private func didChangeTextField(_ textField: UITextField) {
+    guard let text = textField.text,
+          let type = SignUpTextField.SignUpFormType(rawValue: textField.tag) else { return }
+    
+    switch type {
+      case .company:
+        viewModel.bind(action: .changeCompany(text))
+      case .department:
+        viewModel.bind(action: .changeDepartment(text))
+      case .position:
+        viewModel.bind(action: .changePosition(text))
+      default: return
+    }
   }
 }
 
 private extension GenerateBasicCardViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
-
+    
+    configureNavigationBar()
+    
     configureHierarchy()
     makeConstraints()
+  }
+  
+  func configureNavigationBar() {
+    navigationItem.rightBarButtonItem = UIBarButtonItem(title: "나중에")
   }
   
   func configureHierarchy() {
     [titleLabel, cardInformationScrollView, nextFlowButton].forEach(view.addSubview)
     [informationContentView].forEach(cardInformationScrollView.addSubview)
-    [companyLabel, departmentLabel, positionLabel].forEach(informationContentView.addArrangedSubview)
+    [companyTextField, departmentTextField, positionTextField].forEach(informationContentView.addArrangedSubview)
   }
   
   func makeConstraints() {
@@ -104,6 +154,5 @@ private extension GenerateBasicCardViewController {
       $0.bottom(equalTo: cardInformationScrollView.contentLayoutGuide.bottomAnchor)
       $0.width(equalTo: cardInformationScrollView.frameLayoutGuide.widthAnchor)
     }
-    
   }
 }
