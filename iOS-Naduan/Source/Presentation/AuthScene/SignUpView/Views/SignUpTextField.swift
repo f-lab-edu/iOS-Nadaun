@@ -9,16 +9,15 @@ import UIKit
 class SignUpTextField: UITextField {
   enum SignUpFormType: Int {
     case name
-    case phone
     case email
+    case company
+    case department
     case position
     
     var keyBoardType: UIKeyboardType {
       switch self {
-        case .name, .position:
+        case .name, .position, .company, .department, .position:
           return .default
-        case .phone:
-          return .numberPad
         case .email:
           return .emailAddress
       }
@@ -26,9 +25,9 @@ class SignUpTextField: UITextField {
     
     var returnType: UIReturnKeyType {
       switch self {
-        case .name:
+        case .name, .company, .department:
           return .next
-        case .email:
+        case .email, .position:
           return .done
         default: return .default
       }

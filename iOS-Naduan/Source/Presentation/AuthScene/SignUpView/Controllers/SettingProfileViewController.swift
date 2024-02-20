@@ -35,7 +35,7 @@ final class SettingProfileViewController: UIViewController {
   
   private let scrollContentView: UIStackView = {
     let stackView = UIStackView()
-    stackView.distribution = .fillProportionally
+    stackView.distribution = .fillEqually
     stackView.alignment = .fill
     stackView.axis = .vertical
     stackView.spacing = 32
