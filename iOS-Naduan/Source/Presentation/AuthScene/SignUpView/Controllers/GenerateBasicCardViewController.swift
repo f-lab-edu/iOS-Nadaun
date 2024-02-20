@@ -8,13 +8,14 @@ import UIKit
 
 protocol GenerateBasicCardDelegate: AnyObject {
   func generateBasicCard(to controller: UIViewController, didSuccessUpdate card: BusinessCard)
+  func generateBasicCard(skipGenerate controller: UIViewController)
 }
 
 final class GenerateBasicCardViewController: UIViewController {
   weak var delegate: GenerateBasicCardDelegate?
   
   private let titleLabel: SignUpTitleLabel = SignUpTitleLabel()
-  private let nextFlowButton = SignUpNextButton(title: "완료", isEnable: false) { button in
+  private let nextFlowButton = SignUpNextButton(title: "완료") { button in
     switch button.state {
       case .disabled:
         button.configuration?.background.backgroundColor = .disable
@@ -43,7 +44,10 @@ final class GenerateBasicCardViewController: UIViewController {
   private let departmentLabel = SignUpTextField(type: .department, to: "부서")
   private let positionLabel = SignUpTextField(type: .position, to: "직책")
   
-  init() {
+  private let viewModel: GenerateBasicViewModel
+  
+  init(viewModel: GenerateBasicViewModel) {
+    self.viewModel = viewModel
     self.titleLabel.setTextWithLineHeight(text: "다운에서\n첫번째 명함을 완성해보세요.", lineHeight: 26)
     super.init(nibName: nil, bundle: nil)
   }

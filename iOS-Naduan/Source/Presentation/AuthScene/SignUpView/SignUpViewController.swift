@@ -10,10 +10,10 @@ import FirebaseAuth
 
 final class SignUpViewController: UITabBarController {
   // MARK: - Child Flow Item
-  enum SignUpFlow: CaseIterable {
+  enum SignUpFlow {
     case agreeTerm
     case settingProfile
-    case generateBasicCard
+    case generateBasicCard(UserProfile)
   }
   
   private let user: FirebaseAuth.User
@@ -46,7 +46,7 @@ extension SignUpViewController: AgreeTermDelegate {
 // MARK: - SettingProfile Delegate Method
 extension SignUpViewController: SettingProfileDelegate {
   func settingProfile(to controller: UIViewController, didSuccessUpdate profile: UserProfile) {
-    let cardController = generateChildController(to: .generateBasicCard)
+    let cardController = generateChildController(to: .generateBasicCard(profile))
     viewControllers?.append(cardController)
     selectedIndex += 1
   }
@@ -54,6 +54,10 @@ extension SignUpViewController: SettingProfileDelegate {
 
 // MARK: - GenerateBasicCard Delegate Method
 extension SignUpViewController: GenerateBasicCardDelegate {
+  func generateBasicCard(skipGenerate controller: UIViewController) {
+    
+  }
+  
   func generateBasicCard(to controller: UIViewController, didSuccessUpdate card: BusinessCard) {
     // TODO: - 홈 화면으로 전환
   }
@@ -77,8 +81,10 @@ private extension SignUpViewController {
         controller.delegate = self
         return controller
         
-      case .generateBasicCard:
-        let controller = GenerateBasicCardViewController()
+      case .generateBasicCard(let profile):
+        let repository = UserRepository(user: user, store: .firestore())
+        let viewModel = GenerateBasicViewModel(profile: profile, repository: repository)
+        let controller = GenerateBasicCardViewController(viewModel: viewModel)
         controller.delegate = self
         return controller
     }
