@@ -116,7 +116,7 @@ private extension SettingProfileViewController {
       self?.emailTextField.text = email
     }
     
-    viewModel.isEnableNextButton = { [weak self] isAllCheck in
+    viewModel.isVerifyAllFormat = { [weak self] isAllCheck in
       self?.nextFlowButton.isEnabled = isAllCheck
     }
     

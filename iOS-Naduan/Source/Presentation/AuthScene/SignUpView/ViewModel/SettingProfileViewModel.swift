@@ -20,14 +20,14 @@ class SettingProfileViewModel {
   private var name: String? {
     didSet {
       didChangeName?(name)
-      isEnableNextButton?(name?.isEmpty == false && verifyEmailFormat())
+      isVerifyAllFormat?(name?.isEmpty == false && verifyEmailFormat())
     }
   }
   
   private var email: String? {
     didSet {
       didChangeEmail?(email)
-      isEnableNextButton?(name?.isEmpty == false && verifyEmailFormat())
+      isVerifyAllFormat?(name?.isEmpty == false && verifyEmailFormat())
     }
   }
   
@@ -36,7 +36,7 @@ class SettingProfileViewModel {
   var didChangeEmail: ((String?) -> Void)?
   
   // 버튼 사용 가능성 속성
-  var isEnableNextButton: ((Bool) -> Void)?
+  var isVerifyAllFormat: ((Bool) -> Void)?
   
   // 프로필 업데이트 결과 속성
   var updateProfileSuccess: ((UserProfile) -> Void)?
