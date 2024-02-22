@@ -17,19 +17,19 @@ class GenerateBasicViewModel {
   
   private var company: String? {
     didSet {
-      nextButtonEnable?(isEditOver)
+      isVerifyAllFormat?(isEditOver)
     }
   }
   
   private var department: String? {
     didSet {
-      nextButtonEnable?(isEditOver)
+      isVerifyAllFormat?(isEditOver)
     }
   }
   
   private var position: String? {
     didSet {
-      nextButtonEnable?(isEditOver)
+      isVerifyAllFormat?(isEditOver)
     }
   }
   
@@ -40,7 +40,7 @@ class GenerateBasicViewModel {
     return isFillCompany || isFillDepartment || isFillPosition
   }
   
-  var nextButtonEnable: ((Bool) -> Void)?
+  var isVerifyAllFormat: ((Bool) -> Void)?
   var generateCardSuccess: (() -> Void)?
   var generateCardFailure: ((Error) -> Void)?
   

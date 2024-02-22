@@ -67,7 +67,7 @@ private extension GenerateBasicCardViewController {
   func binding() {
     bindingView()
     
-    viewModel.nextButtonEnable = { [weak self] isEnable in
+    viewModel.isVerifyAllFormat = { [weak self] isEnable in
       self?.nextFlowButton.isEnabled = isEnable
     }
     
