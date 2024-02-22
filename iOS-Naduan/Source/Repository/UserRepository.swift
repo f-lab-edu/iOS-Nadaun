@@ -18,14 +18,15 @@ class UserRepository {
   
   func createUserProfile(
     to profile: UserProfile,
-    completion: @escaping (Result<Void, UserProfileError>) -> Void
+    completion: @escaping (Result<UserProfile, UserProfileError>) -> Void
   ) {
     updateEmail(to: profile.email) { [weak self] result in
-      if case .success = result {
-        self?.createNewUserProfile(to: profile, completion: completion)
-        return
+      switch result {
+        case .success:
+          self?.createNewUserProfile(to: profile, completion: completion)
+        case .failure(let error):
+          completion(.failure(error))
       }
-      completion(result)
     }
   }
 }
@@ -52,11 +53,14 @@ private extension UserRepository {
   
   func createNewUserProfile(
     to profile: UserProfile,
-    completion: @escaping (Result<Void, UserProfileError>) -> Void
+    completion: @escaping (Result<UserProfile, UserProfileError>) -> Void
   ) {
+    var updatedProfile = profile
+    updatedProfile.updateID(with: user.uid)
+    
     do {
-      try store.collection("User").document(user.uid).setData(from: profile)
-      completion(.success(()))
+      try store.collection("User").document(user.uid).setData(from: updatedProfile)
+      completion(.success(updatedProfile))
     } catch {
       completion(.failure(.unExpected))
     }

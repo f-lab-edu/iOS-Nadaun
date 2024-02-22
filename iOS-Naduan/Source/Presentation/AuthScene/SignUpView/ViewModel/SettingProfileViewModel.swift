@@ -71,8 +71,8 @@ private extension SettingProfileViewModel {
     let userProfile = UserProfile(nickName: name, email: email)
     userRepository.createUserProfile(to: userProfile) { [weak self] result in
       switch result {
-        case .success:
-          self?.updateProfileSuccess?(userProfile)
+        case .success(let profile):
+          self?.updateProfileSuccess?(profile)
         case .failure(let error):
           self?.errorOccur?(error.description)
       }

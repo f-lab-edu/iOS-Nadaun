@@ -12,6 +12,7 @@ class BusinessCardRepository {
   
   init(profile: UserProfile) {
     self.profile = profile
+    dump(self.profile)
   }
   
   func createNewCard(to card: BusinessCard, completion: @escaping (Result<Void, Error>) -> Void) {
