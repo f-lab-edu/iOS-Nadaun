@@ -128,7 +128,7 @@ private extension SettingProfileViewController {
       }
     }
     
-    viewModel.profileErrorDescription = { [weak self] message in
+    viewModel.errorOccur = { [weak self] message in
       DispatchQueue.main.async {
         self?.presentErrorAlert(for: message)
       }

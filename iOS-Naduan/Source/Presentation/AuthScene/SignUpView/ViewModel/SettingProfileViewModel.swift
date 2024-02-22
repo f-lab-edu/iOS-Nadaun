@@ -40,7 +40,7 @@ class SettingProfileViewModel {
   
   // 프로필 업데이트 결과 속성
   var updateProfileSuccess: ((UserProfile) -> Void)?
-  var profileErrorDescription: ((String) -> Void)?
+  var errorOccur: ((String) -> Void)?
   
   // MARK: - Initializer
   init(userRepository: UserRepository) {
@@ -69,12 +69,12 @@ class SettingProfileViewModel {
 private extension SettingProfileViewModel {
   func uploadProfile() {
     let userProfile = UserProfile(nickName: name, email: email)
-    userRepository.updateUserProfile(to: userProfile) { [weak self, userProfile] result in
+    userRepository.createUserProfile(to: userProfile) { [weak self] result in
       switch result {
         case .success:
           self?.updateProfileSuccess?(userProfile)
         case .failure(let error):
-          self?.profileErrorDescription?(error.description)
+          self?.errorOccur?(error.description)
       }
     }
   }
