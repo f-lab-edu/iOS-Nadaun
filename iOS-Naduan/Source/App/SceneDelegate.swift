@@ -23,9 +23,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window?.makeKeyAndVisible()
   }
   
-  func presentMainViewController() {
-    let controller = UIViewController()
-    controller.view.backgroundColor = .yellow
+  func presentMainViewController(to userID: String) {
+    let controller = MainTabBarController(userID: userID)
     window?.rootViewController = controller
   }
 }
