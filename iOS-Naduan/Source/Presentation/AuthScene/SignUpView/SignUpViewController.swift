@@ -83,7 +83,7 @@ private extension SignUpViewController {
         return controller
         
       case .generateBasicCard(let profile):
-        let repository = UserRepository(user: user, store: .firestore())
+        let repository = BusinessCardRepository(profile: profile)
         let viewModel = GenerateBasicViewModel(profile: profile, repository: repository)
         let controller = GenerateBasicCardViewController(viewModel: viewModel)
         controller.delegate = self
