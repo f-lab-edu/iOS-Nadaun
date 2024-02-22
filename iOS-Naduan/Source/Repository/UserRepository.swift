@@ -16,52 +16,49 @@ class UserRepository {
     self.store = store
   }
   
-  func updateUserProfile(
+  func createUserProfile(
     to profile: UserProfile,
     completion: @escaping (Result<Void, UserProfileError>) -> Void
   ) {
-    updateEmail(to: profile.email) { result in
-      if case let .failure(error) = result {
-        let authError = AuthErrorCode(_nsError: error as NSError)
-        
-        let userProfileError = UserProfileError(rawValue: authError.errorCode)
-        completion(.failure(userProfileError))
+    updateEmail(to: profile.email) { [weak self] result in
+      if case .success = result {
+        self?.createNewUserProfile(to: profile, completion: completion)
+        return
       }
+      completion(result)
     }
-  }
-  
-  func updateBusinessCard(completion: @escaping (Result<Void, Error>) -> Void) {
-    
   }
 }
 
 private extension UserRepository {
-  func updateEmail(to email: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+  func updateEmail(to email: String?, completion: @escaping (Result<Void, UserProfileError>) -> Void) {
     guard let email = email else {
-      completion(.failure(AuthError.unexpected))
+      completion(.failure(.unExpected))
       return
     }
     
     user.updateEmail(to: email) { error in
-      if let error = error {
-        completion(.failure(error))
+      if let error = error as? NSError {
+        let authError = AuthErrorCode(_nsError: error as NSError)
+        
+        let userProfileError = UserProfileError(rawValue: authError.errorCode)
+        completion(.failure(userProfileError))
         return
       }
+      
       completion(.success(()))
     }
   }
   
-  func uploadProfile(to profile: UserProfile, in group: DispatchGroup, completion: @escaping (Result<Void, Error>) -> Void) {
-    group.enter()
-    
+  func createNewUserProfile(
+    to profile: UserProfile,
+    completion: @escaping (Result<Void, UserProfileError>) -> Void
+  ) {
     do {
       try store.collection("User").document(user.uid).setData(from: profile)
-      
-      group.leave()
       completion(.success(()))
-    } catch let error {
-      group.leave()
-      completion(.failure(error))
+    } catch {
+      completion(.failure(.unExpected))
     }
   }
 }
