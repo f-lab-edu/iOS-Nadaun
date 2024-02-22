@@ -7,7 +7,7 @@
 import UIKit
 
 protocol GenerateBasicCardDelegate: AnyObject {
-  func generateBasicCard(to controller: UIViewController, didSuccessUpdate card: BusinessCard)
+  func generateBasicCard(didSuccessUpdate controller: UIViewController)
 }
 
 final class GenerateBasicCardViewController: UIViewController {
@@ -72,7 +72,9 @@ private extension GenerateBasicCardViewController {
     }
     
     viewModel.generateCardSuccess = { [weak self] in
-      // TODO: - Success Method Binding
+      guard let self = self else { return }
+      
+      self.delegate?.generateBasicCard(didSuccessUpdate: self)
     }
     
     viewModel.generateCardFailure = { [weak self] error in
@@ -85,8 +87,8 @@ private extension GenerateBasicCardViewController {
   }
   
   func bindingView() {
-    let action = UIAction { _ in
-      // TODO: - 업데이트 메서드
+    let action = UIAction { [weak self] _ in
+      self?.viewModel.bind(action: .generateCard)
     }
     nextFlowButton.addAction(action, for: .touchUpInside)
   }

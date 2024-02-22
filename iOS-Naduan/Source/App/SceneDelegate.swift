@@ -22,4 +22,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window?.rootViewController = LoginViewController(authController: authController, viewModel: loginViewModel)
     window?.makeKeyAndVisible()
   }
+  
+  func presentMainViewController() {
+    let controller = UIViewController()
+    controller.view.backgroundColor = .yellow
+    window?.rootViewController = controller
+  }
 }

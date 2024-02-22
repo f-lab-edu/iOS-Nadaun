@@ -46,8 +46,8 @@ extension SignUpViewController: AgreeTermDelegate {
 // MARK: - SettingProfile Delegate Method
 extension SignUpViewController: SettingProfileDelegate {
   func settingProfile(to controller: UIViewController, didSuccessUpdate profile: UserProfile) {
-    let skipAction = UIAction { _ in
-      // TODO: - Skip Action
+    let skipAction = UIAction { [weak self] _ in
+      self?.presentHome()
     }
     navigationItem.rightBarButtonItem = UIBarButtonItem(title: "나중에", primaryAction: skipAction)
     
@@ -59,8 +59,8 @@ extension SignUpViewController: SettingProfileDelegate {
 
 // MARK: - GenerateBasicCard Delegate Method
 extension SignUpViewController: GenerateBasicCardDelegate {
-  func generateBasicCard(to controller: UIViewController, didSuccessUpdate card: BusinessCard) {
-    // TODO: - 홈 화면으로 전환
+  func generateBasicCard(didSuccessUpdate controller: UIViewController) {
+    presentHome()
   }
 }
 
@@ -89,6 +89,12 @@ private extension SignUpViewController {
         controller.delegate = self
         return controller
     }
+  }
+  
+  func presentHome() {
+    guard let windowScene = view.window?.windowScene,
+          let sceneDelegate = windowScene.delegate as? SceneDelegate else { return }
+    sceneDelegate.presentMainViewController()
   }
 }
 
