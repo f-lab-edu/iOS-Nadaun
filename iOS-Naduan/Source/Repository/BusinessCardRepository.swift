@@ -5,17 +5,39 @@
 //  Copyright (c) 2024 Minii All rights reserved.
 
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 
 class BusinessCardRepository {
-  private let profile: UserProfile
+  typealias CompanyInformation = (company: String?, department: String?, position: String?)
   
-  init(profile: UserProfile) {
+  private let profile: UserProfile
+  private let collection: CollectionReference
+  
+  init(profile: UserProfile, path: String = "Card") {
     self.profile = profile
-    dump(self.profile)
+    self.collection = Firestore.firestore().collection(path)
   }
   
-  func createNewCard(to card: BusinessCard, completion: @escaping (Result<Void, Error>) -> Void) {
+  func createNewCard(
+    to information: CompanyInformation,
+    completion: @escaping (Result<Void, Error>) -> Void
+  ) {
+    guard let userID = profile.ID else {
+      completion(.failure(AuthError.userMissing))
+      return
+    }
     
+    let card = BusinessCard.make(
+      profile: profile,
+      company: information.company,
+      department: information.department,
+      position: information.position
+    )
+    
+    do {
+      try collection.document(userID).collection(card.name).addDocument(from: card)
+      completion(.success(()))
+    } catch {
+      
+    }
   }
 }
