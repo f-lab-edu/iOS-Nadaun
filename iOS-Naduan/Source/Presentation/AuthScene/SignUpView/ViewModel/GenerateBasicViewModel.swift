@@ -64,8 +64,27 @@ class GenerateBasicViewModel {
         return
         
       case .generateCard:
-        // TODO: - Generate Card Method Call
+        createNewCard()
         return
+    }
+  }
+}
+
+private extension GenerateBasicViewModel {
+  func createNewCard() {
+    let information = BusinessCardRepository.CompanyInformation(
+      company: company,
+      department: department,
+      position: position
+    )
+    
+    repository.createNewCard(to: information) { [weak self] result in
+      switch result {
+        case .success:
+          self?.generateCardSuccess?()
+        case .failure:
+          self?.generateCardFailure?(AuthError.userMissing)
+      }
     }
   }
 }
