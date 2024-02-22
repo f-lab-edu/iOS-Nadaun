@@ -16,30 +16,17 @@ class UserRepository {
     self.store = store
   }
   
-  func updateUserProfile(to profile: UserProfile, completion: @escaping (Result<Void, Error>) -> Void) {
-    let profileUpdateGroup = DispatchGroup()
-    
-    var updateError: Error? = nil
-    
-    updateEmail(to: profile.email, in: profileUpdateGroup) { result in
+  func updateUserProfile(
+    to profile: UserProfile,
+    completion: @escaping (Result<Void, UserProfileError>) -> Void
+  ) {
+    updateEmail(to: profile.email) { result in
       if case let .failure(error) = result {
-        updateError = error
+        let authError = AuthErrorCode(_nsError: error as NSError)
+        
+        let userProfileError = UserProfileError(rawValue: authError.errorCode)
+        completion(.failure(userProfileError))
       }
-    }
-    
-    uploadProfile(to: profile, in: profileUpdateGroup) { result in
-      if case let .failure(error) = result {
-        updateError = error
-      }
-    }
-    
-    profileUpdateGroup.notify(queue: .global()) {
-      if let updateError = updateError {
-        completion(.failure(updateError))
-        return
-      }
-      
-      completion(.success(()))
     }
   }
   
@@ -49,23 +36,17 @@ class UserRepository {
 }
 
 private extension UserRepository {
-  func updateEmail(to email: String?, in group: DispatchGroup, completion: @escaping (Result<Void, Error>) -> Void) {
-    group.enter()
-    
+  func updateEmail(to email: String?, completion: @escaping (Result<Void, Error>) -> Void) {
     guard let email = email else {
-      group.leave()
       completion(.failure(AuthError.unexpected))
       return
     }
     
     user.updateEmail(to: email) { error in
       if let error = error {
-        group.leave()
         completion(.failure(error))
         return
       }
-      
-      group.leave()
       completion(.success(()))
     }
   }
