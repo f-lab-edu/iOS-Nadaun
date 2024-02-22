@@ -128,9 +128,9 @@ private extension SettingProfileViewController {
       }
     }
     
-    viewModel.updateProfileFailure = { [weak self] _ in
+    viewModel.profileErrorDescription = { [weak self] message in
       DispatchQueue.main.async {
-        self?.presentErrorAlert(for: TextConstants.errorMessage)
+        self?.presentErrorAlert(for: message)
       }
     }
   }
@@ -239,6 +239,5 @@ private extension SettingProfileViewController {
   enum TextConstants {
     static let nameTitle: String = "이름 (필수)"
     static let emailTitle: String = "이메일 (필수)"
-    static let errorMessage: String = "설정 중 오류가 발생했습니다. 잠시후 다시 시도해주세요."
   }
 }

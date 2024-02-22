@@ -40,7 +40,7 @@ class SettingProfileViewModel {
   
   // 프로필 업데이트 결과 속성
   var updateProfileSuccess: ((UserProfile) -> Void)?
-  var updateProfileFailure: ((Error) -> Void)?
+  var profileErrorDescription: ((String) -> Void)?
   
   // MARK: - Initializer
   init(userRepository: UserRepository) {
@@ -74,7 +74,7 @@ private extension SettingProfileViewModel {
         case .success:
           self?.updateProfileSuccess?(userProfile)
         case .failure(let error):
-          self?.updateProfileFailure?(error)
+          self?.profileErrorDescription?(error.description)
       }
     }
   }
