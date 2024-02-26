@@ -84,7 +84,7 @@ private extension SignUpViewController {
         
       case .generateBasicCard(let profile):
         let repository = BusinessCardRepository(profile: profile)
-        let viewModel = GenerateBasicViewModel(profile: profile, repository: repository)
+        let viewModel = GenerateBasicViewModel(repository: repository)
         let controller = GenerateBasicCardViewController(viewModel: viewModel)
         controller.delegate = self
         return controller

@@ -12,7 +12,6 @@ enum GenerateBasicAction {
 }
 
 class GenerateBasicViewModel {
-  private let profile: UserProfile
   private let repository: BusinessCardRepository
   
   private var company: String? {
@@ -44,8 +43,7 @@ class GenerateBasicViewModel {
   var generateCardSuccess: (() -> Void)?
   var occurError: ((String) -> Void)?
   
-  init(profile: UserProfile, repository: BusinessCardRepository) {
-    self.profile = profile
+  init(repository: BusinessCardRepository) {
     self.repository = repository
   }
   
