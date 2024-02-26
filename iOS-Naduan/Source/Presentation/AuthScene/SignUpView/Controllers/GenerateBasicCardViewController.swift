@@ -6,13 +6,13 @@
 
 import UIKit
 
+// MARK: - Generate Basic Card Delegate
 protocol GenerateBasicCardDelegate: AnyObject {
   func generateBasicCard(didSuccessUpdate controller: UIViewController)
 }
 
 final class GenerateBasicCardViewController: UIViewController {
-  weak var delegate: GenerateBasicCardDelegate?
-  
+  // MARK: - View Properties
   private let titleLabel: SignUpTitleLabel = SignUpTitleLabel()
   private let nextFlowButton = SignUpNextButton(title: "완료") { button in
     switch button.state {
@@ -39,12 +39,26 @@ final class GenerateBasicCardViewController: UIViewController {
     return stackView
   }()
   
-  private let companyTextField = SignUpTextField(type: .company, to: "회사")
-  private let departmentTextField = SignUpTextField(type: .department, to: "부서")
-  private let positionTextField = SignUpTextField(type: .position, to: "직책")
+  private let companyTextField = SignUpTextField(
+    type: .company,
+    to: TextConstants.companyDescription
+  )
   
+  private let departmentTextField = SignUpTextField(
+    type: .department,
+    to: TextConstants.departmentDescription
+  )
+  
+  private let positionTextField = SignUpTextField(
+    type: .position,
+    to: TextConstants.positionDescription
+  )
+  
+  // MARK: - Business Logic Properties
+  weak var delegate: GenerateBasicCardDelegate?
   private let viewModel: GenerateBasicViewModel
   
+  // MARK: - Life Cycle
   init(viewModel: GenerateBasicViewModel) {
     self.viewModel = viewModel
     self.titleLabel.setTextWithLineHeight(text: "다운에서\n첫번째 명함을 완성해보세요.", lineHeight: 26)
@@ -63,6 +77,7 @@ final class GenerateBasicCardViewController: UIViewController {
   }
 }
 
+// MARK: - Binding Methods
 private extension GenerateBasicCardViewController {
   func binding() {
     bindingView()
@@ -109,6 +124,7 @@ private extension GenerateBasicCardViewController {
   }
 }
 
+// MARK: - View Update Method
 private extension GenerateBasicCardViewController {
   func presentErrorAlert(for reason: String) {
     let controller = UIAlertController(title: "", message: reason, preferredStyle: .alert)
@@ -118,6 +134,7 @@ private extension GenerateBasicCardViewController {
   }
 }
 
+// MARK: - Configure View Methods
 private extension GenerateBasicCardViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
@@ -165,5 +182,14 @@ private extension GenerateBasicCardViewController {
       $0.bottom(equalTo: cardInformationScrollView.contentLayoutGuide.bottomAnchor)
       $0.width(equalTo: cardInformationScrollView.frameLayoutGuide.widthAnchor)
     }
+  }
+}
+
+private extension GenerateBasicCardViewController {
+  enum TextConstants {
+    static let nextDescription: String = "다음에"
+    static let companyDescription: String = "회사"
+    static let departmentDescription: String = "부서"
+    static let positionDescription: String = "직책"
   }
 }
