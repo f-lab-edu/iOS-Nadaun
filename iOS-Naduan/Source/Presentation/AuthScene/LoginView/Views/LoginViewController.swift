@@ -107,8 +107,10 @@ private extension LoginViewController {
       self?.present(navigationController, animated: true)
     }
     
-    viewModel.didRegister = { user in
-      // TODO: - PRESENT HOME VIEW
+    viewModel.didRegister = { [weak self] user in
+      guard let windowScene = self?.view.window?.windowScene,
+            let sceneDelegate = windowScene.delegate as? SceneDelegate else { return }
+      sceneDelegate.presentMainViewController(to: user)
     }
     
     viewModel.didErrorOccur = { [weak self] error in

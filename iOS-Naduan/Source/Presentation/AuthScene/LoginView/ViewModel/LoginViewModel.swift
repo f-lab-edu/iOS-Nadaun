@@ -50,7 +50,7 @@ private extension LoginViewModel {
       return
     }
     
-    if user.email == nil || user.phoneNumber == nil || user.displayName == nil {
+    if user.email == nil {
       didNotRegister?(user)
       return
     }
