@@ -14,17 +14,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = (scene as? UIWindowScene) else { return }
     
     window = UIWindow(windowScene: windowScene)
-    let authController = AuthController()
-    
-    let authRepository = AuthRepository()
-    let loginViewModel = LoginViewModel(authRepository: authRepository)
-    
-    window?.rootViewController = LoginViewController(authController: authController, viewModel: loginViewModel)
+    presentLoginViewController()
     window?.makeKeyAndVisible()
   }
   
   func presentMainViewController(to userID: String) {
     let controller = MainTabBarController(userID: userID)
+    window?.rootViewController = controller
+  }
+  
+  func presentLoginViewController() {
+    let authController = AuthController()
+    
+    let authRepository = AuthRepository()
+    let loginViewModel = LoginViewModel(authRepository: authRepository)
+    let controller = LoginViewController(authController: authController, viewModel: loginViewModel)
     window?.rootViewController = controller
   }
 }
