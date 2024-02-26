@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window = UIWindow(windowScene: windowScene)
     
     if let user = auth.currentUser {
-      presentMainViewController(to: user)
+      presentMainViewController()
     } else {
       presentLoginViewController()
     }
@@ -27,7 +27,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window?.makeKeyAndVisible()
   }
   
-  func presentMainViewController(to user: User) {
+  func presentMainViewController() {
     let controller = MainTabBarController()
     window?.rootViewController = controller
   }

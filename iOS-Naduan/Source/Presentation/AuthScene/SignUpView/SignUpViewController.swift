@@ -47,7 +47,7 @@ extension SignUpViewController: AgreeTermDelegate {
 extension SignUpViewController: SettingProfileDelegate {
   func settingProfile(to controller: UIViewController, didSuccessUpdate profile: UserProfile) {
     let skipAction = UIAction { [weak self] _ in
-      self?.presentHome()
+      self?.view.sceneDelegate?.presentMainViewController()
     }
     navigationItem.rightBarButtonItem = UIBarButtonItem(title: "나중에", primaryAction: skipAction)
     
@@ -60,7 +60,7 @@ extension SignUpViewController: SettingProfileDelegate {
 // MARK: - GenerateBasicCard Delegate Method
 extension SignUpViewController: GenerateBasicCardDelegate {
   func generateBasicCard(didSuccessUpdate controller: UIViewController) {
-    presentHome()
+    view.sceneDelegate?.presentMainViewController()
   }
 }
 
@@ -89,12 +89,6 @@ private extension SignUpViewController {
         controller.delegate = self
         return controller
     }
-  }
-  
-  func presentHome() {
-    guard let windowScene = view.window?.windowScene,
-          let sceneDelegate = windowScene.delegate as? SceneDelegate else { return }
-    sceneDelegate.presentMainViewController(to: user)
   }
 }
 

@@ -33,11 +33,9 @@ class MainSampleViewController: UIViewController {
     
     view.backgroundColor = .systemBackground
     let action = UIAction { [weak self] _ in
-      guard let _ = try? Auth.auth().signOut(),
-            let windowScene = self?.view.window?.windowScene,
-            let sceneDelegate = windowScene.delegate as? SceneDelegate else { return }
+      guard let _ = try? Auth.auth().signOut() else { return }
       
-      sceneDelegate.presentLoginViewController()
+      self?.view.sceneDelegate?.presentLoginViewController()
     }
     button.addAction(action, for: .touchUpInside)
     
