@@ -7,19 +7,28 @@
 
 import UIKit
 
+import FirebaseAuth
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+  private let auth = Auth.auth()
   var window: UIWindow?
 
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     guard let windowScene = (scene as? UIWindowScene) else { return }
     
     window = UIWindow(windowScene: windowScene)
-    presentLoginViewController()
+    
+    if let user = auth.currentUser {
+      presentMainViewController(to: user)
+    } else {
+      presentLoginViewController()
+    }
+    
     window?.makeKeyAndVisible()
   }
   
-  func presentMainViewController(to userID: String) {
-    let controller = MainTabBarController(userID: userID)
+  func presentMainViewController(to user: User) {
+    let controller = MainTabBarController()
     window?.rootViewController = controller
   }
   

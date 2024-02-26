@@ -94,7 +94,7 @@ private extension SignUpViewController {
   func presentHome() {
     guard let windowScene = view.window?.windowScene,
           let sceneDelegate = windowScene.delegate as? SceneDelegate else { return }
-    sceneDelegate.presentMainViewController(to: user.uid)
+    sceneDelegate.presentMainViewController(to: user)
   }
 }
 
