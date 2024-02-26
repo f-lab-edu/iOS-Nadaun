@@ -77,8 +77,8 @@ private extension GenerateBasicCardViewController {
       self.delegate?.generateBasicCard(didSuccessUpdate: self)
     }
     
-    viewModel.generateCardFailure = { [weak self] error in
-      // TODO: - Failure Method Binding
+    viewModel.occurError = { [weak self] errorDescription in
+      self?.presentErrorAlert(for: errorDescription)
     }
     
     [companyTextField, departmentTextField, positionTextField].forEach {
@@ -106,6 +106,15 @@ private extension GenerateBasicCardViewController {
         viewModel.bind(action: .changePosition(text))
       default: return
     }
+  }
+}
+
+private extension GenerateBasicCardViewController {
+  func presentErrorAlert(for reason: String) {
+    let controller = UIAlertController(title: "", message: reason, preferredStyle: .alert)
+    let confirmAction = UIAlertAction(title: "확인", style: .default)
+    controller.addAction(confirmAction)
+    present(controller, animated: true)
   }
 }
 

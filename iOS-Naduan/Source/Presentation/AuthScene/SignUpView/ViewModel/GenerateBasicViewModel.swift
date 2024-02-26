@@ -42,7 +42,7 @@ class GenerateBasicViewModel {
   
   var isVerifyAllFormat: ((Bool) -> Void)?
   var generateCardSuccess: (() -> Void)?
-  var generateCardFailure: ((Error) -> Void)?
+  var occurError: ((String) -> Void)?
   
   init(profile: UserProfile, repository: BusinessCardRepository) {
     self.profile = profile
@@ -82,8 +82,8 @@ private extension GenerateBasicViewModel {
       switch result {
         case .success:
           self?.generateCardSuccess?()
-        case .failure:
-          self?.generateCardFailure?(AuthError.userMissing)
+        case .failure(let error):
+          self?.occurError?(error.description)
       }
     }
   }
