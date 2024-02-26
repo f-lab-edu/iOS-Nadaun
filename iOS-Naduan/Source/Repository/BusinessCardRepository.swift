@@ -19,25 +19,23 @@ class BusinessCardRepository {
   
   func createNewCard(
     to information: CompanyInformation,
-    completion: @escaping (Result<Void, Error>) -> Void
+    completion: @escaping (Result<Void, CardError>) -> Void
   ) {
     guard let userID = profile.ID else {
-      completion(.failure(AuthError.userMissing))
+      completion(.failure(.missingError))
       return
     }
     
-    let card = BusinessCard.make(
-      profile: profile,
-      company: information.company,
-      department: information.department,
-      position: information.position
-    )
+    let card = BusinessCard.make(profile: profile,
+                                 company: information.company,
+                                 department: information.department,
+                                 position: information.position)
     
     do {
       try collection.document(userID).collection(card.name).addDocument(from: card)
       completion(.success(()))
     } catch {
-      
+      completion(.failure(.failureUpload))
     }
   }
 }
