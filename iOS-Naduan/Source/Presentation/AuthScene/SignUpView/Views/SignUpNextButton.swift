@@ -7,7 +7,11 @@
 import UIKit
 
 class SignUpNextButton: UIButton {
-  convenience init(title: String) {
+  convenience init(
+    title: String,
+    isEnable: Bool = false,
+    updateHandler: UIButton.ConfigurationUpdateHandler? = nil
+  ) {
     var container = AttributeContainer()
     container.font = UIFont.pretendardFont(weight: .bold, size: 18)
     
@@ -18,6 +22,8 @@ class SignUpNextButton: UIButton {
     configuration.setTitle(to: title, with: container)
     self.init(configuration: configuration)
     
+    isEnabled = isEnable
     automaticallyUpdatesConfiguration = false
+    configurationUpdateHandler = updateHandler
   }
 }

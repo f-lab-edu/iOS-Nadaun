@@ -35,8 +35,16 @@ class AgreeTermViewController: UIViewController {
   
   // MARK: - View Properties
   private let titleLabel = SignUpTitleLabel()
-  
-  private let nextFlowButton = SignUpNextButton(title: TextConstants.nextFlow)
+  private let nextFlowButton = SignUpNextButton(title: TextConstants.nextFlow) { button in
+    switch button.state {
+      case .disabled:
+        button.configuration?.background.backgroundColor = .disable
+      case .normal:
+        button.configuration?.background.backgroundColor = .accent
+      default:
+        return
+    }
+  }
   
   private let tableView: UITableView = {
     let tableView = UITableView(frame: .zero, style: .plain)
@@ -114,18 +122,6 @@ private extension AgreeTermViewController {
       self.delegate?.agreeTerm(isComplete: self)
     }
     nextFlowButton.addAction(nextAction, for: .touchUpInside)
-    nextFlowButton.configurationUpdateHandler = updateNextButtonConfiguration
-  }
-  
-  func updateNextButtonConfiguration(_ button: UIButton) {
-    switch button.state {
-      case .disabled:
-        button.configuration?.background.backgroundColor = .disable
-      case .normal:
-        button.configuration?.background.backgroundColor = .accent
-      default:
-        return
-    }
   }
 }
 
