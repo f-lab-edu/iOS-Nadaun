@@ -10,34 +10,14 @@ import UIKit
 import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-  private let auth = Auth.auth()
   var window: UIWindow?
 
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     guard let windowScene = (scene as? UIWindowScene) else { return }
-    
     window = UIWindow(windowScene: windowScene)
-    
-    if let user = auth.currentUser {
-      presentMainViewController()
-    } else {
-      presentLoginViewController()
-    }
-    
+    let storyBoard = UIStoryboard(name: "SplashScreen", bundle: nil)
+    let initialViewController = storyBoard.instantiateViewController(identifier: "SplashViewController")
+    window?.rootViewController = initialViewController
     window?.makeKeyAndVisible()
-  }
-  
-  func presentMainViewController() {
-    let controller = MainTabBarController()
-    window?.rootViewController = controller
-  }
-  
-  func presentLoginViewController() {
-    let authController = AuthController()
-    
-    let authRepository = AuthRepository()
-    let loginViewModel = LoginViewModel(authRepository: authRepository)
-    let controller = LoginViewController(authController: authController, viewModel: loginViewModel)
-    window?.rootViewController = controller
   }
 }
