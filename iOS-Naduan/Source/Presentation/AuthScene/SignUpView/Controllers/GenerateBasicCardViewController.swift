@@ -82,17 +82,17 @@ private extension GenerateBasicCardViewController {
   func binding() {
     bindingView()
     
-    viewModel.isVerifyAllFormat = { [weak self] isEnable in
+    viewModel.didFillAll = { [weak self] isEnable in
       self?.nextFlowButton.isEnabled = isEnable
     }
     
-    viewModel.generateCardSuccess = { [weak self] in
+    viewModel.didSuccessGenerate = { [weak self] in
       guard let self = self else { return }
       
       self.delegate?.generateBasicCard(didSuccessUpdate: self)
     }
     
-    viewModel.occurError = { [weak self] errorDescription in
+    viewModel.didOccurError = { [weak self] errorDescription in
       self?.presentErrorAlert(for: errorDescription)
     }
     

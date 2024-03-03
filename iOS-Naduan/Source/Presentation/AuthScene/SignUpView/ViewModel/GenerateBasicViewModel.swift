@@ -16,32 +16,32 @@ class GenerateBasicViewModel {
   
   private var company: String? {
     didSet {
-      isVerifyAllFormat?(isEditOver)
+      didFillAll?(didFillCompany)
     }
   }
   
   private var department: String? {
     didSet {
-      isVerifyAllFormat?(isEditOver)
+      didFillAll?(didFillCompany)
     }
   }
   
   private var position: String? {
     didSet {
-      isVerifyAllFormat?(isEditOver)
+      didFillAll?(didFillCompany)
     }
   }
   
-  private var isEditOver: Bool {
+  private var didFillCompany: Bool {
     let isFillCompany = (company?.isEmpty == false)
     let isFillDepartment = (department?.isEmpty == false)
     let isFillPosition = (position?.isEmpty == false)
     return isFillCompany || isFillDepartment || isFillPosition
   }
   
-  var isVerifyAllFormat: ((Bool) -> Void)?
-  var generateCardSuccess: (() -> Void)?
-  var occurError: ((String) -> Void)?
+  var didFillAll: ((Bool) -> Void)?
+  var didSuccessGenerate: (() -> Void)?
+  var didOccurError: ((String) -> Void)?
   
   init(repository: BusinessCardRepository) {
     self.repository = repository
@@ -79,9 +79,9 @@ private extension GenerateBasicViewModel {
     repository.createNewCard(to: information) { [weak self] result in
       switch result {
         case .success:
-          self?.generateCardSuccess?()
+          self?.didSuccessGenerate?()
         case .failure(let error):
-          self?.occurError?(error.description)
+          self?.didOccurError?(error.description)
       }
     }
   }
