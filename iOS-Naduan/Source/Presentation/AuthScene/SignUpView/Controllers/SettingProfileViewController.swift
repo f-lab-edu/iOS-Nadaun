@@ -116,11 +116,11 @@ private extension SettingProfileViewController {
       self?.emailTextField.text = email
     }
     
-    viewModel.isVerifyAllFormat = { [weak self] isAllCheck in
+    viewModel.didVerifyAll = { [weak self] isAllCheck in
       self?.nextFlowButton.isEnabled = isAllCheck
     }
     
-    viewModel.updateProfileSuccess = { [weak self] userProfile in
+    viewModel.didSuccessUpdateProfile = { [weak self] userProfile in
       guard let self = self else { return }
       
       DispatchQueue.main.async {
@@ -128,7 +128,7 @@ private extension SettingProfileViewController {
       }
     }
     
-    viewModel.errorOccur = { [weak self] message in
+    viewModel.didOccurError = { [weak self] message in
       DispatchQueue.main.async {
         self?.presentErrorAlert(for: message)
       }

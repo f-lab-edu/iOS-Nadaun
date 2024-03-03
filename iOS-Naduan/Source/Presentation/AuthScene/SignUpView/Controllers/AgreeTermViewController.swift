@@ -109,7 +109,7 @@ extension AgreeTermViewController: UITableViewDataSource {
 private extension AgreeTermViewController {
   func binding() {
     addActions()
-    viewModel.isSelectAll = { [weak self] isSelected in
+    viewModel.didSelectAll = { [weak self] isSelected in
       self?.nextFlowButton.isEnabled = isSelected
     }
   }
