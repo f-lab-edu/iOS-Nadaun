@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_app" translatesAutoresizingMaskIntoConstraints="NO" id="OvL-i1-8yW">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_app" translatesAutoresizingMaskIntoConstraints="NO" id="OvL-i1-8yW">
                                 <rect key="frame" x="20" y="363.66666666666669" width="353" height="150.00000000000006"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="150" id="njD-ZZ-JHS"/>
@@ -32,6 +32,9 @@
                             <constraint firstItem="OvL-i1-8yW" firstAttribute="centerY" secondItem="vDu-zF-Fre" secondAttribute="centerY" id="vTs-7G-sdv"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="iconImage" destination="OvL-i1-8yW" id="y9Z-dX-fcZ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

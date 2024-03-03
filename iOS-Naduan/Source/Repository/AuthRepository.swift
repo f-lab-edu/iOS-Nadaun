@@ -28,6 +28,10 @@ class AuthRepository {
     }
   }
   
+  func checkAuthUser() -> User? {
+    return auth.currentUser
+  }
+  
   private func signInWithApple(with idToken: String, completion: @escaping authCompletionHandler) {
     let credential = OAuthProvider.appleCredential(withIDToken: idToken, rawNonce: nil, fullName: nil)
     signIn(credential: credential, completion: completion)

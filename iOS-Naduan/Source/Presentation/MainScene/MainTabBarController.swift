@@ -32,12 +32,6 @@ class MainSampleViewController: UIViewController {
     super.viewDidLoad()
     
     view.backgroundColor = .systemBackground
-    let action = UIAction { [weak self] _ in
-      guard let _ = try? Auth.auth().signOut() else { return }
-      
-      self?.view.sceneDelegate?.presentLoginViewController()
-    }
-    button.addAction(action, for: .touchUpInside)
     
     view.addSubview(button)
     
