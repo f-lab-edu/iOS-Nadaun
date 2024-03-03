@@ -8,11 +8,11 @@ import FirebaseAuth
 import FirebaseFirestore
 
 class UserRepository {
-  private let user: User
+  private let user: User?
   private let store: Firestore
   
-  init(user: User, store: Firestore) {
-    self.user = user
+  init(auth: Auth, store: Firestore) {
+    self.user = auth.currentUser
     self.store = store
   }
   
@@ -33,7 +33,7 @@ class UserRepository {
 
 private extension UserRepository {
   func updateEmail(to email: String?, completion: @escaping (Result<Void, UserProfileError>) -> Void) {
-    guard let email = email else {
+    guard let email = email, let user = user else {
       completion(.failure(.unExpected))
       return
     }
@@ -55,6 +55,11 @@ private extension UserRepository {
     to profile: UserProfile,
     completion: @escaping (Result<UserProfile, UserProfileError>) -> Void
   ) {
+    guard let user = user else {
+      completion(.failure(.unExpected))
+      return
+    }
+    
     var updatedProfile = profile
     updatedProfile.updateID(with: user.uid)
     
