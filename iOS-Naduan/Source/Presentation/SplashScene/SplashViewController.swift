@@ -6,6 +6,10 @@
 
 import UIKit
 
+protocol UserStateObserver: AnyObject {
+  func userStateObserver(didChangeState: UIViewController)
+}
+
 class SplashViewController: UIViewController {
   @IBOutlet weak var iconImage: UIImageView?
   
@@ -25,8 +29,8 @@ class SplashViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    viewModel.currentUserChange = { [weak self] user in
-      if let user = user {
+    viewModel.didSignIn = { [weak self] isSignIn in
+      if isSignIn {
         self?.presentMain()
       } else {
         self?.presentLogin()
@@ -45,19 +49,10 @@ class SplashViewController: UIViewController {
   }
   
   private func presentMain() {
-    let controller = MainSampleViewController(nibName: nil, bundle: nil)
-    controller.modalPresentationStyle = .fullScreen
-    controller.modalTransitionStyle = .crossDissolve
-    present(controller, animated: true)
+    view.sceneDelegate?.presentMain()
   }
   
   private func presentLogin() {
-    let authController = AuthController()
-    let authRepository = AuthRepository(auth: .auth())
-    let viewModel = LoginViewModel(authRepository: authRepository)
-    let controller = LoginViewController(authController: authController, viewModel: viewModel)
-    controller.modalPresentationStyle = .fullScreen
-    controller.modalTransitionStyle = .crossDissolve
-    present(controller, animated: true)
+    view.sceneDelegate?.presentLogin()
   }
 }

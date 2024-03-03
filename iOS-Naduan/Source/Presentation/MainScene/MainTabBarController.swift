@@ -32,7 +32,6 @@ class MainSampleViewController: UIViewController {
     super.viewDidLoad()
     
     view.backgroundColor = .systemBackground
-    
     view.addSubview(button)
     
     button.attach {
@@ -40,5 +39,16 @@ class MainSampleViewController: UIViewController {
       $0.centerYAnchor.constraint(equalTo: view.centerYAnchor)
       $0.width(equalTo: 100)
     }
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    let action = UIAction { _ in
+      try? Auth.auth().signOut()
+      self.view.sceneDelegate?.presentLogin()
+    }
+    
+    button.addAction(action, for: .touchUpInside)
   }
 }

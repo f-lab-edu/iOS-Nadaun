@@ -12,13 +12,8 @@ enum SplashAction {
 
 class SplashViewModel {
   private let authRepository: AuthRepository
-  private var currentUser: FirebaseAuth.User? {
-    didSet {
-      currentUserChange?(currentUser)
-    }
-  }
   
-  var currentUserChange: ((User?) -> Void)?
+  var didSignIn: ((Bool) -> Void)?
   
   init(authRepository: AuthRepository) {
     self.authRepository = authRepository
@@ -27,7 +22,7 @@ class SplashViewModel {
   func bind(to action: SplashAction) {
     switch action {
       case .checkAuthState:
-        self.currentUser = authRepository.checkAuthUser()
+        didSignIn?(authRepository.checkAuthUser() != nil)
     }
   }
 }

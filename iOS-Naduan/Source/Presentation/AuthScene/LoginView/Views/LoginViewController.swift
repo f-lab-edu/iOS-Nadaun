@@ -108,7 +108,7 @@ private extension LoginViewController {
     }
     
     viewModel.didRegister = { [weak self] user in
-//      self?.view.sceneDelegate?.presentMainViewController()
+      self?.view.sceneDelegate?.presentMain()
     }
     
     viewModel.didErrorOccur = { [weak self] error in

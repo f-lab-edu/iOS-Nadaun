@@ -25,4 +25,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     static let storyBoardName: String = "SplashScreen"
     static let viewIdentifier: String = "SplashViewController"
   }
+  
+  func presentMain() {
+    let controller = MainTabBarController(nibName: nil, bundle: nil)
+    controller.modalPresentationStyle = .fullScreen
+    controller.modalTransitionStyle = .crossDissolve
+    window?.rootViewController = controller
+  }
+  
+  func presentLogin() {
+    let authController = AuthController()
+    let authRepository = AuthRepository(auth: .auth())
+    let viewModel = LoginViewModel(authRepository: authRepository)
+    let controller = LoginViewController(authController: authController, viewModel: viewModel)
+    window?.rootViewController = controller
+  }
 }
