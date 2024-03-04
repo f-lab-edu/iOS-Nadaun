@@ -86,7 +86,7 @@ private extension GenerateBasicCardViewController {
       self?.nextFlowButton.isEnabled = isEnable
     }
     
-    viewModel.didSuccessGenerate = { [weak self] in
+    viewModel.didGenerateBasicCardSucceed = { [weak self] in
       guard let self = self else { return }
       
       self.delegate?.generateBasicCard(didSuccessUpdate: self)

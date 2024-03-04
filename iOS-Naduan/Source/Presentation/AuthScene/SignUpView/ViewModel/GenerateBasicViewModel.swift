@@ -40,7 +40,7 @@ class GenerateBasicViewModel {
   }
   
   var didFillAll: ((Bool) -> Void)?
-  var didSuccessGenerate: (() -> Void)?
+  var didGenerateBasicCardSucceed: (() -> Void)?
   var didOccurError: ((String) -> Void)?
   
   init(repository: BusinessCardRepository) {
@@ -79,7 +79,7 @@ private extension GenerateBasicViewModel {
     repository.createNewCard(to: information) { [weak self] result in
       switch result {
         case .success:
-          self?.didSuccessGenerate?()
+          self?.didGenerateBasicCardSucceed?()
         case .failure(let error):
           self?.didOccurError?(error.description)
       }
