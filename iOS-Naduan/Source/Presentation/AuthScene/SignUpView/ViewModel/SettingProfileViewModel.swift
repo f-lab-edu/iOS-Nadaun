@@ -39,7 +39,7 @@ class SettingProfileViewModel {
   var didVerifyAll: ((Bool) -> Void)?
   
   // 프로필 업데이트 결과 속성
-  var didSuccessUpdateProfile: ((UserProfile) -> Void)?
+  var didUpdateProfileSucceed: ((UserProfile) -> Void)?
   var didOccurError: ((String) -> Void)?
   
   // MARK: - Initializer
@@ -72,7 +72,7 @@ private extension SettingProfileViewModel {
     userRepository.createUserProfile(to: userProfile) { [weak self] result in
       switch result {
         case .success(let profile):
-          self?.didSuccessUpdateProfile?(profile)
+          self?.didUpdateProfileSucceed?(profile)
         case .failure(let error):
           self?.didOccurError?(error.description)
       }

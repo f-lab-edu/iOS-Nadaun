@@ -120,7 +120,7 @@ private extension SettingProfileViewController {
       self?.nextFlowButton.isEnabled = isAllCheck
     }
     
-    viewModel.didSuccessUpdateProfile = { [weak self] userProfile in
+    viewModel.didUpdateProfileSucceed = { [weak self] userProfile in
       guard let self = self else { return }
       
       DispatchQueue.main.async {
