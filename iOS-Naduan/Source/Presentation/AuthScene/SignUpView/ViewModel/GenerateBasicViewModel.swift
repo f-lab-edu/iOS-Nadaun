@@ -16,23 +16,23 @@ class GenerateBasicViewModel {
   
   private var company: String? {
     didSet {
-      didFillAll?(didFillCompany)
+      didFillAll?(isCompanyFilled)
     }
   }
   
   private var department: String? {
     didSet {
-      didFillAll?(didFillCompany)
+      didFillAll?(isCompanyFilled)
     }
   }
   
   private var position: String? {
     didSet {
-      didFillAll?(didFillCompany)
+      didFillAll?(isCompanyFilled)
     }
   }
   
-  private var didFillCompany: Bool {
+  private var isCompanyFilled: Bool {
     let isFillCompany = (company?.isEmpty == false)
     let isFillDepartment = (department?.isEmpty == false)
     let isFillPosition = (position?.isEmpty == false)
