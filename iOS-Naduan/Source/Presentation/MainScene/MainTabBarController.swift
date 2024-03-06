@@ -7,27 +7,45 @@
 import UIKit
 
 final class MainTabBarController: UITabBarController {
-  private enum SceneRouter: CaseIterable {
+  // MARK: - Scene Router
+  private enum SceneRouter: Int, CaseIterable {
     case myCard
-    case example
+    case contact
+    case setting
+    
+    var image: UIImage? {
+      switch self {
+        case .myCard:
+          return .iconCard.withBaselineOffset(fromBottom: UIFont.systemFontSize * 2)
+        case .contact:
+          return .iconAddressBook.withBaselineOffset(fromBottom: UIFont.systemFontSize * 2)
+        case .setting:
+          return .iconGear.withBaselineOffset(fromBottom: UIFont.systemFontSize * 2)
+      }
+    }
     
     func generateInstance() -> UIViewController {
       switch self {
         case .myCard:
           let controller = MyCardViewController()
-          let tabBarItem = UITabBarItem()
-          tabBarItem.image = .add.withBaselineOffset(fromBottom: UIFont.systemFontSize * 2)
-          controller.tabBarItem = tabBarItem
+          controller.tabBarItem = UITabBarItem(title: nil, image: self.image, tag: self.rawValue)
           return controller
           
-        case .example:
+        // TODO: - 새로 생성되는 뷰컨 추가하기
+        case .contact:
           let controller = MyCardViewController()
-          controller.tabBarItem = UITabBarItem(title: nil, image: .remove, tag: 1)
+          controller.tabBarItem = UITabBarItem(title: nil, image: self.image, tag: self.rawValue)
+          return controller
+          
+        case .setting:
+          let controller = MyCardViewController()
+          controller.tabBarItem = UITabBarItem(title: nil, image: self.image, tag: self.rawValue)
           return controller
       }
     }
   }
   
+  // MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -35,6 +53,7 @@ final class MainTabBarController: UITabBarController {
     configureTabItems()
   }
   
+  // MARK: Configure UI Methods
   private func configureTabItems() {
     view.backgroundColor = .systemBackground
     
@@ -44,7 +63,7 @@ final class MainTabBarController: UITabBarController {
   
   private func configureTabBar() {
     tabBar.isTranslucent = false
-    tabBar.unselectedItemTintColor = .black
+    tabBar.unselectedItemTintColor = .body2
     tabBar.backgroundColor = .accent
     tabBar.tintColor = .white
   }
