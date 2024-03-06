@@ -20,14 +20,14 @@ class SettingProfileViewModel {
   private var name: String? {
     didSet {
       didChangeName?(name)
-      isVerifyAllFormat?(name?.isEmpty == false && verifyEmailFormat())
+      didVerifyAll?(name?.isEmpty == false && verifyEmailFormat())
     }
   }
   
   private var email: String? {
     didSet {
       didChangeEmail?(email)
-      isVerifyAllFormat?(name?.isEmpty == false && verifyEmailFormat())
+      didVerifyAll?(name?.isEmpty == false && verifyEmailFormat())
     }
   }
   
@@ -36,11 +36,11 @@ class SettingProfileViewModel {
   var didChangeEmail: ((String?) -> Void)?
   
   // 버튼 사용 가능성 속성
-  var isVerifyAllFormat: ((Bool) -> Void)?
+  var didVerifyAll: ((Bool) -> Void)?
   
   // 프로필 업데이트 결과 속성
-  var updateProfileSuccess: ((UserProfile) -> Void)?
-  var errorOccur: ((String) -> Void)?
+  var didUpdateProfileSucceed: ((UserProfile) -> Void)?
+  var didOccurError: ((String) -> Void)?
   
   // MARK: - Initializer
   init(userRepository: UserRepository) {
@@ -71,10 +71,10 @@ private extension SettingProfileViewModel {
     let userProfile = UserProfile(nickName: name, email: email)
     userRepository.createUserProfile(to: userProfile) { [weak self] result in
       switch result {
-        case .success:
-          self?.updateProfileSuccess?(userProfile)
+        case .success(let profile):
+          self?.didUpdateProfileSucceed?(profile)
         case .failure(let error):
-          self?.errorOccur?(error.description)
+          self?.didOccurError?(error.description)
       }
     }
   }

@@ -35,7 +35,7 @@ final class SettingProfileViewController: UIViewController {
   
   private let scrollContentView: UIStackView = {
     let stackView = UIStackView()
-    stackView.distribution = .fillProportionally
+    stackView.distribution = .fillEqually
     stackView.alignment = .fill
     stackView.axis = .vertical
     stackView.spacing = 32
@@ -116,11 +116,11 @@ private extension SettingProfileViewController {
       self?.emailTextField.text = email
     }
     
-    viewModel.isVerifyAllFormat = { [weak self] isAllCheck in
+    viewModel.didVerifyAll = { [weak self] isAllCheck in
       self?.nextFlowButton.isEnabled = isAllCheck
     }
     
-    viewModel.updateProfileSuccess = { [weak self] userProfile in
+    viewModel.didUpdateProfileSucceed = { [weak self] userProfile in
       guard let self = self else { return }
       
       DispatchQueue.main.async {
@@ -128,7 +128,7 @@ private extension SettingProfileViewController {
       }
     }
     
-    viewModel.errorOccur = { [weak self] message in
+    viewModel.didOccurError = { [weak self] message in
       DispatchQueue.main.async {
         self?.presentErrorAlert(for: message)
       }
@@ -192,7 +192,6 @@ private extension SettingProfileViewController {
 private extension SettingProfileViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
-    nextFlowButton.isEnabled = true
     
     configureHierarchy()
     makeConstraints()

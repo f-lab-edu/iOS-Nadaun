@@ -6,25 +6,12 @@
 
 import UIKit
 
-import FirebaseAuth
-
 final class SignUpViewController: UITabBarController {
   // MARK: - Child Flow Item
-  enum SignUpFlow: CaseIterable {
+  enum SignUpFlow {
     case agreeTerm
     case settingProfile
-    case generateBasicCard
-  }
-  
-  private let user: FirebaseAuth.User
-  
-  init(user: FirebaseAuth.User) {
-    self.user = user
-    super.init(nibName: nil, bundle: nil)
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
+    case generateBasicCard(UserProfile)
   }
   
   // MARK: - Life Cycle
@@ -46,7 +33,12 @@ extension SignUpViewController: AgreeTermDelegate {
 // MARK: - SettingProfile Delegate Method
 extension SignUpViewController: SettingProfileDelegate {
   func settingProfile(to controller: UIViewController, didSuccessUpdate profile: UserProfile) {
-    let cardController = generateChildController(to: .generateBasicCard)
+    let skipAction = UIAction { [weak self] _ in
+      self?.view.sceneDelegate?.presentMain()
+    }
+    navigationItem.rightBarButtonItem = UIBarButtonItem(title: "나중에", primaryAction: skipAction)
+    
+    let cardController = generateChildController(to: .generateBasicCard(profile))
     viewControllers?.append(cardController)
     selectedIndex += 1
   }
@@ -54,8 +46,8 @@ extension SignUpViewController: SettingProfileDelegate {
 
 // MARK: - GenerateBasicCard Delegate Method
 extension SignUpViewController: GenerateBasicCardDelegate {
-  func generateBasicCard(to controller: UIViewController, didSuccessUpdate card: BusinessCard) {
-    // TODO: - 홈 화면으로 전환
+  func generateBasicCard(didSuccessUpdate controller: UIViewController) {
+    view.sceneDelegate?.presentMain()
   }
 }
 
@@ -70,15 +62,17 @@ private extension SignUpViewController {
         return controller
         
       case .settingProfile:
-        let repository = UserRepository(user: user, store: .firestore())
+        let repository = UserRepository(auth: .auth(), store: .firestore())
         let viewModel = SettingProfileViewModel(userRepository: repository)
         
         let controller = SettingProfileViewController(viewModel: viewModel)
         controller.delegate = self
         return controller
         
-      case .generateBasicCard:
-        let controller = GenerateBasicCardViewController()
+      case .generateBasicCard(let profile):
+        let repository = BusinessCardRepository(profile: profile)
+        let viewModel = GenerateBasicViewModel(repository: repository)
+        let controller = GenerateBasicCardViewController(viewModel: viewModel)
         controller.delegate = self
         return controller
     }

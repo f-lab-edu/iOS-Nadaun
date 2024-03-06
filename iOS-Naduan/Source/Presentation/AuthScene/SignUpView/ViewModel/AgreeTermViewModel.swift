@@ -10,26 +10,26 @@ class AgreeTermViewModel {
     case selectPrivacy
   }
   
-  private var isSelectTerm: Bool = false {
+  private var didSelectTerm: Bool = false {
     didSet {
-      isSelectAll?(isSelectTerm == true && isSelectPrivacy == true)
+      didSelectAll?(didSelectTerm == true && didSelectPrivacy == true)
     }
   }
   
-  private var isSelectPrivacy: Bool = false {
+  private var didSelectPrivacy: Bool = false {
     didSet {
-      isSelectAll?(isSelectTerm == true && isSelectPrivacy == true)
+      didSelectAll?(didSelectTerm == true && didSelectPrivacy == true)
     }
   }
   
-  var isSelectAll: ((Bool) -> Void)?
+  var didSelectAll: ((Bool) -> Void)?
   
   func bind(action: AgreeTermAction) {
     switch action {
       case .selectTerm:
-        isSelectTerm.toggle()
+        didSelectTerm.toggle()
       case .selectPrivacy:
-        isSelectPrivacy.toggle()
+        didSelectPrivacy.toggle()
     }
   }
 }
