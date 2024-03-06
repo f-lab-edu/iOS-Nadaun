@@ -66,5 +66,6 @@ final class MainTabBarController: UITabBarController {
     tabBar.unselectedItemTintColor = .body2
     tabBar.backgroundColor = .accent
     tabBar.tintColor = .white
+    tabBar.layer.cornerRadius = 16
   }
 }
