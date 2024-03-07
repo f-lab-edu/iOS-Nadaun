@@ -5,6 +5,7 @@
 //  Copyright (c) 2024 Minii All rights reserved.
 
 import UIKit
+import FirebaseAuth
 
 final class MyCardViewController: UIViewController {
   private var collectionView: UICollectionView? = nil
@@ -111,6 +112,9 @@ private extension MyCardViewController {
     titleLabel.font = .pretendardFont(to: .H3B)
     titleLabel.textColor = .accent
     navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
+    navigationItem.rightBarButtonItem = UIBarButtonItem(image: .remove, primaryAction: .init(handler: { [weak self] _ in
+      try? Auth.auth().signOut()
+    }))
   }
   
   func configureHierarchy() {

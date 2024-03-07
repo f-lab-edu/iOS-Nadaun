@@ -11,7 +11,7 @@ final class SignUpViewController: UITabBarController {
   enum SignUpFlow {
     case agreeTerm
     case settingProfile
-    case generateBasicCard(UserProfile)
+    case generateBasicCard
   }
   
   // MARK: - Life Cycle
@@ -38,7 +38,7 @@ extension SignUpViewController: SettingProfileDelegate {
     }
     navigationItem.rightBarButtonItem = UIBarButtonItem(title: "나중에", primaryAction: skipAction)
     
-    let cardController = generateChildController(to: .generateBasicCard(profile))
+    let cardController = generateChildController(to: .generateBasicCard)
     viewControllers?.append(cardController)
     selectedIndex += 1
   }
@@ -69,8 +69,8 @@ private extension SignUpViewController {
         controller.delegate = self
         return controller
         
-      case .generateBasicCard(let profile):
-        let repository = BusinessCardRepository(profile: profile)
+      case .generateBasicCard:
+        let repository = BusinessCardRepository()
         let viewModel = GenerateBasicViewModel(repository: repository)
         let controller = GenerateBasicCardViewController(viewModel: viewModel)
         controller.delegate = self
