@@ -6,11 +6,88 @@
 
 import UIKit
 
+extension UICollectionViewCell: Reusable { }
+
+class MyCardCollectionViewCell: UICollectionViewCell {
+  func configure(with number: Int) {
+    let random1 = CGFloat.random(in: 0...1)
+    let random2 = CGFloat.random(in: 0...1)
+    let random3 = CGFloat.random(in: 0...1)
+    layer.backgroundColor = UIColor(red: random1, green: random2, blue: random3, alpha: 1).cgColor
+    layer.cornerRadius = 8
+  }
+}
+
 final class MyCardViewController: UIViewController {
+  private var collectionView: UICollectionView? = nil
+  private var dataSource: UICollectionViewDiffableDataSource<Int, Int>?
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    generateCollectionView()
     configureUI()
+    
+    let items = Array(1...100)
+    
+    var snapshot = NSDiffableDataSourceSnapshot<Int, Int>()
+    snapshot.appendSections([0])
+    snapshot.appendItems(items)
+    dataSource?.apply(snapshot)
+  }
+}
+
+extension MyCardViewController: UICollectionViewDelegate {
+  
+}
+
+// MARK: Configure CollectionView Methods
+private extension MyCardViewController {
+  func generateCollectionView() {
+    let layout = generateCollectionViewLayout()
+    collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+    collectionView?.delegate = self
+    
+    if let collectionView = collectionView {
+      dataSource = generateDataSource(to: collectionView)
+    }
+  }
+  
+  func generateDataSource(
+    to collectionView: UICollectionView
+  ) -> UICollectionViewDiffableDataSource<Int, Int> {
+    let registration = UICollectionView
+      .CellRegistration<MyCardCollectionViewCell, Int> { cell, indexPath, itemIdentifier in
+      cell.configure(with: itemIdentifier)
+    }
+    
+    return UICollectionViewDiffableDataSource(
+      collectionView: collectionView
+    ) { collectionView, indexPath, itemIdentifier in
+      return collectionView.dequeueConfiguredReusableCell(
+        using: registration, for: indexPath, item: itemIdentifier
+      )
+    }
+  }
+  
+  func generateCollectionViewLayout() -> UICollectionViewLayout {
+    return UICollectionViewCompositionalLayout { sectionIndex, environment in
+      let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                            heightDimension: .fractionalHeight(1.0))
+      let item = NSCollectionLayoutItem(layoutSize: itemSize)
+      item.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+      
+      let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.8),
+                                             heightDimension: .fractionalHeight(0.8))
+      let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+      let section = NSCollectionLayoutSection(group: group)
+      section.orthogonalScrollingBehavior = .groupPagingCentered
+      
+      let container = environment.container
+      section.contentInsets = NSDirectionalEdgeInsets(top: container.contentSize.height * 0.1,
+                                                      leading: .zero, bottom: .zero, trailing: .zero)
+      return section
+    }
   }
 }
 
@@ -33,10 +110,18 @@ private extension MyCardViewController {
   }
   
   func configureHierarchy() {
-    
+    guard let collectionView = collectionView else { return }
+    view.addSubview(collectionView)
   }
   
   func makeConstraints() {
+    guard let collectionView = collectionView else { return }
     
+    collectionView.attach {
+      $0.top(equalTo: view.safeAreaLayoutGuide.topAnchor)
+      $0.leading(equalTo: view.leadingAnchor)
+      $0.trailing(equalTo: view.trailingAnchor)
+      $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+    }
   }
 }
