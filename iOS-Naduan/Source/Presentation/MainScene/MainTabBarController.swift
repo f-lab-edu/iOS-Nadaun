@@ -58,6 +58,7 @@ final class MainTabBarController: UITabBarController {
     view.backgroundColor = .systemBackground
     
     let controllers = SceneRouter.allCases.map { $0.generateInstance() }
+      .map { UINavigationController(rootViewController: $0) }
     setViewControllers(controllers, animated: true)
   }
   
