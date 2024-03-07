@@ -44,7 +44,7 @@ class MyCardCollectionViewCell: UICollectionViewCell {
   private let phoneStackView = generatePrivacyStackView()
   
   private let phoneImage: UIImageView = {
-    let imageView = UIImageView(image: UIImage(systemName: "iphone.gen1"))
+    let imageView = UIImageView(image: .phone)
     return imageView
   }()
   
@@ -52,6 +52,22 @@ class MyCardCollectionViewCell: UICollectionViewCell {
     let label = UILabel()
     label.font = .pretendardFont(to: .C2R)
     label.text = "010-1234-1234"
+    label.textColor = .body2
+    label.textAlignment = .right
+    return label
+  }()
+  
+  private let emailStackView = generatePrivacyStackView()
+  
+  private let emailImage: UIImageView = {
+    let imageView = UIImageView(image: .email)
+    return imageView
+  }()
+  
+  private let emailLabel: UILabel = {
+    let label = UILabel()
+    label.font = .pretendardFont(to: .C2R)
+    label.text = "test@test.com"
     label.textColor = .body2
     label.textAlignment = .right
     return label
@@ -84,7 +100,7 @@ class MyCardCollectionViewCell: UICollectionViewCell {
   private static func generatePrivacyStackView() -> UIStackView {
     let stackView = UIStackView()
     stackView.alignment = .fill
-    stackView.distribution = .fillProportionally
+    stackView.distribution = .equalSpacing
     stackView.spacing = 10
     return stackView
   }
@@ -98,9 +114,10 @@ private extension MyCardCollectionViewCell {
   
   func configureHierarchy() {
     [phoneImage, phoneLabel].forEach(phoneStackView.addArrangedSubview)
+    [emailImage, emailLabel].forEach(emailStackView.addArrangedSubview)
     [
       nameLabel, shareButton, positionLabel, companyLabel,
-      phoneStackView
+      phoneStackView, emailStackView
     ].forEach {
       contentView.addSubview($0)
     }
@@ -135,10 +152,16 @@ private extension MyCardCollectionViewCell {
       $0.trailing(equalTo: positionLabel.trailingAnchor)
     }
     
+    emailStackView.attach {
+        $0.leading(equalTo: contentView.leadingAnchor, padding: 16)
+        $0.trailing(equalTo: contentView.trailingAnchor, padding: 16)
+        $0.bottom(equalTo: contentView.bottomAnchor, padding: 16)
+    }
+    
     phoneStackView.attach {
       $0.leading(equalTo: contentView.leadingAnchor, padding: 16)
       $0.trailing(equalTo: contentView.trailingAnchor, padding: 16)
-      $0.bottom(equalTo: contentView.bottomAnchor, padding: 16)
+      $0.bottom(equalTo: emailStackView.topAnchor, padding: 10)
     }
   }
 }
