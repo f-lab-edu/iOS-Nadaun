@@ -6,8 +6,6 @@
 
 import UIKit
 
-extension UICollectionViewCell: Reusable { }
-
 final class MyCardViewController: UIViewController {
   private var collectionView: UICollectionView? = nil
   private var dataSource: UICollectionViewDiffableDataSource<Int, Int>?

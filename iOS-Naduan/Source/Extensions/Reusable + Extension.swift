@@ -27,3 +27,5 @@ extension UITableView {
     return cell
   }
 }
+
+extension UICollectionViewCell: Reusable { }
