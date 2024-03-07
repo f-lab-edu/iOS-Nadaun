@@ -8,16 +8,6 @@ import UIKit
 
 extension UICollectionViewCell: Reusable { }
 
-class MyCardCollectionViewCell: UICollectionViewCell {
-  func configure(with number: Int) {
-    let random1 = CGFloat.random(in: 0...1)
-    let random2 = CGFloat.random(in: 0...1)
-    let random3 = CGFloat.random(in: 0...1)
-    layer.backgroundColor = UIColor(red: random1, green: random2, blue: random3, alpha: 1).cgColor
-    layer.cornerRadius = 8
-  }
-}
-
 final class MyCardViewController: UIViewController {
   private var collectionView: UICollectionView? = nil
   private var dataSource: UICollectionViewDiffableDataSource<Int, Int>?
@@ -51,6 +41,7 @@ private extension MyCardViewController {
     let layout = generateCollectionViewLayout()
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     collectionView?.delegate = self
+    collectionView?.isScrollEnabled = false
     
     if let collectionView = collectionView {
       dataSource = generateDataSource(to: collectionView)
@@ -62,8 +53,9 @@ private extension MyCardViewController {
   ) -> UICollectionViewDiffableDataSource<Int, Int> {
     let registration = UICollectionView
       .CellRegistration<MyCardCollectionViewCell, Int> { cell, indexPath, itemIdentifier in
-      cell.configure(with: itemIdentifier)
-    }
+        cell.configure(with: itemIdentifier)
+        //        return
+      }
     
     return UICollectionViewDiffableDataSource(
       collectionView: collectionView
@@ -81,12 +73,12 @@ private extension MyCardViewController {
       let item = NSCollectionLayoutItem(layoutSize: itemSize)
       item.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4)
       
-      let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.8),
+      let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.75),
                                              heightDimension: .fractionalHeight(0.8))
       let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+      
       let section = NSCollectionLayoutSection(group: group)
       section.orthogonalScrollingBehavior = .groupPagingCentered
-      
       let container = environment.container
       section.contentInsets = NSDirectionalEdgeInsets(top: container.contentSize.height * 0.1,
                                                       leading: .zero, bottom: .zero, trailing: .zero)
