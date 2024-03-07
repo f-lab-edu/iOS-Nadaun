@@ -27,13 +27,17 @@ final class MyCardViewController: UIViewController {
     
     generateCollectionView()
     configureUI()
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
     
     let items = Array(1...100)
     
     var snapshot = NSDiffableDataSourceSnapshot<Int, Int>()
     snapshot.appendSections([0])
     snapshot.appendItems(items)
-    dataSource?.apply(snapshot)
+    dataSource?.apply(snapshot, animatingDifferences: true)
   }
 }
 
@@ -75,7 +79,7 @@ private extension MyCardViewController {
       let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                             heightDimension: .fractionalHeight(1.0))
       let item = NSCollectionLayoutItem(layoutSize: itemSize)
-      item.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
+      item.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4)
       
       let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.8),
                                              heightDimension: .fractionalHeight(0.8))
@@ -86,6 +90,16 @@ private extension MyCardViewController {
       let container = environment.container
       section.contentInsets = NSDirectionalEdgeInsets(top: container.contentSize.height * 0.1,
                                                       leading: .zero, bottom: .zero, trailing: .zero)
+      
+      section.visibleItemsInvalidationHandler = { items, point, environment in
+        items.enumerated().forEach { index, item in
+          let distanceFromCenter = abs((item.frame.midX - point.x) - environment.container.contentSize.width / 2)
+          let minScale = 0.9
+          let maxScale = (1.0 - (distanceFromCenter / environment.container.contentSize.width))
+          let scale = max(minScale, maxScale)
+          item.transform = CGAffineTransform(scaleX: scale, y: scale)
+        }
+      }
       return section
     }
   }
