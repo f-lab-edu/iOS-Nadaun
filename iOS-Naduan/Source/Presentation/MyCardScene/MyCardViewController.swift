@@ -9,7 +9,7 @@ import FirebaseAuth
 
 final class MyCardViewController: UIViewController {
   private var collectionView: UICollectionView? = nil
-  private var dataSource: UICollectionViewDiffableDataSource<Int, Int>?
+  private var dataSource: UICollectionViewDiffableDataSource<Int, BusinessCard>?
   
   private let viewModel: MyCardViewModel
   
@@ -27,17 +27,37 @@ final class MyCardViewController: UIViewController {
     
     generateCollectionView()
     configureUI()
+    
+    binding()
   }
   
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
     
-    let items = Array(1...100)
+    viewModel.bind(.fetchCards)
+  }
+}
+
+private extension MyCardViewController {
+  func binding() {
+    viewModel.fetchedCards = { [weak self] cards in
+      self?.updateSnapshot(with: cards)
+    }
+  }
+  
+  private func updateSnapshot(with items: [BusinessCard]) {
+    var snapshot = dataSource?.snapshot() ?? .init()
     
-    var snapshot = NSDiffableDataSourceSnapshot<Int, Int>()
-    snapshot.appendSections([0])
-    snapshot.appendItems(items)
-    dataSource?.apply(snapshot, animatingDifferences: true)
+    if snapshot.numberOfSections <= 0 {
+      snapshot.appendSections([0])
+    }
+    
+    let notContainItems = items.filter { snapshot.itemIdentifiers.contains($0) == false }
+    
+    if notContainItems.isEmpty { return }
+    
+    snapshot.appendItems(notContainItems)
+    dataSource?.apply(snapshot)
   }
 }
 
@@ -60,11 +80,9 @@ private extension MyCardViewController {
   
   func generateDataSource(
     to collectionView: UICollectionView
-  ) -> UICollectionViewDiffableDataSource<Int, Int> {
+  ) -> UICollectionViewDiffableDataSource<Int, BusinessCard> {
     let registration = UICollectionView
-      .CellRegistration<MyCardCollectionViewCell, Int> { cell, indexPath, itemIdentifier in
-        cell.configure(with: itemIdentifier)
-        //        return
+      .CellRegistration<MyCardCollectionViewCell, BusinessCard> { cell, indexPath, itemIdentifier in
       }
     
     return UICollectionViewDiffableDataSource(
@@ -124,7 +142,8 @@ private extension MyCardViewController {
     titleLabel.textColor = .accent
     navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
     navigationItem.rightBarButtonItem = UIBarButtonItem(image: .remove, primaryAction: .init(handler: { [weak self] _ in
-      try? Auth.auth().signOut()
+//      try? Auth.auth().signOut()
+      self?.viewModel.bind(.fetchCards)
     }))
   }
   

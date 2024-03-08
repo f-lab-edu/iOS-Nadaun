@@ -11,7 +11,11 @@ enum MyCardAction {
 class MyCardViewModel {
   private let cardRepository: BusinessCardRepository
   
-  private var cards: [BusinessCard] = []
+  private var cards: [BusinessCard] = [] {
+    didSet {
+      fetchedCards?(cards)
+    }
+  }
   
   var fetchedCards: (([BusinessCard]) -> Void)?
   
@@ -22,7 +26,20 @@ class MyCardViewModel {
   func bind(_ action: MyCardAction) {
     switch action {
       case .fetchCards:
-        print("FETCH CARD ACTION")
+        fetchMyCards()
+    }
+  }
+}
+
+private extension MyCardViewModel {
+  func fetchMyCards() {
+    cardRepository.fetchCards { result in
+      switch result {
+        case .success(let fetchedCards):
+          self.cards = fetchedCards
+        case .failure(let error):
+          return
+      }
     }
   }
 }
