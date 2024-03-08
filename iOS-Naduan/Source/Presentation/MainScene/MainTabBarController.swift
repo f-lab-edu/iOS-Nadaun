@@ -27,20 +27,15 @@ final class MainTabBarController: UITabBarController {
     func generateInstance() -> UIViewController {
       switch self {
         case .myCard:
-          let controller = MyCardViewController()
+          let businessCardRepository = BusinessCardRepository()
+          let viewModel = MyCardViewModel(cardRepository: businessCardRepository)
+          let controller = MyCardViewController(viewModel: viewModel)
           controller.tabBarItem = UITabBarItem(title: nil, image: self.image, tag: self.rawValue)
           return controller
           
         // TODO: - 새로 생성되는 뷰컨 추가하기
-        case .contact:
-          let controller = MyCardViewController()
-          controller.tabBarItem = UITabBarItem(title: nil, image: self.image, tag: self.rawValue)
-          return controller
-          
-        case .setting:
-          let controller = MyCardViewController()
-          controller.tabBarItem = UITabBarItem(title: nil, image: self.image, tag: self.rawValue)
-          return controller
+        default:
+          return UIViewController()
       }
     }
   }

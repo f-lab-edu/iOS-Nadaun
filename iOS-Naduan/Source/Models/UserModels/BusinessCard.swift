@@ -4,7 +4,7 @@
 //
 //  Copyright (c) 2024 Minii All rights reserved.
 
-struct BusinessCard: Encodable {
+struct BusinessCard: Encodable, Decodable {
   typealias CompanyInformation = (company: String?, department: String?, position: String?)
   
   let id: String
