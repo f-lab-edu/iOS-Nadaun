@@ -68,41 +68,34 @@ class MyCardCollectionViewCell: UICollectionViewCell {
     return label
   }()
   
-  func configure(with card: BusinessCard) {
-    nameLabel.text = card.name
-    positionLabel.text = card.position
-    companyLabel.text = card.companyDescription
-    emailLabel.text = card.email
-    
-    if let phoneNumber = card.phone {
-      phoneLabel.text = phoneNumber
-    } else {
-      phoneStackView.isHidden = true
-    }
-  }
-  
   override init(frame: CGRect) {
     super.init(frame: frame)
     
-    layer.cornerRadius = 8
-    layer.backgroundColor = UIColor.white.cgColor
-    layer.shadowColor = UIColor.black.withAlphaComponent(0.3).cgColor
-    layer.shadowRadius = 2
-    layer.shadowOpacity = 1
-    layer.shadowOffset = CGSize(width: -1, height: 1)
+    configureUI()
   }
   
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
   
-  override func layoutSubviews() {
-    super.layoutSubviews()
+  func configure(with card: BusinessCard) {
+    nameLabel.text = card.name
+    positionLabel.text = card.position
+    companyLabel.text = card.companyDescription
+    emailLabel.text = card.email
     
-    configureUI()
+    guard let phone = card.phone else {
+      phoneStackView.isHidden = true
+      return
+    }
+    
+    phoneLabel.text = phone
   }
-  
-  private static func generatePrivacyStackView() -> UIStackView {
+}
+
+// MARK: - Generate StackView
+private extension MyCardCollectionViewCell {
+  static func generatePrivacyStackView() -> UIStackView {
     let stackView = UIStackView()
     stackView.alignment = .fill
     stackView.distribution = .equalSpacing
@@ -111,10 +104,22 @@ class MyCardCollectionViewCell: UICollectionViewCell {
   }
 }
 
+// MARK: - Configure UI Methods
 private extension MyCardCollectionViewCell {
   func configureUI() {
+    configureAttributes()
     configureHierarchy()
     makeConstraints()
+  }
+  
+  func configureAttributes() {
+    layer.cornerRadius = 8
+    layer.backgroundColor = UIColor.white.cgColor
+    layer.shadowColor = UIColor.black.withAlphaComponent(0.3).cgColor
+    layer.shadowRadius = 8
+    layer.shadowOpacity = 1
+    layer.shadowOffset = CGSize(width: 1, height: 1)
+    layer.shadowPath = UIBezierPath(rect: bounds).cgPath
   }
   
   func configureHierarchy() {
