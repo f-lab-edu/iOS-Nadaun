@@ -7,6 +7,7 @@
 import UIKit
 
 class MyCardCollectionViewCell: UICollectionViewCell {
+  // MARK: - View Properties
   private let nameLabel: UILabel = {
     let label = UILabel()
     label.font = .pretendardFont(to: .H1B)
@@ -68,6 +69,7 @@ class MyCardCollectionViewCell: UICollectionViewCell {
     return label
   }()
   
+  // MARK: - Initializer
   override init(frame: CGRect) {
     super.init(frame: frame)
     
@@ -78,7 +80,8 @@ class MyCardCollectionViewCell: UICollectionViewCell {
     fatalError("init(coder:) has not been implemented")
   }
   
-  func configure(with card: BusinessCard) {
+  // MARK: - Binding Method
+  func bind(with card: BusinessCard) {
     nameLabel.text = card.name
     positionLabel.text = card.position
     companyLabel.text = card.companyDescription
@@ -93,7 +96,7 @@ class MyCardCollectionViewCell: UICollectionViewCell {
   }
 }
 
-// MARK: - Generate StackView
+// MARK: - Static StackView
 private extension MyCardCollectionViewCell {
   static func generatePrivacyStackView() -> UIStackView {
     let stackView = UIStackView()
