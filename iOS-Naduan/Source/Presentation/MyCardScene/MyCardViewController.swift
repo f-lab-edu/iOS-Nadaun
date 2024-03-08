@@ -97,7 +97,8 @@ private extension MyCardViewController {
     to collectionView: UICollectionView
   ) -> UICollectionViewDiffableDataSource<Int, BusinessCard> {
     let registration = UICollectionView
-      .CellRegistration<MyCardCollectionViewCell, BusinessCard> { cell, indexPath, itemIdentifier in
+      .CellRegistration<MyCardCollectionViewCell, BusinessCard> { cell, _, card in
+        cell.configure(with: card)
       }
     
     return UICollectionViewDiffableDataSource(

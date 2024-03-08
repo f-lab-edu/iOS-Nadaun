@@ -12,7 +12,6 @@ class MyCardCollectionViewCell: UICollectionViewCell {
     label.font = .pretendardFont(to: .H1B)
     label.textColor = .title
     label.numberOfLines = 1
-    label.text = "이경민"
     return label
   }()
   
@@ -26,7 +25,6 @@ class MyCardCollectionViewCell: UICollectionViewCell {
   private let positionLabel: UILabel = {
     let label = UILabel()
     label.font = .pretendardFont(to: .B3M)
-    label.text = "iOS 개발자"
     label.textColor = .body1
     label.numberOfLines = 1
     return label
@@ -34,7 +32,6 @@ class MyCardCollectionViewCell: UICollectionViewCell {
   
   private let companyLabel: UILabel = {
     let label = UILabel()
-    label.text = "Naver"
     label.font = .pretendardFont(to: .C2R)
     label.textColor = .body1
     label.numberOfLines = 1
@@ -51,7 +48,6 @@ class MyCardCollectionViewCell: UICollectionViewCell {
   private let phoneLabel: UILabel = {
     let label = UILabel()
     label.font = .pretendardFont(to: .C2R)
-    label.text = "010-1234-1234"
     label.textColor = .body2
     label.textAlignment = .right
     return label
@@ -67,13 +63,22 @@ class MyCardCollectionViewCell: UICollectionViewCell {
   private let emailLabel: UILabel = {
     let label = UILabel()
     label.font = .pretendardFont(to: .C2R)
-    label.text = "test@test.com"
     label.textColor = .body2
     label.textAlignment = .right
     return label
   }()
   
-  func configure(with number: Int) {
+  func configure(with card: BusinessCard) {
+    nameLabel.text = card.name
+    positionLabel.text = card.position
+    companyLabel.text = card.companyDescription
+    emailLabel.text = card.email
+    
+    if let phoneNumber = card.phone {
+      phoneLabel.text = phoneNumber
+    } else {
+      phoneStackView.isHidden = true
+    }
   }
   
   override init(frame: CGRect) {

@@ -13,6 +13,15 @@ struct BusinessCard: Encodable, Decodable, Hashable {
   var company: String?
   var department: String?
   var position: String?
+  var phone: String?
+  
+  var companyDescription: String {
+    if let company = company {
+      return company + " | " + (department ?? "")
+    }
+    
+    return department ?? ""
+  }
   
   static func make(
     profile: UserProfile,
