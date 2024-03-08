@@ -9,7 +9,6 @@ import FirebaseAuth
 import FirebaseFirestore
 
 class BusinessCardRepository {
-  
   private let auth: Auth
   private let store: Firestore
   
@@ -36,7 +35,7 @@ class BusinessCardRepository {
         return nil
       }
       
-      guard let userProfile = try? fetchUserProfile(to: userID, with: transaction) else {
+      guard let userProfile = try? fetchUserProfileInTransaction(to: userID, with: transaction) else {
         pointer?.pointee = NSError(domain: "Fetch Profile Error", code: -1)
         return nil
       }
@@ -60,11 +59,29 @@ class BusinessCardRepository {
       completion(.success(()))
     }
   }
+  
+  func fetchCards(_ completion: @escaping (Result<[BusinessCard], Error>) -> Void) {
+    guard let userID = auth.currentUser?.uid else {
+      completion(.failure(CardError.missingError))
+      return
+    }
+    
+    store.collection("Card").whereField("id", isEqualTo: userID)
+      .getDocuments { snapshot, error in
+        guard error == nil, let documents = snapshot?.documents else {
+          completion(.failure(CardError.missingError))
+          return
+        }
+        
+        let cards = documents.compactMap { try? $0.data(as: BusinessCard.self) }
+        completion(.success(cards))
+      }
+  }
 }
 
 // MARK: Detail Methods
 private extension BusinessCardRepository {
-  func fetchUserProfile(to userID: String, with transaction: Transaction) throws -> UserProfile {
+  func fetchUserProfileInTransaction(to userID: String, with transaction: Transaction) throws -> UserProfile {
     let userReference = Firestore.firestore().collection("User").document(userID)
     
     let document = try transaction.getDocument(userReference)
