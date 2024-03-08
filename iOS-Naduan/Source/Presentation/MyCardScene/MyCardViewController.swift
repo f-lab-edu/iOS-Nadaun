@@ -8,15 +8,19 @@ import UIKit
 import FirebaseAuth
 
 final class MyCardViewController: UIViewController {
+  // MARK: - View Properties
   private let loadingIndicator: UIActivityIndicatorView = {
     let indicator = UIActivityIndicatorView(style: .medium)
     return indicator
   }()
-  private var collectionView: UICollectionView? = nil
-  private var dataSource: UICollectionViewDiffableDataSource<Int, BusinessCard>?
   
+  private var collectionView: UICollectionView? = nil
+  
+  // MARK: - Business Logic Properties
+  private var dataSource: UICollectionViewDiffableDataSource<Int, BusinessCard>?
   private let viewModel: MyCardViewModel
   
+  // MARK: - Initializer
   init(viewModel: MyCardViewModel) {
     self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
@@ -26,6 +30,7 @@ final class MyCardViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
   
+  // MARK: - Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -42,6 +47,7 @@ final class MyCardViewController: UIViewController {
   }
 }
 
+// MARK: - Binding Methods
 private extension MyCardViewController {
   func binding() {
     viewModel.didChangeRenderState = { [weak self] renderState in
@@ -82,6 +88,7 @@ private extension MyCardViewController {
 
 // MARK: Configure CollectionView Methods
 private extension MyCardViewController {
+  /// CollectionView 뷰를 구성하는 메서드입니다.
   func generateCollectionView() {
     let layout = generateCollectionViewLayout()
     
@@ -93,6 +100,7 @@ private extension MyCardViewController {
     }
   }
   
+  /// CollectionView와 연결될 DataSource를 구성합니다.
   func generateDataSource(
     to collectionView: UICollectionView
   ) -> UICollectionViewDiffableDataSource<Int, BusinessCard> {
@@ -110,15 +118,18 @@ private extension MyCardViewController {
     }
   }
   
+  /// CollectionView Layout의 섹션을 구성합니다.
+  /// Center에 위치하지 않는 아이템에 대하여 작은 사이즈를 제공합니다.
   func generateAnimationSection(with group: NSCollectionLayoutGroup) -> NSCollectionLayoutSection {
     let section = NSCollectionLayoutSection(group: group)
     section.orthogonalScrollingBehavior = .groupPagingCentered
     
     section.visibleItemsInvalidationHandler = { items, point, environment in
+      let contentSize = environment.container.contentSize
       items.enumerated().forEach { index, item in
-        let distanceFromCenter = abs((item.frame.midX - point.x) - environment.container.contentSize.width / 2)
+        let distanceFromCenter = abs((item.frame.midX - point.x) - contentSize.width / 2)
         let minScale = 0.9
-        let maxScale = (1.0 - (distanceFromCenter / environment.container.contentSize.width))
+        let maxScale = (1.0 - (distanceFromCenter / contentSize.width))
         let scale = max(minScale, maxScale)
         item.transform = CGAffineTransform(scaleX: scale, y: scale)
       }
@@ -127,6 +138,7 @@ private extension MyCardViewController {
     return section
   }
   
+  /// CollectionView에 필요한 Layout을 생성합니다.
   func generateCollectionViewLayout() -> UICollectionViewLayout {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                           heightDimension: .fractionalHeight(1.0))
@@ -146,6 +158,7 @@ private extension MyCardViewController {
   }
 }
 
+// MARK: - Configure UI Methods
 private extension MyCardViewController {
   func configureUI() {
     view.backgroundColor = .systemBackground
