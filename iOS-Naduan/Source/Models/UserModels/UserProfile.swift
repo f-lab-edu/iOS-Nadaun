@@ -8,7 +8,6 @@ struct UserProfile: Encodable, Decodable {
   var ID: String?
   var nickName: String?
   var email: String?
-  var cardIDs: [String] = []
   
   mutating func updateID(with id: String) {
     self.ID = id
