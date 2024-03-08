@@ -106,7 +106,9 @@ private extension MyCardViewController {
   ) -> UICollectionViewDiffableDataSource<Int, BusinessCard> {
     let registration = UICollectionView
       .CellRegistration<MyCardCollectionViewCell, BusinessCard> { cell, _, card in
-        cell.bind(with: card)
+        cell.bind(with: card) { [weak self] _ in
+          print("CELL TAPPED \(card)")
+        }
       }
     
     return UICollectionViewDiffableDataSource(

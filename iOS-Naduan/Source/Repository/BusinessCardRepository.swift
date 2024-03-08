@@ -26,7 +26,6 @@ class BusinessCardRepository {
       return
     }
     
-    let userReference = store.collection("User").document(userID)
     let cardReference = store.collection("Card").document()
     
     store.runTransaction { [weak self] transaction, pointer in
@@ -40,7 +39,9 @@ class BusinessCardRepository {
         return nil
       }
       
-      let card = BusinessCard.make(profile: userProfile, information: information)
+      let card = BusinessCard.make(cardID: cardReference.documentID,
+                                   profile: userProfile,
+                                   information: information)
       
       do {
         try transaction.setData(from: card, forDocument: cardReference)
@@ -64,7 +65,7 @@ class BusinessCardRepository {
       return
     }
     
-    store.collection("Card").whereField("id", isEqualTo: userID)
+    store.collection("Card").whereField("userID", isEqualTo: userID)
       .getDocuments { snapshot, error in
         guard error == nil, let documents = snapshot?.documents else {
           completion(.failure(CardError.missingError))

@@ -81,11 +81,13 @@ class MyCardCollectionViewCell: UICollectionViewCell {
   }
   
   // MARK: - Binding Method
-  func bind(with card: BusinessCard) {
+  func bind(with card: BusinessCard, handler: @escaping UIActionHandler) {
     nameLabel.text = card.name
     positionLabel.text = card.position
     companyLabel.text = card.companyDescription
     emailLabel.text = card.email
+    let action = UIAction(handler: handler)
+    shareButton.addAction(action, for: .touchUpInside)
     
     guard let phone = card.phone else {
       phoneStackView.isHidden = true

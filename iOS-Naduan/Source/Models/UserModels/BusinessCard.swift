@@ -4,10 +4,13 @@
 //
 //  Copyright (c) 2024 Minii All rights reserved.
 
+import Foundation
+
 struct BusinessCard: Encodable, Decodable, Hashable {
   typealias CompanyInformation = (company: String?, department: String?, position: String?)
   
-  let id: String
+  let cardID: String
+  let userID: String
   let name: String
   let email: String
   var company: String?
@@ -24,11 +27,13 @@ struct BusinessCard: Encodable, Decodable, Hashable {
   }
   
   static func make(
+    cardID: String,
     profile: UserProfile,
     information: CompanyInformation
   ) -> Self {
     return .init(
-      id: profile.ID ?? "",
+      cardID: cardID,
+      userID: profile.ID ?? "",
       name: profile.nickName ?? "",
       email: profile.email ?? "",
       company: information.company,
