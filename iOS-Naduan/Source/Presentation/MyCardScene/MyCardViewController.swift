@@ -8,6 +8,10 @@ import UIKit
 import FirebaseAuth
 
 final class MyCardViewController: UIViewController {
+  private let loadingIndicator: UIActivityIndicatorView = {
+    let indicator = UIActivityIndicatorView(style: .medium)
+    return indicator
+  }()
   private var collectionView: UICollectionView? = nil
   private var dataSource: UICollectionViewDiffableDataSource<Int, BusinessCard>?
   
@@ -40,8 +44,23 @@ final class MyCardViewController: UIViewController {
 
 private extension MyCardViewController {
   func binding() {
+    viewModel.didChangeRenderState = { [weak self] renderState in
+      self?.updateIndicatorState(to: renderState == .loading)
+    }
+    
     viewModel.fetchedCards = { [weak self] cards in
       self?.updateSnapshot(with: cards)
+    }
+  }
+  
+  private func updateIndicatorState(to isAnimating: Bool) {
+    self.collectionView?.isHidden = isAnimating
+    self.loadingIndicator.isHidden = (isAnimating == false)
+    
+    if isAnimating {
+      loadingIndicator.startAnimating()
+    } else {
+      loadingIndicator.stopAnimating()
     }
   }
   
@@ -142,14 +161,14 @@ private extension MyCardViewController {
     titleLabel.textColor = .accent
     navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
     navigationItem.rightBarButtonItem = UIBarButtonItem(image: .remove, primaryAction: .init(handler: { [weak self] _ in
-//      try? Auth.auth().signOut()
+      //      try? Auth.auth().signOut()
       self?.viewModel.bind(.fetchCards)
     }))
   }
   
   func configureHierarchy() {
     guard let collectionView = collectionView else { return }
-    view.addSubview(collectionView)
+    [loadingIndicator, collectionView].forEach(view.addSubview)
   }
   
   func makeConstraints() {
@@ -160,6 +179,11 @@ private extension MyCardViewController {
       $0.leading(equalTo: view.leadingAnchor)
       $0.trailing(equalTo: view.trailingAnchor)
       $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+    }
+    
+    loadingIndicator.attach {
+      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+      $0.centerYAnchor.constraint(equalTo: view.centerYAnchor)
     }
   }
 }
