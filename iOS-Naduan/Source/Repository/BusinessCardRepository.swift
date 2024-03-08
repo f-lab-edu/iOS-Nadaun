@@ -41,11 +41,9 @@ class BusinessCardRepository {
       }
       
       let card = BusinessCard.make(profile: userProfile, information: information)
-      let updateFields = ["cardIDs": FieldValue.arrayUnion([cardReference.documentID])]
       
       do {
         try transaction.setData(from: card, forDocument: cardReference)
-        transaction.updateData(updateFields, forDocument: userReference)
         return nil
       } catch let error as NSError {
         pointer?.pointee = error
@@ -82,7 +80,7 @@ class BusinessCardRepository {
 // MARK: Detail Methods
 private extension BusinessCardRepository {
   func fetchUserProfileInTransaction(to userID: String, with transaction: Transaction) throws -> UserProfile {
-    let userReference = Firestore.firestore().collection("User").document(userID)
+    let userReference = store.collection("User").document(userID)
     
     let document = try transaction.getDocument(userReference)
     let userProfile = try document.data(as: UserProfile.self)
