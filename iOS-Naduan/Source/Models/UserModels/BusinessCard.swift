@@ -5,6 +5,8 @@
 //  Copyright (c) 2024 Minii All rights reserved.
 
 struct BusinessCard: Encodable {
+  typealias CompanyInformation = (company: String?, department: String?, position: String?)
+  
   let id: String
   let name: String
   let email: String
@@ -14,17 +16,15 @@ struct BusinessCard: Encodable {
   
   static func make(
     profile: UserProfile,
-    company: String? = nil,
-    department: String? = nil,
-    position: String? = nil
+    information: CompanyInformation
   ) -> Self {
     return .init(
       id: profile.ID ?? "",
       name: profile.nickName ?? "",
       email: profile.email ?? "",
-      company: company,
-      department: department,
-      position: position
+      company: information.company,
+      department: information.department,
+      position: information.position
     )
   }
 }
