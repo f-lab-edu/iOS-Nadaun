@@ -80,16 +80,12 @@ private extension MyCardViewController {
   }
 }
 
-extension MyCardViewController: UICollectionViewDelegate {
-  
-}
-
 // MARK: Configure CollectionView Methods
 private extension MyCardViewController {
   func generateCollectionView() {
     let layout = generateCollectionViewLayout()
+    
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-    collectionView?.delegate = self
     collectionView?.isScrollEnabled = false
     
     if let collectionView = collectionView {
@@ -113,32 +109,37 @@ private extension MyCardViewController {
     }
   }
   
+  func generateAnimationSection(with group: NSCollectionLayoutGroup) -> NSCollectionLayoutSection {
+    let section = NSCollectionLayoutSection(group: group)
+    section.orthogonalScrollingBehavior = .groupPagingCentered
+    
+    section.visibleItemsInvalidationHandler = { items, point, environment in
+      items.enumerated().forEach { index, item in
+        let distanceFromCenter = abs((item.frame.midX - point.x) - environment.container.contentSize.width / 2)
+        let minScale = 0.9
+        let maxScale = (1.0 - (distanceFromCenter / environment.container.contentSize.width))
+        let scale = max(minScale, maxScale)
+        item.transform = CGAffineTransform(scaleX: scale, y: scale)
+      }
+    }
+    
+    return section
+  }
+  
   func generateCollectionViewLayout() -> UICollectionViewLayout {
-    return UICollectionViewCompositionalLayout { sectionIndex, environment in
-      let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                            heightDimension: .fractionalHeight(1.0))
-      let item = NSCollectionLayoutItem(layoutSize: itemSize)
-      item.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 4)
-      
-      let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.75),
-                                             heightDimension: .fractionalHeight(0.8))
-      let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-      
-      let section = NSCollectionLayoutSection(group: group)
-      section.orthogonalScrollingBehavior = .groupPagingCentered
+    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                          heightDimension: .fractionalHeight(1.0))
+    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.8),
+                                           heightDimension: .fractionalHeight(0.8))
+    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+    
+    let section = generateAnimationSection(with: group)
+    return UICollectionViewCompositionalLayout { _, environment in
       let container = environment.container
       section.contentInsets = NSDirectionalEdgeInsets(top: container.contentSize.height * 0.1,
                                                       leading: .zero, bottom: .zero, trailing: .zero)
-      
-      section.visibleItemsInvalidationHandler = { items, point, environment in
-        items.enumerated().forEach { index, item in
-          let distanceFromCenter = abs((item.frame.midX - point.x) - environment.container.contentSize.width / 2)
-          let minScale = 0.9
-          let maxScale = (1.0 - (distanceFromCenter / environment.container.contentSize.width))
-          let scale = max(minScale, maxScale)
-          item.transform = CGAffineTransform(scaleX: scale, y: scale)
-        }
-      }
       return section
     }
   }
@@ -160,10 +161,6 @@ private extension MyCardViewController {
     titleLabel.font = .pretendardFont(to: .H3B)
     titleLabel.textColor = .accent
     navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
-    navigationItem.rightBarButtonItem = UIBarButtonItem(image: .remove, primaryAction: .init(handler: { [weak self] _ in
-      //      try? Auth.auth().signOut()
-      self?.viewModel.bind(.fetchCards)
-    }))
   }
   
   func configureHierarchy() {

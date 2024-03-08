@@ -47,12 +47,10 @@ class MyCardViewModel {
 private extension MyCardViewModel {
   func fetchMyCards() {
     cardRepository.fetchCards { [weak self] result in
-      switch result {
-        case .success(let fetchedCards):
-          self?.cards = fetchedCards
-        case .failure(let error):
-          return
+      if case let .success(fetchedCards) = result {
+        self?.cards = fetchedCards
       }
+      
       self?.renderState = .complete
     }
   }
