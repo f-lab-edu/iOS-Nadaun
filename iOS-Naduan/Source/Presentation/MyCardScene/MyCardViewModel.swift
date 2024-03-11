@@ -8,7 +8,7 @@ enum MyCardAction {
   case fetchCards
 }
 
-enum RenderState {
+enum CardFetchState {
   case loading
   case complete
 }
@@ -22,13 +22,13 @@ class MyCardViewModel {
     }
   }
   
-  private var renderState: RenderState = .loading {
+  private var cardFetchState: CardFetchState = .loading {
     didSet {
-      didChangeRenderState?(renderState)
+      didChangeFetchState?(cardFetchState)
     }
   }
   
-  var didChangeRenderState: ((RenderState) -> Void)?
+  var didChangeFetchState: ((CardFetchState) -> Void)?
   var fetchedCards: (([BusinessCard]) -> Void)?
   
   init(cardRepository: BusinessCardRepository) {
@@ -38,7 +38,7 @@ class MyCardViewModel {
   func bind(_ action: MyCardAction) {
     switch action {
       case .fetchCards:
-        renderState = .loading
+        cardFetchState = .loading
         fetchMyCards()
     }
   }
@@ -51,7 +51,7 @@ private extension MyCardViewModel {
         self?.cards = fetchedCards
       }
       
-      self?.renderState = .complete
+      self?.cardFetchState = .complete
     }
   }
 }
