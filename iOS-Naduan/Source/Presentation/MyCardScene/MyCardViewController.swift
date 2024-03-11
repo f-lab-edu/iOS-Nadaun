@@ -50,8 +50,8 @@ final class MyCardViewController: UIViewController {
 // MARK: - Binding Methods
 private extension MyCardViewController {
   func binding() {
-    viewModel.didChangeRenderState = { [weak self] renderState in
-      self?.updateIndicatorState(to: renderState == .loading)
+    viewModel.didChangeFetchState = { [weak self] fetchState in
+      self?.updateIndicatorState(to: fetchState == .loading)
     }
     
     viewModel.didFetchCards = { [weak self] cards in
@@ -86,6 +86,12 @@ private extension MyCardViewController {
   }
 }
 
+extension MyCardViewController: MyCardCollectionViewCellDelegate {
+  func myCardCollectionViewCell(_ cell: MyCardCollectionViewCell, didSelectShare card: BusinessCard) {
+    print(card)
+  }
+}
+
 // MARK: Configure CollectionView Methods
 private extension MyCardViewController {
   /// CollectionView 뷰를 구성하는 메서드입니다.
@@ -104,18 +110,18 @@ private extension MyCardViewController {
   func generateDataSource(
     to collectionView: UICollectionView
   ) -> UICollectionViewDiffableDataSource<Int, BusinessCard> {
-    let registration = UICollectionView
-      .CellRegistration<MyCardCollectionViewCell, BusinessCard> { cell, _, card in
-        cell.bind(with: card) { [weak self] _ in
-          print("CELL TAPPED \(card)")
-        }
-      }
+    let registration = UICollectionView.CellRegistration<
+      MyCardCollectionViewCell, BusinessCard
+    > { cell, _, card in
+      cell.delegate = self
+      cell.bind(with: card)
+    }
     
     return UICollectionViewDiffableDataSource(
       collectionView: collectionView
-    ) { collectionView, indexPath, itemIdentifier in
+    ) { collectionView, indexPath, card in
       return collectionView.dequeueConfiguredReusableCell(
-        using: registration, for: indexPath, item: itemIdentifier
+        using: registration, for: indexPath, item: card
       )
     }
   }

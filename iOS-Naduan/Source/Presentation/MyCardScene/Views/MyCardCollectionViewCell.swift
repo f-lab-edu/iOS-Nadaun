@@ -6,6 +6,12 @@
 
 import UIKit
 
+// MARK: MyCardCollectionViewCell Delegate
+protocol MyCardCollectionViewCellDelegate: AnyObject {
+  func myCardCollectionViewCell(_ cell: MyCardCollectionViewCell, didSelectShare card: BusinessCard)
+}
+
+// MARK: MyCardCollectionViewCell
 class MyCardCollectionViewCell: UICollectionViewCell {
   // MARK: - View Properties
   private let nameLabel: UILabel = {
@@ -69,6 +75,8 @@ class MyCardCollectionViewCell: UICollectionViewCell {
     return label
   }()
   
+  weak var delegate: MyCardCollectionViewCellDelegate?
+  
   // MARK: - Initializer
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -80,21 +88,34 @@ class MyCardCollectionViewCell: UICollectionViewCell {
     fatalError("init(coder:) has not been implemented")
   }
   
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    
+    phoneStackView.isHidden = true
+    let shareIdentifier = UIAction.Identifier("SHARE")
+    shareButton.removeAction(identifiedBy: shareIdentifier, for: .touchUpInside)
+  }
+  
   // MARK: - Binding Method
-  func bind(with card: BusinessCard, handler: @escaping UIActionHandler) {
+  func bind(with card: BusinessCard) {
     nameLabel.text = card.name
     positionLabel.text = card.position
     companyLabel.text = card.companyDescription
     emailLabel.text = card.email
-    let action = UIAction(handler: handler)
-    shareButton.addAction(action, for: .touchUpInside)
     
-    guard let phone = card.phone else {
-      phoneStackView.isHidden = true
-      return
+    if let phone = card.phone {
+      phoneLabel.text = phone
+      phoneStackView.isHidden = false
     }
     
-    phoneLabel.text = phone
+    
+    let actionIdentifier = UIAction.Identifier("SHARE")
+    let shareAction = UIAction(identifier: actionIdentifier) { [weak self] _ in
+      guard let self = self else { return }
+      delegate?.myCardCollectionViewCell(self, didSelectShare: card)
+    }
+    
+    shareButton.addAction(shareAction, for: .touchUpInside)
   }
 }
 
