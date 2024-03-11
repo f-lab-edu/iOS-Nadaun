@@ -18,7 +18,7 @@ class MyCardViewModel {
   
   private var cards: [BusinessCard] = [] {
     didSet {
-      fetchedCards?(cards)
+      didFetchCards?(cards)
     }
   }
   
@@ -29,7 +29,7 @@ class MyCardViewModel {
   }
   
   var didChangeFetchState: ((CardFetchState) -> Void)?
-  var fetchedCards: (([BusinessCard]) -> Void)?
+  var didFetchCards: (([BusinessCard]) -> Void)?
   
   init(cardRepository: BusinessCardRepository) {
     self.cardRepository = cardRepository

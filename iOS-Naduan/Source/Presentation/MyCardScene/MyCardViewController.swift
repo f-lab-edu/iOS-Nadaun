@@ -54,7 +54,7 @@ private extension MyCardViewController {
       self?.updateIndicatorState(to: renderState == .loading)
     }
     
-    viewModel.fetchedCards = { [weak self] cards in
+    viewModel.didFetchCards = { [weak self] cards in
       self?.updateSnapshot(with: cards)
     }
   }
