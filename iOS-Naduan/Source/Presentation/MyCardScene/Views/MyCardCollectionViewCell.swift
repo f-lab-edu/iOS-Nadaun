@@ -92,8 +92,7 @@ class MyCardCollectionViewCell: UICollectionViewCell {
     super.prepareForReuse()
     
     phoneStackView.isHidden = true
-    let shareIdentifier = UIAction.Identifier("SHARE")
-    shareButton.removeAction(identifiedBy: shareIdentifier, for: .touchUpInside)
+    shareButton.removeAction(identifiedBy: Constants.shareActionID, for: .touchUpInside)
   }
   
   // MARK: - Binding Method
@@ -108,9 +107,7 @@ class MyCardCollectionViewCell: UICollectionViewCell {
       phoneStackView.isHidden = false
     }
     
-    
-    let actionIdentifier = UIAction.Identifier("SHARE")
-    let shareAction = UIAction(identifier: actionIdentifier) { [weak self] _ in
+    let shareAction = UIAction(identifier: Constants.shareActionID) { [weak self] _ in
       guard let self = self else { return }
       delegate?.myCardCollectionViewCell(self, didSelectShare: card)
     }
@@ -199,5 +196,11 @@ private extension MyCardCollectionViewCell {
       $0.trailing(equalTo: contentView.trailingAnchor, padding: 16)
       $0.bottom(equalTo: emailStackView.topAnchor, padding: 10)
     }
+  }
+}
+
+private extension MyCardCollectionViewCell {
+  enum Constants {
+    static let shareActionID = UIAction.Identifier("SHARE")
   }
 }
