@@ -6,49 +6,62 @@
 
 import UIKit
 
-import FirebaseAuth
-
 final class MainTabBarController: UITabBarController {
-  override func viewDidLoad() {
-    super.viewDidLoad()
+  // MARK: - Scene Router
+  private enum SceneRouter: Int, CaseIterable {
+    case myCard
+    case contact
+    case setting
     
-    view.backgroundColor = .systemBackground
+    var image: UIImage? {
+      switch self {
+        case .myCard:
+          return .iconCard.withBaselineOffset(fromBottom: UIFont.systemFontSize * 2)
+        case .contact:
+          return .iconAddressBook.withBaselineOffset(fromBottom: UIFont.systemFontSize * 2)
+        case .setting:
+          return .iconGear.withBaselineOffset(fromBottom: UIFont.systemFontSize * 2)
+      }
+    }
     
-    let controller = MainSampleViewController()
-    controller.tabBarItem = UITabBarItem(title: "홈", image: .checkmark, tag: .zero)
-    setViewControllers([controller], animated: true)
-  }
-}
-
-class MainSampleViewController: UIViewController {
-  private let button: UIButton = {
-    let button = UIButton(type: .system)
-    button.setTitle("로그아웃", for: .normal)
-    button.setTitleColor(.black, for: .normal)
-    return button
-  }()
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    
-    view.backgroundColor = .systemBackground
-    view.addSubview(button)
-    
-    button.attach {
-      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-      $0.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-      $0.width(equalTo: 100)
+    func generateInstance() -> UIViewController {
+      switch self {
+        case .myCard:
+          let businessCardRepository = BusinessCardRepository()
+          let viewModel = MyCardViewModel(cardRepository: businessCardRepository)
+          let controller = MyCardViewController(viewModel: viewModel)
+          controller.tabBarItem = UITabBarItem(title: nil, image: self.image, tag: self.rawValue)
+          return controller
+          
+        // TODO: - 새로 생성되는 뷰컨 추가하기
+        default:
+          return UIViewController()
+      }
     }
   }
   
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
+  // MARK: - Life Cycle
+  override func viewDidLoad() {
+    super.viewDidLoad()
     
-    let action = UIAction { _ in
-      try? Auth.auth().signOut()
-      self.view.sceneDelegate?.presentLogin()
-    }
+    configureTabBar()
+    configureTabItems()
+  }
+  
+  // MARK: Configure UI Methods
+  private func configureTabItems() {
+    view.backgroundColor = .systemBackground
     
-    button.addAction(action, for: .touchUpInside)
+    let controllers = SceneRouter.allCases.map { $0.generateInstance() }
+      .map { UINavigationController(rootViewController: $0) }
+    setViewControllers(controllers, animated: true)
+  }
+  
+  private func configureTabBar() {
+    tabBar.isTranslucent = false
+    tabBar.unselectedItemTintColor = .body2
+    tabBar.backgroundColor = .accent
+    tabBar.tintColor = .white
+    tabBar.layer.cornerRadius = 16
   }
 }

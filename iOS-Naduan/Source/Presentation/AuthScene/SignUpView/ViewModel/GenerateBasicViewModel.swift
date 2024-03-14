@@ -70,7 +70,7 @@ class GenerateBasicViewModel {
 
 private extension GenerateBasicViewModel {
   func createNewCard() {
-    let information = BusinessCardRepository.CompanyInformation(
+    let information = BusinessCard.CompanyInformation(
       company: company,
       department: department,
       position: position
