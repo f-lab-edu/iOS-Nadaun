@@ -38,16 +38,41 @@ class DropCardViewController: UIViewController {
     label.textColor = .disable
     label.font = .pretendardFont(to: .C1R)
     label.layer.cornerRadius = 8
-    label.layer.backgroundColor = UIColor.gray01.cgColor
+    label.layer.backgroundColor = UIColor.gray02.cgColor
     label.text = TextConstants.shareExplanation
     return label
   }()
+  
+  private let viewModel: DropCardViewModel
+  
+  init(viewModel: DropCardViewModel) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  @available(*, unavailable, message: "스토리보드로 생성할 수 없습니다.")
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
     configureUI()
     animationBackgroundView.play()
+    binding()
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    viewModel.bind(with: .startShare)
+  }
+}
+
+private extension DropCardViewController {
+  func binding() {
+    viewModel.didReceiveCard = { card in print(card) }
   }
 }
 
