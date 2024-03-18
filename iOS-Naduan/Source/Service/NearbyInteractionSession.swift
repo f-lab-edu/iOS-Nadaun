@@ -45,8 +45,6 @@ class NearbyInteractionSession: NSObject {
     
     isSendCard = false
     isShareMyToken = false
-    connectedPeerID = nil
-    connectedPeerToken = nil
   }
   
   func didReceivePeerToken(data: Data, peer: MCPeerID) throws {
@@ -65,7 +63,7 @@ extension NearbyInteractionSession: NISessionDelegate {
   func session(_ session: NISession, didUpdate nearbyObjects: [NINearbyObject]) {
     if isSendCard == true { return }
     
-    guard let token = connectedPeerID else { return }
+    guard let token = connectedPeerToken else { return }
     
     let object = nearbyObjects.first { $0.discoveryToken == token }
     
@@ -76,18 +74,26 @@ extension NearbyInteractionSession: NISessionDelegate {
   }
   
   // 세션이 에러와 함께 종료된다.
-  func session(_ session: NISession, didInvalidateWith error: Error) { }
+  func session(_ session: NISession, didInvalidateWith error: Error) { 
+    print(error)
+  }
   
   // Session이 더 이상 상호작용하지 않는 경우 세션을 종료할 때 호출된다.
   func session(
     _ session: NISession,
     didRemove nearbyObjects: [NINearbyObject],
     reason: NINearbyObject.RemovalReason
-  ) { }
+  ) { 
+    print(reason)
+  }
   
   // Session이 시작되면 불리는 메서드
-  func sessionDidStartRunning(_ session: NISession) { }
+  func sessionDidStartRunning(_ session: NISession) { 
+    print(#function)
+  }
   
   // Session이 종료된 후 불리는 메서드
-  func sessionWasSuspended(_ session: NISession) { }
+  func sessionWasSuspended(_ session: NISession) { 
+    print(#function)
+  }
 }
