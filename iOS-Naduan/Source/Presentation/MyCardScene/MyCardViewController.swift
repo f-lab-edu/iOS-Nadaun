@@ -89,6 +89,7 @@ private extension MyCardViewController {
 extension MyCardViewController: MyCardCollectionViewCellDelegate {
   func myCardCollectionViewCell(_ cell: MyCardCollectionViewCell, didSelectShare card: BusinessCard) {
     let controller = DropCardViewController()
+    controller.hidesBottomBarWhenPushed = true
     navigationController?.pushViewController(controller, animated: true)
   }
 }
