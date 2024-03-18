@@ -36,10 +36,10 @@ class DropCardViewController: UIViewController {
     let label = Label(padding: padding)
     label.numberOfLines = .zero
     label.textColor = .disable
-    label.text = TextConstants.shareExplanation
-    label.font = .pretendardFont(to: .C1M)
+    label.font = .pretendardFont(to: .C1R)
     label.layer.cornerRadius = 8
     label.layer.backgroundColor = UIColor.gray01.cgColor
+    label.text = TextConstants.shareExplanation
     return label
   }()
   
@@ -86,7 +86,7 @@ private extension DropCardViewController {
     explanationLabel.attach {
       $0.leading(equalTo: view.leadingAnchor, padding: 24)
       $0.trailing(equalTo: view.trailingAnchor, padding: 24)
-      $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor, padding: 60)
+      $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor, padding: 24)
     }
   }
 }
@@ -94,7 +94,9 @@ private extension DropCardViewController {
 private extension DropCardViewController {
   enum TextConstants {
     static let shareExplanation: String = """
-    해당 기능은 제한적으로 지원하고 있습니다. 지원되지 않는 기기는 QR 코드 화면이 나옵니다. 두 기기 모두 화면에 머물러야 공유가 됩니다.
+    해당 기능은 UWB 기능을 지원하는 기기에서만 가능합니다. 지원되지 않는 기기는 QR 코드 화면이 나옵니다. 두 기기 모두 화면에 머물러야 공유가 가능합니다.
+    
+    지원 기기 : iPhone 11 이후 모델 (SE 기종 제외)
     """
   }
 }
