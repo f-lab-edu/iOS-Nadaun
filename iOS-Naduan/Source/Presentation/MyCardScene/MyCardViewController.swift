@@ -88,7 +88,8 @@ private extension MyCardViewController {
 
 extension MyCardViewController: MyCardCollectionViewCellDelegate {
   func myCardCollectionViewCell(_ cell: MyCardCollectionViewCell, didSelectShare card: BusinessCard) {
-    print(card)
+    let controller = DropCardViewController()
+    navigationController?.pushViewController(controller, animated: true)
   }
 }
 

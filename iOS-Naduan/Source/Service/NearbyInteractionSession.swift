@@ -72,7 +72,7 @@ extension NearbyInteractionSession: NISessionDelegate {
     if (object?.distance ?? Float.infinity) < 0.05 {
       didReachNear?()
       isSendCard = true
-    }
+    } 
   }
   
   // 세션이 에러와 함께 종료된다.
