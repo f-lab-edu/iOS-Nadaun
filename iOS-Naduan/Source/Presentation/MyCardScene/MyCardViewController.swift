@@ -88,9 +88,11 @@ private extension MyCardViewController {
 
 extension MyCardViewController: MyCardCollectionViewCellDelegate {
   func myCardCollectionViewCell(_ cell: MyCardCollectionViewCell, didSelectShare card: BusinessCard) {
-    let controller = DropCardViewController()
-    controller.hidesBottomBarWhenPushed = true
-    navigationController?.pushViewController(controller, animated: true)
+    let repository = ShareCardRepository(path: "Card")
+    let viewModel = DropCardViewModel(shareCard: card, shareCardRepository: repository)
+    let controller = DropCardViewController(viewModel: viewModel)
+    controller.modalPresentationStyle = .fullScreen
+    present(controller, animated: true)
   }
 }
 
