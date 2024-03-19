@@ -43,6 +43,18 @@ class DropCardViewController: UIViewController {
     return label
   }()
   
+  private let cardView: CardView = {
+    let cardView = CardView()
+    cardView.layer.cornerRadius = 8
+    cardView.layer.backgroundColor = UIColor.white.cgColor
+    cardView.layer.shadowColor = UIColor.black.withAlphaComponent(0.3).cgColor
+    cardView.layer.shadowRadius = 8
+    cardView.layer.shadowOpacity = 1
+    cardView.layer.shadowOffset = CGSize(width: 1, height: 1)
+    cardView.isHidden = true
+    return cardView
+  }()
+  
   private let viewModel: DropCardViewModel
   
   init(viewModel: DropCardViewModel) {
@@ -77,8 +89,9 @@ private extension DropCardViewController {
       self?.animationBackgroundView.stop()
       self?.animationBackgroundView.isHidden = true
       self?.explanationLabel.isHidden = true
-      self?.shareImage.image = .iconApp
-      print(card)
+      self?.shareImage.isHidden = true
+      self?.cardView.isHidden = false
+      self?.cardView.bind(to: card)
     }
   }
 }
@@ -92,7 +105,10 @@ private extension DropCardViewController {
   }
   
   func configureHierarchy() {
-    [titleLabel, animationBackgroundView, shareImage, explanationLabel].forEach(view.addSubview)
+    [
+      titleLabel, animationBackgroundView, shareImage, explanationLabel,
+      cardView
+    ].forEach(view.addSubview)
   }
   
   func makeConstraints() {
@@ -119,6 +135,14 @@ private extension DropCardViewController {
       $0.leading(equalTo: view.leadingAnchor, padding: 24)
       $0.trailing(equalTo: view.trailingAnchor, padding: 24)
       $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor, padding: 24)
+    }
+    
+    cardView.attach {
+      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+      $0.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 32)
+      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 32)
+      $0.height(equalTo: view.safeAreaLayoutGuide.heightAnchor, multi: 0.7)
     }
   }
 }
