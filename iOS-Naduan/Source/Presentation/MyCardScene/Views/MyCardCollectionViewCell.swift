@@ -11,8 +11,7 @@ protocol MyCardCollectionViewCellDelegate: AnyObject {
   func myCardCollectionViewCell(_ cell: MyCardCollectionViewCell, didSelectShare card: BusinessCard)
 }
 
-// MARK: MyCardCollectionViewCell
-class MyCardCollectionViewCell: UICollectionViewCell {
+class CardView: UIView {
   // MARK: - View Properties
   private let nameLabel: UILabel = {
     let label = UILabel()
@@ -20,13 +19,6 @@ class MyCardCollectionViewCell: UICollectionViewCell {
     label.textColor = .title
     label.numberOfLines = 1
     return label
-  }()
-  
-  private let shareButton: UIButton = {
-    var configuration = UIButton.Configuration.plain()
-    configuration.image = .share
-    configuration.contentInsets = .zero
-    return UIButton(configuration: configuration)
   }()
   
   private let positionLabel: UILabel = {
@@ -75,6 +67,101 @@ class MyCardCollectionViewCell: UICollectionViewCell {
     return label
   }()
   
+  init() {
+    super.init(frame: .zero)
+    
+    configureUI()
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  static func generatePrivacyStackView() -> UIStackView {
+    let stackView = UIStackView()
+    stackView.alignment = .fill
+    stackView.distribution = .equalSpacing
+    stackView.spacing = 10
+    return stackView
+  }
+  
+  func reset() {
+    nameLabel.text = nil
+    positionLabel.text = nil
+    companyLabel.text = nil
+    emailLabel.text = nil
+    phoneLabel.text = nil
+    phoneStackView.isHidden = true
+  }
+  
+  func bind(to card: BusinessCard) {
+    nameLabel.text = card.name
+    positionLabel.text = card.position
+    companyLabel.text = card.companyDescription
+    emailLabel.text = card.email
+    
+    if let phone = card.phone {
+      phoneLabel.text = phone
+      phoneStackView.isHidden = false
+    }
+  }
+}
+// MARK: - Configure UI Methods
+private extension CardView {
+  func configureUI() {
+    configureHierarchy()
+    makeConstraints()
+  }
+  
+  func configureHierarchy() {
+    [phoneImage, phoneLabel].forEach(phoneStackView.addArrangedSubview)
+    [emailImage, emailLabel].forEach(emailStackView.addArrangedSubview)
+    [
+      nameLabel, positionLabel, companyLabel,
+      phoneStackView, emailStackView
+    ].forEach { addSubview($0) }
+  }
+  
+  func makeConstraints() {
+    nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+    
+    nameLabel.attach {
+      $0.top(equalTo: topAnchor, padding: 16)
+      $0.leading(equalTo: leadingAnchor, padding: 16)
+      $0.trailing(equalTo: trailingAnchor, padding: 16)
+    }
+    
+    positionLabel.attach {
+      $0.top(equalTo: nameLabel.bottomAnchor, padding: 4)
+      $0.leading(equalTo: nameLabel.leadingAnchor)
+      $0.trailing(equalTo: trailingAnchor, padding: 16)
+    }
+    
+    companyLabel.attach {
+      $0.top(equalTo: positionLabel.bottomAnchor, padding: 4)
+      $0.leading(equalTo: positionLabel.leadingAnchor)
+      $0.trailing(equalTo: positionLabel.trailingAnchor)
+    }
+    
+    emailStackView.attach {
+        $0.leading(equalTo: leadingAnchor, padding: 16)
+        $0.trailing(equalTo: trailingAnchor, padding: 16)
+        $0.bottom(equalTo: bottomAnchor, padding: 16)
+    }
+    
+    phoneStackView.attach {
+      $0.leading(equalTo: leadingAnchor, padding: 16)
+      $0.trailing(equalTo: trailingAnchor, padding: 16)
+      $0.bottom(equalTo: emailStackView.topAnchor, padding: 10)
+    }
+  }
+}
+
+// MARK: MyCardCollectionViewCell
+class MyCardCollectionViewCell: UICollectionViewCell {
+  // MARK: - View Properties
+  private let cardView = CardView()
+  
   weak var delegate: MyCardCollectionViewCellDelegate?
   
   // MARK: - Initializer
@@ -91,43 +178,15 @@ class MyCardCollectionViewCell: UICollectionViewCell {
   override func prepareForReuse() {
     super.prepareForReuse()
     
-    phoneStackView.isHidden = true
-    shareButton.removeAction(identifiedBy: Constants.shareActionID, for: .touchUpInside)
+    cardView.reset()
   }
   
   // MARK: - Binding Method
   func bind(with card: BusinessCard) {
-    nameLabel.text = card.name
-    positionLabel.text = card.position
-    companyLabel.text = card.companyDescription
-    emailLabel.text = card.email
-    
-    if let phone = card.phone {
-      phoneLabel.text = phone
-      phoneStackView.isHidden = false
-    }
-    
-    let shareAction = UIAction(identifier: Constants.shareActionID) { [weak self] _ in
-      guard let self = self else { return }
-      delegate?.myCardCollectionViewCell(self, didSelectShare: card)
-    }
-    
-    shareButton.addAction(shareAction, for: .touchUpInside)
+    cardView.bind(to: card)
   }
 }
 
-// MARK: - Static StackView
-private extension MyCardCollectionViewCell {
-  static func generatePrivacyStackView() -> UIStackView {
-    let stackView = UIStackView()
-    stackView.alignment = .fill
-    stackView.distribution = .equalSpacing
-    stackView.spacing = 10
-    return stackView
-  }
-}
-
-// MARK: - Configure UI Methods
 private extension MyCardCollectionViewCell {
   func configureUI() {
     configureAttributes()
@@ -146,55 +205,15 @@ private extension MyCardCollectionViewCell {
   }
   
   func configureHierarchy() {
-    [phoneImage, phoneLabel].forEach(phoneStackView.addArrangedSubview)
-    [emailImage, emailLabel].forEach(emailStackView.addArrangedSubview)
-    [
-      nameLabel, shareButton, positionLabel, companyLabel,
-      phoneStackView, emailStackView
-    ].forEach {
-      contentView.addSubview($0)
-    }
+    contentView.addSubview(cardView)
   }
   
   func makeConstraints() {
-    nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-    shareButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-    
-    nameLabel.attach {
-      $0.top(equalTo: contentView.topAnchor, padding: 16)
-      $0.leading(equalTo: contentView.leadingAnchor, padding: 16)
-    }
-    
-    shareButton.attach {
-      $0.leading(equalTo: nameLabel.trailingAnchor, padding: 4)
-      $0.top(equalTo: contentView.topAnchor, padding: 16)
-      $0.trailing(equalTo: contentView.trailingAnchor, padding: 16)
-      $0.bottom(equalTo: nameLabel.bottomAnchor)
-      $0.width(equalTo: 24)
-    }
-    
-    positionLabel.attach {
-      $0.top(equalTo: nameLabel.bottomAnchor, padding: 4)
-      $0.leading(equalTo: nameLabel.leadingAnchor)
-      $0.trailing(equalTo: contentView.trailingAnchor, padding: 16)
-    }
-    
-    companyLabel.attach {
-      $0.top(equalTo: positionLabel.bottomAnchor, padding: 4)
-      $0.leading(equalTo: positionLabel.leadingAnchor)
-      $0.trailing(equalTo: positionLabel.trailingAnchor)
-    }
-    
-    emailStackView.attach {
-        $0.leading(equalTo: contentView.leadingAnchor, padding: 16)
-        $0.trailing(equalTo: contentView.trailingAnchor, padding: 16)
-        $0.bottom(equalTo: contentView.bottomAnchor, padding: 16)
-    }
-    
-    phoneStackView.attach {
-      $0.leading(equalTo: contentView.leadingAnchor, padding: 16)
-      $0.trailing(equalTo: contentView.trailingAnchor, padding: 16)
-      $0.bottom(equalTo: emailStackView.topAnchor, padding: 10)
+    cardView.attach {
+      $0.top(equalTo: contentView.topAnchor)
+      $0.leading(equalTo: contentView.leadingAnchor)
+      $0.trailing(equalTo: contentView.trailingAnchor)
+      $0.bottom(equalTo: contentView.bottomAnchor)
     }
   }
 }

@@ -72,7 +72,14 @@ class DropCardViewController: UIViewController {
 
 private extension DropCardViewController {
   func binding() {
-    viewModel.didReceiveCard = { card in print(card) }
+    viewModel.didReceiveCard = { [weak self] card in
+      self?.titleLabel.isHidden = true
+      self?.animationBackgroundView.stop()
+      self?.animationBackgroundView.isHidden = true
+      self?.explanationLabel.isHidden = true
+      self?.shareImage.image = .iconApp
+      print(card)
+    }
   }
 }
 
