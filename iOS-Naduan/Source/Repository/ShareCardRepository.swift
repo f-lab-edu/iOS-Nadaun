@@ -8,6 +8,10 @@ import FirebaseFirestore
 import MultipeerConnectivity
 import NearbyInteraction
 
+enum ShareError: Error {
+  case notFindReceiveData
+}
+
 class ShareCardRepository {
   private let store: CollectionReference
   private let nearBySession: NearbyInteractionSession
@@ -18,8 +22,8 @@ class ShareCardRepository {
     self.nearBySession = NearbyInteractionSession()
   }
   
-  func shareCards(with ID: String, completion: @escaping (BusinessCard?) -> Void) {
-    configureNearBySession(with: ID)
+  func shareCards(with card: BusinessCard, completion: @escaping ((Result<BusinessCard, Error>) -> Void)) {
+    configureNearBySession(with: card)
     
     if multiPeerSession == nil {
       let session = configureMultiPeerSession(with: 1, completion: completion)
@@ -33,7 +37,7 @@ class ShareCardRepository {
 private extension ShareCardRepository {
   func configureMultiPeerSession(
     with max: Int,
-    completion: @escaping (BusinessCard?) -> Void
+    completion: @escaping ((Result<BusinessCard, Error>) -> Void)
   ) -> MultiPeerSession {
     let session = MultiPeerSession(service: "nadaun", identity: "com.share.nadaun", maxPeers: 1)
     
@@ -42,9 +46,8 @@ private extension ShareCardRepository {
     }
     
     session.peerDataHandler = { [weak self] in
-      if let cardID = String(data: $0, encoding: .utf8) {
-        print("Peer Data Handler", cardID)
-        self?.fetchCard(to: cardID, completion: completion)
+      if let card = try? JSONDecoder().decode(BusinessCard.self, from: $0) {
+        self?.saveCardDataWithTransaction(to: card, completion: completion)
         return
       }
       
@@ -57,9 +60,9 @@ private extension ShareCardRepository {
     return session
   }
   
-  func configureNearBySession(with ID: String) {
-    nearBySession.didReachNear = { [weak self, ID] in
-      guard let data = ID.data(using: .utf8) else { return }
+  func configureNearBySession(with card: BusinessCard) {
+    nearBySession.didReachNear = { [weak self, card] in
+      guard let data = try? JSONEncoder().encode(card) else { return }
       self?.multiPeerSession?.sendDataToAllPeers(data: data)
     }
     
@@ -71,17 +74,42 @@ private extension ShareCardRepository {
       
       self?.multiPeerSession?.sendDataToAllPeers(data: encodedData)
     }
-  
   }
-  
-  func fetchCard(to ID: String, completion: @escaping (BusinessCard?) -> Void) {
-    store.document(ID).getDocument(as: BusinessCard.self) { result in
-      switch result {
-        case .success(let card):
-          completion(card)
-        case .failure:
-          completion(nil)
+}
+
+// MARK: FireStore Data Handling Method
+private extension ShareCardRepository {
+  func saveCardDataWithTransaction(
+    to card: BusinessCard,
+    completion: @escaping (Result<BusinessCard, Error>) -> Void
+  ) {
+    let document = store.document(card.cardID)
+    let relationCollection = Firestore.firestore().collection("Relation")
+    
+    Firestore.firestore().runTransaction { (transaction, pointer) -> Any? in
+      let document = try? transaction.getDocument(document)
+      guard let receivedCard = try? document?.data(as: BusinessCard.self) else {
+        pointer?.pointee = NSError(domain: "ReceiveError", code: -1)
+        return nil
       }
+      
+      let relationDocument = relationCollection.document(card.userID)
+        .collection(receivedCard.cardID).document()
+      
+      let _ = try? transaction.setData(from: receivedCard, forDocument: relationDocument)
+      
+      return receivedCard
+    } completion: { receivedCard, error in
+      if let error = error {
+        completion(.failure(error))
+        return
+      }
+      guard let receivedCard = receivedCard as? BusinessCard else {
+        completion(.failure(ShareError.notFindReceiveData))
+        return
+      }
+      
+      completion(.success(receivedCard))
     }
   }
 }

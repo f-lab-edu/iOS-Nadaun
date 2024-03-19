@@ -30,8 +30,13 @@ class DropCardViewModel {
   func bind(with action: DropCardAction) {
     switch action {
       case .startShare:
-        shareCardRepository.shareCards(with: shareCard.cardID) { [weak self] in
-          self?.receivedCard = $0
+        shareCardRepository.shareCards(with: shareCard) { [weak self] result in
+          switch result {
+            case .success(let card):
+              self?.receivedCard = card
+            case .failure:
+              print("ERROR OCCUR")
+          }
         }
     }
   }
