@@ -112,15 +112,36 @@ extension NearByInteractionService: MCSessionDelegate {
     nearBySession.run(configuration)
   }
   
-  func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) { }
+  func session(
+    _ session: MCSession,
+    didReceive stream: InputStream,
+    withName streamName: String,
+    fromPeer peerID: MCPeerID
+  ) { }
   
-  func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) { }
+  func session(
+    _ session: MCSession,
+    didStartReceivingResourceWithName resourceName: String,
+    fromPeer peerID: MCPeerID,
+    with progress: Progress
+  ) { }
   
-  func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) { }
+  func session(
+    _ session: MCSession,
+    didFinishReceivingResourceWithName resourceName: String,
+    fromPeer peerID: MCPeerID,
+    at localURL: URL?,
+    withError error: Error?
+  ) { }
 }
 
 extension NearByInteractionService: MCNearbyServiceAdvertiserDelegate {
-  func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
+  func advertiser(
+    _ advertiser: MCNearbyServiceAdvertiser,
+    didReceiveInvitationFromPeer peerID: MCPeerID,
+    withContext context: Data?,
+    invitationHandler: @escaping (Bool, MCSession?) -> Void
+  ) {
     if session.connectedPeers.contains(peerID) == false {
       invitationHandler(true, session)
     }
@@ -128,7 +149,11 @@ extension NearByInteractionService: MCNearbyServiceAdvertiserDelegate {
 }
 
 extension NearByInteractionService: MCNearbyServiceBrowserDelegate {
-  func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
+  func browser(
+    _ browser: MCNearbyServiceBrowser,
+    foundPeer peerID: MCPeerID,
+    withDiscoveryInfo info: [String : String]?
+  ) {
     guard let identifier = info?[MPCSessionConstants.discoveryID] else { return }
     
     if session.connectedPeers.contains(peerID) { return }
@@ -157,7 +182,11 @@ extension NearByInteractionService: NISessionDelegate {
     }
   }
   
-  func session(_ session: NISession, didRemove nearbyObjects: [NINearbyObject], reason: NINearbyObject.RemovalReason) {
+  func session(
+    _ session: NISession,
+    didRemove nearbyObjects: [NINearbyObject],
+    reason: NINearbyObject.RemovalReason
+  ) {
     guard reason == .timeout else { return }
 
     let tokens = nearbyObjects.map(\.discoveryToken)
