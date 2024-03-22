@@ -9,7 +9,6 @@
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_nadaun._tcp</string>
-		<string>_nadaun._udp</string>
 	</array>
 	<key>UIAppFonts</key>
 	<array>
