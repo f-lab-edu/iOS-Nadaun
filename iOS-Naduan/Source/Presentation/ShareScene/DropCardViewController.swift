@@ -19,39 +19,7 @@ class DropCardViewController: UIViewController {
     return UIButton(configuration: configuration)
   }()
   
-  private let titleLabel: UILabel = {
-    let label = UILabel()
-    label.font = .pretendardFont(to: .H2B)
-    label.textColor = .accent
-    label.text = "핸드폰 뒷면을 마주쳐보세요."
-    return label
-  }()
-  
-  private let animationBackgroundView: LottieAnimationView = {
-    let view = LottieAnimationView(name: "drop")
-    view.backgroundBehavior = .continuePlaying
-    view.loopMode = .loop
-    view.animationSpeed = 0.5
-    return view
-  }()
-  
-  private let shareImage: UIImageView = {
-    let imageView = UIImageView(image: .handShake)
-    imageView.contentMode = .scaleAspectFit
-    return imageView
-  }()
-  
-  private let explanationLabel: Label = {
-    let padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-    let label = Label(padding: padding)
-    label.numberOfLines = .zero
-    label.textColor = .disable
-    label.font = .pretendardFont(to: .C1R)
-    label.layer.cornerRadius = 8
-    label.layer.backgroundColor = UIColor.gray02.cgColor
-    label.text = TextConstants.shareExplanation
-    return label
-  }()
+  private let dropCardShareAnimationView = DropCardShareAnimationView()
   
   private let cardView: CardView = {
     let cardView = CardView()
@@ -81,7 +49,6 @@ class DropCardViewController: UIViewController {
     super.viewDidLoad()
     
     configureUI()
-    animationBackgroundView.play()
     binding()
     configureButtonActions()
   }
@@ -97,13 +64,8 @@ private extension DropCardViewController {
   func binding() {
     viewModel.didReceiveCard = { [weak self] card in
       DispatchQueue.main.async {
-        self?.titleLabel.isHidden = true
-        self?.animationBackgroundView.stop()
-        self?.animationBackgroundView.isHidden = true
-        self?.explanationLabel.isHidden = true
-        self?.shareImage.isHidden = true
+        self?.dropCardShareAnimationView.isHidden = true
         self?.cardView.isHidden = false
-        self?.cardView.bind(to: card)
       }
     }
   }
@@ -126,10 +88,7 @@ private extension DropCardViewController {
   }
   
   func configureHierarchy() {
-    [
-      closeButton, titleLabel, animationBackgroundView, shareImage, explanationLabel,
-      cardView
-    ].forEach(view.addSubview)
+    [closeButton, dropCardShareAnimationView].forEach(view.addSubview)
   }
   
   func makeConstraints() {
@@ -140,47 +99,23 @@ private extension DropCardViewController {
       $0.width(equalTo: 24)
     }
     
-    titleLabel.attach {
-      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-      $0.top(equalTo: closeButton.bottomAnchor, padding: 80)
-    }
-    
-    animationBackgroundView.attach {
-      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+    dropCardShareAnimationView.attach {
       $0.top(equalTo: closeButton.bottomAnchor, padding: 16)
       $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
       $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
       $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
     }
     
-    shareImage.attach {
-      $0.centerXAnchor.constraint(equalTo: animationBackgroundView.centerXAnchor)
-      $0.centerYAnchor.constraint(equalTo: animationBackgroundView.centerYAnchor)
-      $0.height(equalTo: 250)
-    }
-    
-    explanationLabel.attach {
-      $0.leading(equalTo: view.leadingAnchor, padding: 24)
-      $0.trailing(equalTo: view.trailingAnchor, padding: 24)
-      $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor, padding: 24)
-    }
-    
-    cardView.attach {
-      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-      $0.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 32)
-      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 32)
-      $0.height(equalTo: view.safeAreaLayoutGuide.heightAnchor, multi: 0.7)
-    }
+//    cardView.attach {
+//      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+//      $0.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+//      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 32)
+//      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 32)
+//      $0.height(equalTo: view.safeAreaLayoutGuide.heightAnchor, multi: 0.7)
+//    }
   }
 }
 
 private extension DropCardViewController {
-  enum TextConstants {
-    static let shareExplanation: String = """
-    해당 기능은 UWB 기능을 지원하는 기기에서만 가능합니다. 지원되지 않는 기기는 QR 코드 화면이 나옵니다. 두 기기 모두 화면에 머물러야 공유가 가능합니다.
-    
-    지원 기기 : iPhone 11 이후 모델 (SE 기종 제외)
-    """
-  }
+
 }
