@@ -72,6 +72,12 @@ class NearByInteractionService: NSObject {
     mcBrowser.stopBrowsingForPeers()
   }
   
+  func invalidate() {
+    stop()
+    nearBySession.pause()
+    nearBySession.invalidate()
+  }
+  
   func sendData(to peer: MCPeerID, with data: Data) {
     do {
       try session.send(data, toPeers: [peer], with: .reliable)

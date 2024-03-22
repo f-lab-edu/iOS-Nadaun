@@ -14,11 +14,14 @@ enum ShareError: Error {
 
 class ShareCardRepository {
   private let store: Firestore
-  //  private let nearBySession: NearbyInteractionSession
   private var multiPeerSession: NearByInteractionService?
   
   init() {
     self.store = Firestore.firestore()
+  }
+  
+  func stopShare() {
+    multiPeerSession?.invalidate()
   }
   
   func shareCards(with card: BusinessCard, completion: @escaping ((Result<BusinessCard, Error>) -> Void)) {
