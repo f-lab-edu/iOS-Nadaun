@@ -9,6 +9,16 @@ import UIKit
 import Lottie
 
 class DropCardViewController: UIViewController {
+  private let closeButton: UIButton = {
+    var configuration = UIButton.Configuration.filled()
+    configuration.cornerStyle = .capsule
+    configuration.contentInsets = NSDirectionalEdgeInsets(
+      top: 4, leading: 4, bottom: 4, trailing: 4
+    )
+    configuration.image = UIImage.xmark.withTintColor(.white)
+    return UIButton(configuration: configuration)
+  }()
+  
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.font = .pretendardFont(to: .H2B)
@@ -73,6 +83,7 @@ class DropCardViewController: UIViewController {
     configureUI()
     animationBackgroundView.play()
     binding()
+    configureButtonActions()
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -85,7 +96,6 @@ class DropCardViewController: UIViewController {
 private extension DropCardViewController {
   func binding() {
     viewModel.didReceiveCard = { [weak self] card in
-      print(card)
       DispatchQueue.main.async {
         self?.titleLabel.isHidden = true
         self?.animationBackgroundView.stop()
@@ -107,30 +117,45 @@ private extension DropCardViewController {
     makeConstraints()
   }
   
+  func configureButtonActions() {
+    let action = UIAction { [weak self] _ in
+      self?.viewModel.bind(with: .stopShare)
+      self?.dismiss(animated: true)
+    }
+    closeButton.addAction(action, for: .touchUpInside)
+  }
+  
   func configureHierarchy() {
     [
-      titleLabel, animationBackgroundView, shareImage, explanationLabel,
+      closeButton, titleLabel, animationBackgroundView, shareImage, explanationLabel,
       cardView
     ].forEach(view.addSubview)
   }
   
   func makeConstraints() {
+    closeButton.attach {
+      $0.top(equalTo: view.safeAreaLayoutGuide.topAnchor, padding: 16)
+      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 16)
+      $0.height(equalTo: 24)
+      $0.width(equalTo: 24)
+    }
+    
     titleLabel.attach {
       $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-      $0.top(equalTo: view.safeAreaLayoutGuide.topAnchor, padding: 80)
+      $0.top(equalTo: closeButton.bottomAnchor, padding: 80)
     }
     
     animationBackgroundView.attach {
       $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-      $0.top(equalTo: view.safeAreaLayoutGuide.topAnchor)
+      $0.top(equalTo: closeButton.bottomAnchor, padding: 16)
       $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
       $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
       $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
     }
     
     shareImage.attach {
-      $0.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+      $0.centerXAnchor.constraint(equalTo: animationBackgroundView.centerXAnchor)
+      $0.centerYAnchor.constraint(equalTo: animationBackgroundView.centerYAnchor)
       $0.height(equalTo: 250)
     }
     

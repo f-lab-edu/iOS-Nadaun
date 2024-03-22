@@ -91,7 +91,7 @@ extension MyCardViewController: MyCardCollectionViewCellDelegate {
     let repository = ShareCardRepository()
     let viewModel = DropCardViewModel(shareCard: card, shareCardRepository: repository)
     let controller = DropCardViewController(viewModel: viewModel)
-    controller.modalPresentationStyle = .fullScreen
+    controller.modalPresentationStyle = .overFullScreen
     present(controller, animated: true)
   }
 }

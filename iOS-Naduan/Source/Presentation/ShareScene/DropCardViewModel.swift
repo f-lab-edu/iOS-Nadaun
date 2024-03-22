@@ -6,6 +6,7 @@
 
 enum DropCardAction {
   case startShare
+  case stopShare
 }
 
 class DropCardViewModel {
@@ -38,6 +39,8 @@ class DropCardViewModel {
               print("ERROR OCCUR")
           }
         }
+      case .stopShare:
+        shareCardRepository.stopShare()
     }
   }
 }
