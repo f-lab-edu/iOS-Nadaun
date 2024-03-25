@@ -41,10 +41,15 @@ class DropCardSuccessView: UIView {
   func bind(to card: BusinessCard) {
     isHidden = false
     cardView.bind(to: card)
+    
+    UIView.animate(withDuration: 1) { [weak self] in
+      guard let self = self else { return }
+      cardView.transform = CGAffineTransform(translationX: .zero, y: -(frame.height / 2))
+    }
   }
   
   private func configureUI() {
-    [titleLabel, cardView].forEach(addSubview)
+    [cardView, titleLabel].forEach(addSubview)
     
     titleLabel.attach {
       $0.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor)
@@ -54,7 +59,7 @@ class DropCardSuccessView: UIView {
     cardView.attach {
       $0.leading(equalTo: safeAreaLayoutGuide.leadingAnchor, padding: 32)
       $0.trailing(equalTo: safeAreaLayoutGuide.trailingAnchor, padding: 32)
-      $0.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor)
+      $0.centerYAnchor.constraint(equalTo: bottomAnchor)
       $0.height(equalTo: heightAnchor, multi: 0.7)
     }
     
