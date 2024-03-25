@@ -19,6 +19,17 @@ class DropCardViewController: UIViewController {
   
   private let dropCardShareAnimationView = DropCardShareAnimationView()
   private let dropCardSuccessView = DropCardSuccessView()
+  private let dropCardFailureView = DropCardFailureAnimationView()
+  
+  private let additionalActionButton: UIButton = {
+    var configuration = UIButton.Configuration.daunStyle(with: .basic)
+    configuration.title = "확인"
+    configuration.cornerStyle = .capsule
+    configuration.baseBackgroundColor = .accent
+    let button = UIButton(configuration: configuration)
+    button.isHidden = true
+    return button
+  }()
   
   private let cardView: CardView = {
     let cardView = CardView()
@@ -61,11 +72,34 @@ class DropCardViewController: UIViewController {
 
 private extension DropCardViewController {
   func binding() {
-    viewModel.didReceiveCard = { [weak self] card in
-      DispatchQueue.main.async {
-        self?.dropCardShareAnimationView.isHidden = true
-        self?.dropCardSuccessView.bind(to: card)
-      }
+    viewModel.didChangeCardShareState = { [weak self] in
+      self?.updateUI(for: $0)
+    }
+  }
+}
+
+private extension DropCardViewController {
+  func updateUI(for sharingState: CardShareState) {
+    switch sharingState {
+      case .success(let card):
+        dropCardShareAnimationView.isHidden = true
+        dropCardSuccessView.bind(to: card)
+        dropCardSuccessView.isHidden = false
+        dropCardFailureView.isHidden = true
+        updateAdditionalAction(to: true)
+        
+      case .failure:
+        dropCardShareAnimationView.isHidden = true
+        dropCardSuccessView.isHidden = true
+        dropCardFailureView.isHidden = false
+        updateAdditionalAction(to: false)
+        dropCardFailureView.play()
+        
+      case .sharing:
+        dropCardShareAnimationView.isHidden = false
+        dropCardSuccessView.isHidden = true
+        dropCardFailureView.isHidden = true
+        additionalActionButton.isHidden = true
     }
   }
 }
@@ -78,16 +112,53 @@ private extension DropCardViewController {
     makeConstraints()
   }
   
+  func updateAdditionalAction(to isSuccess: Bool) {
+    additionalActionButton.isHidden = false
+    var configuration = additionalActionButton.configuration
+    let title = isSuccess ? "확인" : "다시 시도"
+    configuration?.title = title
+    additionalActionButton.configuration = configuration
+    let identifier = UIAction.Identifier(Constants.actionIdentifier)
+    additionalActionButton.removeAction(identifiedBy: identifier, for: .touchUpInside)
+    
+    
+    if isSuccess {
+      let action = UIAction(identifier: identifier) { [weak self] _ in
+        self?.viewModel.bind(with: .stopShare)
+        self?.dismiss(animated: true)
+      }
+      
+      additionalActionButton.addAction(action, for: .touchUpInside)
+      
+      return
+    }
+    
+    if isSuccess == false {
+      let action = UIAction(identifier: identifier) { [weak self] action in
+        self?.viewModel.bind(with: .stopShare)
+        self?.viewModel.bind(with: .startShare)
+        self?.dropCardShareAnimationView.isHidden = false
+        self?.dropCardSuccessView.isHidden = true
+        self?.dropCardFailureView.isHidden = true
+        (action.sender as? UIButton)?.isHidden = true
+      }
+      
+      additionalActionButton.addAction(action, for: .touchUpInside)
+    }
+  }
+  
   func configureButtonActions() {
     let action = UIAction { [weak self] _ in
       self?.viewModel.bind(with: .stopShare)
       self?.dismiss(animated: true)
     }
+    
     closeButton.addAction(action, for: .touchUpInside)
   }
   
   func configureHierarchy() {
-    [closeButton, dropCardShareAnimationView, dropCardSuccessView].forEach(view.addSubview)
+    [closeButton, dropCardShareAnimationView, dropCardSuccessView, additionalActionButton, dropCardFailureView]
+      .forEach(view.addSubview)
   }
   
   func makeConstraints() {
@@ -109,19 +180,26 @@ private extension DropCardViewController {
       $0.top(equalTo: closeButton.bottomAnchor, padding: 16)
       $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
       $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-      $0.bottom(equalTo: view.bottomAnchor)
+      $0.bottom(equalTo: additionalActionButton.topAnchor, padding: 16)
     }
     
-    //    cardView.attach {
-    //      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-    //      $0.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-    //      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 32)
-    //      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 32)
-    //      $0.height(equalTo: view.safeAreaLayoutGuide.heightAnchor, multi: 0.7)
-    //    }
+    dropCardFailureView.attach {
+      $0.top(equalTo: closeButton.bottomAnchor, padding: 16)
+      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+      $0.bottom(equalTo: additionalActionButton.topAnchor, padding: 16)
+    }
+    
+    additionalActionButton.attach {
+      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 16)
+      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 16)
+      $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+    }
   }
 }
 
 private extension DropCardViewController {
-  
+  enum Constants {
+    static let actionIdentifier: String = "ADDITIONAL_ACTION"
+  }
 }
