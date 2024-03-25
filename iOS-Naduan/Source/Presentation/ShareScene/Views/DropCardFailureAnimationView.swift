@@ -18,17 +18,14 @@ class DropCardFailureAnimationView: UIView {
     return view
   }()
   
-//  private let explanationLabel: Label = {
-//    let padding = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-//    let label = Label(padding: padding)
-//    label.numberOfLines = .zero
-//    label.textColor = .disable
-//    label.font = .pretendardFont(to: .C1R)
-//    label.layer.cornerRadius = 8
-//    label.layer.backgroundColor = UIColor.gray02.cgColor
-//    label.text = TextConstants.shareExplanation
-//    return label
-//  }()
+  private let titleLabel: UILabel = {
+    let label = UILabel()
+    label.text = "공유를 다시 시도해주세요."
+    label.font = .pretendardFont(to: .H2B)
+    label.textColor = .redError
+    label.textAlignment = .center
+    return label
+  }()
   
   init() {
     super.init(frame: .zero)
@@ -53,11 +50,16 @@ private extension DropCardFailureAnimationView {
   }
   
   func configureHierarchy() {
-    [animationBackgroundView]
-      .forEach { addSubview($0) }
+    [animationBackgroundView, titleLabel].forEach { addSubview($0) }
   }
   
   func makeConstraints() {
+    titleLabel.attach {
+      $0.top(equalTo: safeAreaLayoutGuide.topAnchor)
+      $0.leading(equalTo: safeAreaLayoutGuide.leadingAnchor)
+      $0.trailing(equalTo: safeAreaLayoutGuide.trailingAnchor)
+    }
+    
     animationBackgroundView.attach {
       $0.leading(equalTo: safeAreaLayoutGuide.leadingAnchor)
       $0.trailing(equalTo: safeAreaLayoutGuide.trailingAnchor)
