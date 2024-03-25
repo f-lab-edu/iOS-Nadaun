@@ -6,8 +6,6 @@
 
 import UIKit
 
-import Lottie
-
 class DropCardViewController: UIViewController {
   private let closeButton: UIButton = {
     var configuration = UIButton.Configuration.filled()
@@ -20,6 +18,7 @@ class DropCardViewController: UIViewController {
   }()
   
   private let dropCardShareAnimationView = DropCardShareAnimationView()
+  private let dropCardSuccessView = DropCardSuccessView()
   
   private let cardView: CardView = {
     let cardView = CardView()
@@ -65,7 +64,7 @@ private extension DropCardViewController {
     viewModel.didReceiveCard = { [weak self] card in
       DispatchQueue.main.async {
         self?.dropCardShareAnimationView.isHidden = true
-        self?.cardView.isHidden = false
+        self?.dropCardSuccessView.bind(to: card)
       }
     }
   }
@@ -88,7 +87,7 @@ private extension DropCardViewController {
   }
   
   func configureHierarchy() {
-    [closeButton, dropCardShareAnimationView].forEach(view.addSubview)
+    [closeButton, dropCardShareAnimationView, dropCardSuccessView].forEach(view.addSubview)
   }
   
   func makeConstraints() {
@@ -106,16 +105,23 @@ private extension DropCardViewController {
       $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
     }
     
-//    cardView.attach {
-//      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-//      $0.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-//      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 32)
-//      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 32)
-//      $0.height(equalTo: view.safeAreaLayoutGuide.heightAnchor, multi: 0.7)
-//    }
+    dropCardSuccessView.attach {
+      $0.top(equalTo: closeButton.bottomAnchor, padding: 16)
+      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+      $0.bottom(equalTo: view.bottomAnchor)
+    }
+    
+    //    cardView.attach {
+    //      $0.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+    //      $0.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+    //      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 32)
+    //      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 32)
+    //      $0.height(equalTo: view.safeAreaLayoutGuide.heightAnchor, multi: 0.7)
+    //    }
   }
 }
 
 private extension DropCardViewController {
-
+  
 }

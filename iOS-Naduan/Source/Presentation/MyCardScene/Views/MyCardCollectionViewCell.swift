@@ -64,8 +64,6 @@ class MyCardCollectionViewCell: UICollectionViewCell {
       case .ended:
         guard let superview = superview, let card = card else { return }
         
-        let isSendCard = (frame.minY + 100) < .zero
-        
         UIView.animate(withDuration: 0.2) { [weak self] in
           self?.frame.origin.y = superview.frame.minY
         }
