@@ -42,8 +42,7 @@ class DropCardViewModel {
         shareCardRepository.shareCards(with: shareCard) { [weak self] result in
           switch result {
             case .success(let card):
-//              self?.receivedCard = card
-              self?.didChangeCardShareState?(.failure)
+              self?.receivedCard = card
             case .failure:
               self?.didChangeCardShareState?(.failure)
           }
