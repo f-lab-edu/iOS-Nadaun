@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSNearbyInteractionUsageDescription</key>
+	<string>로컬 네트워크를 활용하여서 무선 공유를 제공합니다.</string>
+	<key>NSNearbyInteractionAllowOnceUsageDescription</key>
+	<string>로컬 네트워크를 활용하여서 무선 공유를 제공합니다.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_nadaun._tcp</string>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Black.ttf</string>

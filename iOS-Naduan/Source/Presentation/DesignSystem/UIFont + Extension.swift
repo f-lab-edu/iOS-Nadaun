@@ -13,6 +13,7 @@ enum TypographyType {
     case medium = 18
     case small = 16
     case extraSmall = 14
+    case minimum = 12
   }
 
   enum FontWeight: String {
@@ -33,6 +34,7 @@ enum TypographyType {
   case B4R
   
   case C1M
+  case C1R
   case C2R
   
   var size: FontSize {
@@ -42,6 +44,7 @@ enum TypographyType {
       case .H3B, .B1M:                    return .medium
       case .H4B, .B2M:                    return .small
       case .H5B, .B3M, .B4R, .C1M, .C2R:  return .extraSmall
+      case .C1R:                          return .minimum
     }
   }
   
@@ -49,7 +52,7 @@ enum TypographyType {
     switch self {
       case .H1B, .H2B, .H3B, .H4B, .H5B: return .bold
       case .B1M, .B2M, .B3M, .C1M:       return .medium
-      case .B4R, .C2R:                   return .regular
+      case .B4R, .C1R, .C2R:             return .regular
     }
   }
 }
