@@ -43,6 +43,12 @@ class DropCardViewController: UIViewController {
     return cardView
   }()
   
+  private let qrView: QRView = {
+    let view = QRView()
+    view.isHidden = true
+    return view
+  }()
+  
   private let viewModel: DropCardViewModel
   
   init(viewModel: DropCardViewModel) {
@@ -94,6 +100,14 @@ private extension DropCardViewController {
         dropCardFailureView.isHidden = false
         updateAdditionalAction(to: false)
         dropCardFailureView.play()
+        
+      case .didNotSupport(let cardID):
+        dropCardShareAnimationView.isHidden = true
+        dropCardSuccessView.isHidden = true
+        dropCardFailureView.isHidden = true
+        additionalActionButton.isHidden = true
+        qrView.isHidden = false
+        qrView.generateCode(cardID)
         
       case .sharing:
         dropCardShareAnimationView.isHidden = false
@@ -157,8 +171,10 @@ private extension DropCardViewController {
   }
   
   func configureHierarchy() {
-    [closeButton, dropCardShareAnimationView, dropCardSuccessView, additionalActionButton, dropCardFailureView]
-      .forEach(view.addSubview)
+    [
+      closeButton, dropCardShareAnimationView, dropCardSuccessView,
+      additionalActionButton, dropCardFailureView, qrView
+    ].forEach(view.addSubview)
   }
   
   func makeConstraints() {
@@ -194,6 +210,13 @@ private extension DropCardViewController {
       $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor, padding: 16)
       $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor, padding: 16)
       $0.bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+    }
+    
+    qrView.attach {
+      $0.top(equalTo: closeButton.bottomAnchor, padding: 16)
+      $0.leading(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+      $0.trailing(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+      $0.bottom(equalTo: additionalActionButton.topAnchor, padding: 16)
     }
   }
 }

@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>명함 QR을 인식을 지원합니다.</string>
 	<key>NSNearbyInteractionUsageDescription</key>
 	<string>로컬 네트워크를 활용하여서 무선 공유를 제공합니다.</string>
 	<key>NSNearbyInteractionAllowOnceUsageDescription</key>

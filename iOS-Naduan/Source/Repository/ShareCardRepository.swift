@@ -10,6 +10,7 @@ import NearbyInteraction
 
 enum ShareError: Error {
   case notFindReceiveData
+  case didNotSupported
 }
 
 class ShareCardRepository {
@@ -30,6 +31,11 @@ class ShareCardRepository {
       self?.multiPeerSession?.sendData(to: peerID, with: cardData)
     }
     
+    guard let session = session else {
+      completion(.failure(ShareError.didNotSupported))
+      return
+    }
+    
     session.didReceiveNotDecodableData = { [weak self] data in
       guard let receivedCard = try? JSONDecoder().decode(BusinessCard.self, from: data) else {
         completion(.failure(ShareError.notFindReceiveData))
@@ -37,6 +43,11 @@ class ShareCardRepository {
       }
       
       self?.saveCardData(sendCard: card, receivedCard: receivedCard, completion: completion)
+    }
+    
+    session.didReceiveNotSupported = {
+      completion(.failure(ShareError.didNotSupported))
+      return
     }
     
     self.multiPeerSession = session
