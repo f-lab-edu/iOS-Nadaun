@@ -17,6 +17,7 @@ struct MPCSessionConstants {
 class NearByInteractionService: NSObject {
   var didReachHandler: (MCPeerID) -> Void
   var didReceiveNotDecodableData: ((Data) -> Void)?
+  var didReceiveNotSupported: (() -> Void)?
   private let serviceID: String
   private let session: MCSession
   private let localPeerID: MCPeerID
@@ -27,7 +28,7 @@ class NearByInteractionService: NSObject {
   private let nearBySession: NISession
   private var connectedTokens: [NIDiscoveryToken: MCPeerID] = [:]
   
-  init(
+  init?(
     peerID: String,
     service: String = MPCSessionConstants.serviceID,
     identifier: String = MPCSessionConstants.keyID,
@@ -55,6 +56,16 @@ class NearByInteractionService: NSObject {
     self.didReachHandler = didReachHandler
     
     super.init()
+    
+    if #available(iOS 16.0, *) {
+      if NISession.deviceCapabilities.supportsPreciseDistanceMeasurement == false {
+        return nil
+      }
+    } else {
+      if NISession.isSupported == false {
+        return nil
+      }
+    }
     
     session.delegate = self
     mcAdvertiser.delegate = self
@@ -206,6 +217,5 @@ extension NearByInteractionService: NISessionDelegate {
   }
   
   func session(_ session: NISession, didInvalidateWith error: Error) {
-    print(error)
   }
 }

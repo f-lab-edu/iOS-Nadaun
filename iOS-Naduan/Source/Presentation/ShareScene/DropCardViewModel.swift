@@ -6,6 +6,7 @@
 
 enum CardShareState {
   case sharing
+  case didNotSupport(cardID: String)
   case success(BusinessCard)
   case failure
 }
@@ -29,6 +30,7 @@ class DropCardViewModel {
   
   var didReceiveCard: ((BusinessCard) -> Void)?
   var didChangeCardShareState: ((CardShareState) -> Void)?
+  var didNotSupportDevice: ((String) -> Void)?
   
   init(shareCard: BusinessCard, shareCardRepository: ShareCardRepository) {
     self.shareCard = shareCard
@@ -43,7 +45,12 @@ class DropCardViewModel {
           switch result {
             case .success(let card):
               self?.receivedCard = card
-            case .failure:
+            case .failure(let error):
+              if case ShareError.didNotSupported = error, let cardID = self?.shareCard.cardID {
+                self?.didChangeCardShareState?(.didNotSupport(cardID: cardID))
+                return
+              }
+              
               self?.didChangeCardShareState?(.failure)
           }
         }
